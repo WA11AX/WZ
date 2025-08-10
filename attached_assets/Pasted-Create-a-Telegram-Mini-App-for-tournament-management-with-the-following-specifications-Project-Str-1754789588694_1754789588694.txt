@@ -1,0 +1,68 @@
+Create a Telegram Mini App for tournament management with the following specifications:
+
+Project Structure:
+1. Frontend (React + TypeScript)
+2. Backend (Node.js + Express)
+3. Database (Replit Database)
+
+Core Features:
+- Display list of upcoming tournaments
+- Tournament details view (description, date, prizes, participants)
+- Registration system with Telegram Stars payment
+- Participant list management
+- Admin panel for tournament management
+
+Technical Requirements:
+1. Use @twa-dev/sdk for Telegram Web App integration
+2. Implement authentication using Telegram WebApp API
+3. Setup payment processing with Telegram Stars
+4. Create real-time updates using WebSocket
+5. Follow Telegram Mini App design guidelines
+
+Project Setup:
+1. Initialize a new React TypeScript project
+2. Setup Express backend with necessary routes
+3. Configure Replit Database for data storage
+4. Implement WebSocket for real-time updates
+
+Database Schema:
+1. Tournaments:
+   - id: string
+   - title: string
+   - description: string
+   - date: string
+   - prize: number
+   - entryFee: number
+   - participants: Array<string>
+   - status: 'upcoming' | 'active' | 'completed'
+
+2. Users:
+   - telegramId: string
+   - isAdmin: boolean
+   - participatingTournaments: Array<string>
+
+API Endpoints:
+1. GET /api/tournaments - List all tournaments
+2. GET /api/tournaments/:id - Get tournament details
+3. POST /api/tournaments - Create tournament (admin only)
+4. PUT /api/tournaments/:id - Update tournament (admin only)
+5. POST /api/tournaments/:id/register - Register for tournament
+6. GET /api/tournaments/:id/participants - Get participant list
+
+Important Notes:
+- Ensure proper error handling
+- Implement input validation
+- Add loading states
+- Setup proper security measures
+- Use environment variables for sensitive data
+- Follow Telegram Mini App size limitations
+- Implement responsive design
+
+Please start by:
+1. Setting up the basic project structure
+2. Creating necessary configuration files
+3. Implementing the database schema
+4. Setting up basic Express server
+5. Creating the main React components structure
+
+Focus on making the code maintainable and following best practices. Use TypeScript for better type safety and code organization.
