@@ -10,7 +10,10 @@ export interface WebSocketMessage {
 export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  // `setTimeout` returns different types in browser and Node environments.
+  // Using `ReturnType<typeof setTimeout>` keeps the hook portable between
+  // environments and avoids build-time type mismatches.
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const connect = () => {
     try {
@@ -23,8 +26,9 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         console.log('WebSocket connected');
         setIsConnected(true);
         // Clear any existing reconnect timeout
-        if (reconnectTimeoutRef.current) {
+        if (reconnectTimeoutRef.current !== null) {
           clearTimeout(reconnectTimeoutRef.current);
+          reconnectTimeoutRef.current = null;
         }
       };
 
@@ -60,8 +64,9 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     connect();
 
     return () => {
-      if (reconnectTimeoutRef.current) {
+      if (reconnectTimeoutRef.current !== null) {
         clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
       }
       if (wsRef.current) {
         wsRef.current.close();
