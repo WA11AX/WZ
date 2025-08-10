@@ -1,12 +1,14 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import Header from "@/components/header";
-import TournamentCard from "@/components/tournament-card";
+import Header from "@/components/layout/header";
+import TournamentCard from "@/components/features/tournaments/tournament-card";
+import { Container, Stack } from "@/components/layout";
+import { Loading } from "@/components/common";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trophy, Star, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
 import { useWebSocket, type WebSocketMessage } from "@/lib/websocket";
 import { queryClient } from "@/lib/queryClient";
 import { getAuthHeaders, processStarsPayment } from "@/lib/telegram";

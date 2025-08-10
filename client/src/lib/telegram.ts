@@ -1,4 +1,4 @@
-import type { TelegramWebApp } from "@/types/telegram";
+import type { TelegramWebApp } from "@/lib/types/telegram";
 
 let webApp: TelegramWebApp | null = null;
 
