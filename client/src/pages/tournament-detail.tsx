@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/lib/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { getAuthHeaders, processStarsPayment, showBackButton, hideBackButton } from "@/lib/telegram";
 import { useEffect } from "react";
