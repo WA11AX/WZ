@@ -26,9 +26,9 @@ Preferred communication style: Simple, everyday language.
 
 ### Database & Data Layer
 - **ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL configured for production with Neon Database integration
+- **Database**: PostgreSQL configured with Replit Database integration
 - **Schema Management**: Shared TypeScript schemas using Drizzle with Zod validation
-- **Development Storage**: In-memory storage implementation for rapid development iteration
+- **Storage**: DatabaseStorage implementation using PostgreSQL for persistent data
 
 ### Authentication & Authorization
 - **Primary Auth**: Telegram WebApp API integration using @twa-dev/sdk
