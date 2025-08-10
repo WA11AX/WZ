@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Star, Trophy, Users, Clock } from "lucide-react";
+import { Star, Trophy, Users, Clock, Zap, Target } from "lucide-react";
 import type { Tournament } from "@shared/schema";
 import { useLocation } from "wouter";
 
@@ -46,10 +46,19 @@ export default function TournamentCard({ tournament, onJoin, showJoinButton = tr
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-gaming-green';
-      case 'upcoming': return 'bg-yellow-500';
+      case 'active': return 'gradient-green animate-glow';
+      case 'upcoming': return 'gradient-orange';
       case 'completed': return 'bg-gray-500';
       default: return 'bg-gray-400';
+    }
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'active': return <Zap className="w-3 h-3 text-white" />;
+      case 'upcoming': return <Clock className="w-3 h-3 text-white" />;
+      case 'completed': return <Target className="w-3 h-3 text-white" />;
+      default: return <Clock className="w-3 h-3 text-white" />;
     }
   };
 
@@ -58,83 +67,85 @@ export default function TournamentCard({ tournament, onJoin, showJoinButton = tr
   };
 
   return (
-    <Card className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 cursor-pointer hover:shadow-lg transition-shadow">
-      <div className="relative h-32 overflow-hidden" onClick={handleCardClick}>
+    <Card className="bg-white rounded-2xl overflow-hidden shadow-tournament border-0 cursor-pointer hover:shadow-tournament-hover hover:scale-105 transition-all duration-300 animate-float">
+      <div className="relative h-36 overflow-hidden group" onClick={handleCardClick}>
         <img 
           src={tournament.mapImage} 
           alt={`${tournament.mapName} gaming environment`}
-          className="w-full h-full object-cover" 
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-purple-900/20"></div>
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-shimmer"></div>
         
         {/* Map Name Overlay */}
         <div className="absolute top-3 left-3">
-          <div className="bg-white/20 backdrop-blur-sm rounded-lg px-2 py-1">
-            <span className="text-white text-xs font-medium">{tournament.mapName}</span>
+          <div className="glass rounded-xl px-3 py-2 transform transition-transform hover:scale-105">
+            <span className="text-white text-sm font-bold tracking-wide drop-shadow-lg">{tournament.mapName}</span>
           </div>
         </div>
         
         {/* Entry Fee and Prize Badges */}
-        <div className="absolute top-3 right-3 flex space-x-2">
-          <div className="bg-entry-orange rounded-full px-2 py-1 flex items-center space-x-1">
-            <Star className="text-white w-3 h-3 fill-current" />
-            <span className="text-white text-xs font-bold">{tournament.entryFee}</span>
+        <div className="absolute top-3 right-3 flex flex-col space-y-2">
+          <div className="gradient-orange rounded-full px-3 py-1.5 flex items-center space-x-1.5 shadow-lg transform transition-transform hover:scale-110">
+            <Star className="text-white w-4 h-4 fill-current drop-shadow" />
+            <span className="text-white text-sm font-bold drop-shadow">{tournament.entryFee}</span>
           </div>
-          <div className="bg-gaming-green rounded-full px-2 py-1 flex items-center space-x-1">
-            <Trophy className="text-white w-3 h-3" />
-            <span className="text-white text-xs font-bold">{tournament.prize}</span>
+          <div className="gradient-green rounded-full px-3 py-1.5 flex items-center space-x-1.5 shadow-lg transform transition-transform hover:scale-110">
+            <Trophy className="text-white w-4 h-4 drop-shadow" />
+            <span className="text-white text-sm font-bold drop-shadow">{tournament.prize}</span>
           </div>
         </div>
 
         {/* Status Indicator */}
         <div className="absolute bottom-3 left-3">
-          <div className={`flex items-center space-x-1 ${getStatusColor(tournament.status)} rounded-full px-2 py-1`}>
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse-dot"></div>
-            <span className="text-white text-xs font-medium uppercase">{tournament.status}</span>
+          <div className={`flex items-center space-x-2 ${getStatusColor(tournament.status)} rounded-full px-4 py-2 shadow-lg`}>
+            {getStatusIcon(tournament.status)}
+            <span className="text-white text-sm font-bold uppercase tracking-wider drop-shadow">{tournament.status}</span>
           </div>
         </div>
       </div>
 
       {/* Tournament Details */}
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-semibold text-gray-900 cursor-pointer" onClick={handleCardClick}>
+      <div className="p-5 bg-gradient-to-br from-white to-gray-50">
+        <div className="flex justify-between items-start mb-3">
+          <h3 className="font-bold text-xl text-gray-900 cursor-pointer hover:text-telegram-blue transition-colors" onClick={handleCardClick}>
             {tournament.title}
           </h3>
-          <div className="text-right text-sm text-gray-500">
-            <div className="flex items-center space-x-1">
-              <Clock className="w-3 h-3" />
-              <span>{formatDate(tournament.date)}</span>
+          <div className="text-right">
+            <div className="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
+              <Clock className="w-4 h-4 text-telegram-blue" />
+              <span className="text-sm font-medium text-gray-700">{formatDate(tournament.date)}</span>
             </div>
           </div>
         </div>
         
-        <p className="text-sm text-gray-600 mb-3 cursor-pointer" onClick={handleCardClick}>
+        <p className="text-gray-600 mb-4 cursor-pointer leading-relaxed" onClick={handleCardClick}>
           {tournament.description}
         </p>
         
         {/* Participant Info */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            <div className="flex -space-x-2">
-              {[...Array(Math.min(3, tournament.participants.length))].map((_, i) => (
-                <div key={i} className="w-6 h-6 bg-telegram-blue rounded-full border-2 border-white flex items-center justify-center">
-                  <Users className="text-white w-3 h-3" />
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center space-x-4">
+            <div className="flex -space-x-3">
+              {[...Array(Math.min(4, tournament.participants.length))].map((_, i) => (
+                <div key={i} className="w-8 h-8 gradient-blue rounded-full border-3 border-white flex items-center justify-center shadow-lg transform transition-transform hover:scale-110 hover:z-10">
+                  <Users className="text-white w-4 h-4" />
                 </div>
               ))}
-              {tournament.participants.length > 3 && (
-                <div className="w-6 h-6 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">+{tournament.participants.length - 3}</span>
+              {tournament.participants.length > 4 && (
+                <div className="w-8 h-8 gradient-purple rounded-full border-3 border-white flex items-center justify-center shadow-lg">
+                  <span className="text-white text-xs font-bold">+{tournament.participants.length - 4}</span>
                 </div>
               )}
             </div>
-            <span className="text-sm text-gray-600">
-              {tournament.participants.length} players joined
-            </span>
+            <div>
+              <div className="text-lg font-bold text-gray-900">{tournament.participants.length}</div>
+              <div className="text-xs text-gray-500 -mt-1">players</div>
+            </div>
           </div>
           
           {/* Tournament Type Badge */}
-          <Badge variant="secondary" className="text-xs">
+          <Badge className="gradient-blue text-white font-bold px-3 py-1 shadow-lg border-0">
             {tournament.tournamentType}
           </Badge>
         </div>
@@ -142,14 +153,15 @@ export default function TournamentCard({ tournament, onJoin, showJoinButton = tr
         {/* Action Button */}
         {showJoinButton && (
           <Button 
-            className="w-full bg-telegram-blue hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition-colors flex items-center justify-center space-x-2"
+            className="w-full gradient-blue text-white font-bold py-4 rounded-2xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-lg hover:shadow-xl hover:scale-105 transform border-0"
             onClick={(e) => {
               e.stopPropagation();
               onJoin?.(tournament);
             }}
           >
-            <Star className="w-4 h-4 fill-current" />
-            <span>Join for {tournament.entryFee} stars</span>
+            <Star className="w-5 h-5 fill-current animate-pulse" />
+            <span className="text-lg">Join for {tournament.entryFee} stars</span>
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
           </Button>
         )}
       </div>
