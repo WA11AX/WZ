@@ -1,0 +1,93 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# Temporary folders
+tmp/
+temp/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# ESLint cache
+.eslintcache
+
+# Prettier cache
+.prettierache
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Package manager lock files (keep only npm)
+yarn.lock
+pnpm-lock.yaml
+
+# Replit specific
+.replit
+replit.nix
+
+# Testing
+__tests__/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+test-results/
+playwright-report/
+
+# Storybook
+storybook-static/
+
+# IDE
+*.sublime-project
+*.sublime-workspace
