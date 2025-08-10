@@ -9,9 +9,9 @@ export const users = pgTable("users", {
   username: text("username").notNull(),
   firstName: text("first_name"),
   lastName: text("last_name"),
-  isAdmin: boolean("is_admin").default(false),
-  stars: integer("stars").default(0),
-  participatingTournaments: json("participating_tournaments").$type<string[]>().default([]),
+  isAdmin: boolean("is_admin").default(false).notNull(),
+  stars: integer("stars").default(0).notNull(),
+  participatingTournaments: json("participating_tournaments").$type<string[]>().default([]).notNull(),
 });
 
 export const tournaments = pgTable("tournaments", {
@@ -23,11 +23,11 @@ export const tournaments = pgTable("tournaments", {
   date: timestamp("date").notNull(),
   entryFee: integer("entry_fee").notNull(),
   prize: integer("prize").notNull(),
-  maxParticipants: integer("max_participants").default(100),
-  participants: json("participants").$type<string[]>().default([]),
-  status: text("status").$type<"upcoming" | "active" | "completed">().default("upcoming"),
-  tournamentType: text("tournament_type").default("BATTLE ROYALE"),
-  createdAt: timestamp("created_at").default(sql`now()`),
+  maxParticipants: integer("max_participants").default(100).notNull(),
+  participants: json("participants").$type<string[]>().default([]).notNull(),
+  status: text("status").$type<"upcoming" | "active" | "completed">().default("upcoming").notNull(),
+  tournamentType: text("tournament_type").default("BATTLE ROYALE").notNull(),
+  createdAt: timestamp("created_at").default(sql`now()`).notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({

@@ -83,8 +83,12 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
     const user: User = { 
-      ...insertUser, 
       id,
+      telegramId: insertUser.telegramId,
+      username: insertUser.username,
+      firstName: insertUser.firstName ?? null,
+      lastName: insertUser.lastName ?? null,
+      isAdmin: insertUser.isAdmin ?? false,
       stars: 1000, // Give new users some stars
       participatingTournaments: []
     };
@@ -116,7 +120,10 @@ export class MemStorage implements IStorage {
     const tournament: Tournament = {
       ...insertTournament,
       id,
+      maxParticipants: insertTournament.maxParticipants ?? 100,
       participants: [],
+      status: (insertTournament.status ?? "upcoming") as "upcoming" | "active" | "completed",
+      tournamentType: insertTournament.tournamentType ?? "BATTLE ROYALE",
       createdAt: new Date(),
     };
     this.tournaments.set(id, tournament);

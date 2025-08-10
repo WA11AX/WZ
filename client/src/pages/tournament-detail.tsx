@@ -37,7 +37,7 @@ export default function TournamentDetailPage() {
   });
 
   // Fetch user data
-  const { data: user } = useQuery({
+  const { data: user } = useQuery<User>({
     queryKey: ['/api/user/me'],
   });
 

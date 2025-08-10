@@ -27,17 +27,17 @@ export default function AdminPage() {
     entryFee: '',
     prize: '',
     maxParticipants: '100',
-    status: 'upcoming' as const,
+    status: 'upcoming' as 'upcoming' | 'active' | 'completed',
     tournamentType: 'BATTLE ROYALE',
   });
 
   // Check if user is admin
-  const { data: user } = useQuery({
+  const { data: user } = useQuery<User>({
     queryKey: ['/api/user/me'],
   });
 
   // Fetch tournaments
-  const { data: tournaments = [] } = useQuery({
+  const { data: tournaments = [] } = useQuery<Tournament[]>({
     queryKey: ['/api/tournaments'],
   });
 
