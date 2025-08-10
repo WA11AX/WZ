@@ -6,10 +6,13 @@ const router = Router();
 
 /**
  * API Routes Index
- * Combines all API routes under /api prefix
+ * Maintains backward compatibility with existing API paths
  */
 
-// User routes - /api/users
+// User routes - /api/user (legacy path for compatibility)
+router.use('/user', userRoutes);
+
+// Users routes - /api/users (new REST-style path)
 router.use('/users', userRoutes);
 
 // Tournament routes - /api/tournaments  

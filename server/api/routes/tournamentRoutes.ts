@@ -31,7 +31,7 @@ router.delete('/:id', TournamentController.deleteTournament);
 // Register for tournament
 router.post('/:id/register', TournamentController.registerForTournament);
 
-// Unregister from tournament
+// Unregister from tournament  
 router.delete('/:id/register', TournamentController.unregisterFromTournament);
 
 // Get tournament participants

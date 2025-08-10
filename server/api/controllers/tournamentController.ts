@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { tournamentService } from '../services/tournamentService';
+import { tournamentService } from '../../services/tournamentService';
 import { z } from 'zod';
 
 /**

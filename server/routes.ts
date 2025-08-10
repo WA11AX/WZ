@@ -1,9 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
-import { storage } from "./storage";
-import { insertUserSchema, insertTournamentSchema } from "@shared/schema";
-import { z } from "zod";
+import apiRoutes from "./api/routes";
+
+/**
+ * Enhanced Routes Registration
+ * Uses new controller and service architecture
+ */
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -29,15 +32,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Broadcast function for real-time updates
-  function broadcast(data: any) {
+  const broadcast = (data: any) => {
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(data));
       }
     });
-  }
+  };
 
-  // Authentication middleware
+  // Make broadcast function available globally for controllers
+  (global as any).broadcast = broadcast;
+
+  // Authentication middleware for all API routes
   app.use('/api', (req, res, next) => {
     // In a real app, validate Telegram Web App data here
     // For now, we'll create a mock user if none exists
@@ -46,210 +52,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     next();
   });
 
-  // User routes
-  app.get('/api/user/me', async (req, res) => {
-    try {
-      let user = await storage.getUserByTelegramId(req.telegramUserId);
-      
-      if (!user) {
-        // Create new user
-        user = await storage.createUser({
-          telegramId: req.telegramUserId,
-          username: `user_${req.telegramUserId}`,
-          firstName: 'Telegram',
-          lastName: 'User',
-          isAdmin: req.telegramUserId === 'mock-user', // Make mock user admin
-        });
-      }
-      
-      res.json(user);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to get user' });
-    }
-  });
-
-  // Tournament routes
-  app.get('/api/tournaments', async (req, res) => {
-    try {
-      const tournaments = await storage.getTournaments();
-      res.json(tournaments);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch tournaments' });
-    }
-  });
-
-  app.get('/api/tournaments/:id', async (req, res) => {
-    try {
-      const tournament = await storage.getTournament(req.params.id);
-      if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
-      }
-      res.json(tournament);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch tournament' });
-    }
-  });
-
-  app.post('/api/tournaments', async (req, res) => {
-    try {
-      // Check if user is admin
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
-      if (!user?.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
-      }
-
-      const validatedData = insertTournamentSchema.parse(req.body);
-      const tournament = await storage.createTournament(validatedData);
-      
-      // Broadcast new tournament to all clients
-      broadcast({ type: 'tournament_created', tournament });
-      
-      res.status(201).json(tournament);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: 'Invalid tournament data', errors: error.errors });
-      }
-      res.status(500).json({ message: 'Failed to create tournament' });
-    }
-  });
-
-  app.put('/api/tournaments/:id', async (req, res) => {
-    try {
-      // Check if user is admin
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
-      if (!user?.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
-      }
-
-      const tournament = await storage.updateTournament(req.params.id, req.body);
-      if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
-      }
-      
-      // Broadcast tournament update
-      broadcast({ type: 'tournament_updated', tournament });
-      
-      res.json(tournament);
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to update tournament' });
-    }
-  });
-
-  app.delete('/api/tournaments/:id', async (req, res) => {
-    try {
-      // Check if user is admin
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
-      if (!user?.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
-      }
-
-      const success = await storage.deleteTournament(req.params.id);
-      if (!success) {
-        return res.status(404).json({ message: 'Tournament not found' });
-      }
-      
-      // Broadcast tournament deletion
-      broadcast({ type: 'tournament_deleted', tournamentId: req.params.id });
-      
-      res.json({ success: true });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to delete tournament' });
-    }
-  });
-
-  app.post('/api/tournaments/:id/register', async (req, res) => {
-    try {
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
-      if (!user) {
-        return res.status(401).json({ message: 'User not found' });
-      }
-
-      const tournament = await storage.getTournament(req.params.id);
-      if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
-      }
-
-      if (user.stars < tournament.entryFee) {
-        return res.status(400).json({ message: 'Insufficient stars' });
-      }
-
-      if (tournament.participants.length >= tournament.maxParticipants) {
-        return res.status(400).json({ message: 'Tournament is full' });
-      }
-
-      const success = await storage.registerForTournament(req.params.id, user.id);
-      if (!success) {
-        return res.status(400).json({ message: 'Already registered or tournament full' });
-      }
-
-      const updatedTournament = await storage.getTournament(req.params.id);
-      const updatedUser = await storage.getUser(user.id);
-      
-      // Broadcast registration update
-      broadcast({ 
-        type: 'tournament_registration', 
-        tournament: updatedTournament,
-        userId: user.id
-      });
-      
-      res.json({ 
-        success: true, 
-        tournament: updatedTournament,
-        user: updatedUser
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to register for tournament' });
-    }
-  });
-
-  app.delete('/api/tournaments/:id/register', async (req, res) => {
-    try {
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
-      if (!user) {
-        return res.status(401).json({ message: 'User not found' });
-      }
-
-      const success = await storage.unregisterFromTournament(req.params.id, user.id);
-      if (!success) {
-        return res.status(400).json({ message: 'Not registered for this tournament' });
-      }
-
-      const updatedTournament = await storage.getTournament(req.params.id);
-      const updatedUser = await storage.getUser(user.id);
-      
-      // Broadcast unregistration update
-      broadcast({ 
-        type: 'tournament_unregistration', 
-        tournament: updatedTournament,
-        userId: user.id
-      });
-      
-      res.json({ 
-        success: true, 
-        tournament: updatedTournament,
-        user: updatedUser
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to unregister from tournament' });
-    }
-  });
-
-  app.get('/api/tournaments/:id/participants', async (req, res) => {
-    try {
-      const tournament = await storage.getTournament(req.params.id);
-      if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
-      }
-
-      const participants = await Promise.all(
-        tournament.participants.map(userId => storage.getUser(userId))
-      );
-      
-      res.json(participants.filter(Boolean));
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch participants' });
-    }
-  });
+  // Register all API routes
+  app.use('/api', apiRoutes);
 
   return httpServer;
 }

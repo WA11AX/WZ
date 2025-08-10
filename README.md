@@ -13,11 +13,37 @@ A modern TypeScript-based tournament platform for gaming competitions, built wit
 ## 🏗️ Project Structure
 
 ```
-├── client/          # React frontend application
-├── server/          # Express.js backend API
-├── shared/          # Shared types and database schemas
-├── attached_assets/ # Static assets and media files
-└── dist/           # Build output directory
+├── client/                    # React frontend application
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   │   ├── common/        # Shared/common components
+│   │   │   ├── features/      # Feature-specific components
+│   │   │   ├── layout/        # Layout components and primitives
+│   │   │   └── ui/           # Base UI components (shadcn/ui)
+│   │   ├── lib/              # Utility libraries
+│   │   │   ├── constants/    # Application constants
+│   │   │   ├── hooks/        # Custom React hooks
+│   │   │   ├── animations.ts # Animation utilities
+│   │   │   ├── design-system.ts # Design system configuration
+│   │   │   └── utils.ts      # General utilities
+│   │   ├── pages/            # Page components
+│   │   └── types/            # TypeScript type definitions
+│   └── public/               # Static assets
+├── server/                   # Express.js backend API
+│   ├── api/                  # API layer
+│   │   ├── controllers/      # Request handlers
+│   │   └── routes/          # API route definitions
+│   ├── middleware/           # Express middleware
+│   ├── models/              # Database model types
+│   ├── services/            # Business logic layer
+│   ├── index.ts             # Server entry point
+│   ├── routes.ts            # Main route registration
+│   ├── storage.ts           # Database operations
+│   └── vite.ts              # Vite integration
+├── shared/                   # Shared types and schemas
+├── .vscode/                  # VSCode configuration
+├── attached_assets/          # Static assets and media files
+└── dist/                    # Build output directory
 ```
 
 ## 🛠️ Tech Stack
@@ -99,14 +125,37 @@ The application will be available at `http://localhost:5173`
 
 ## 🔧 Development
 
+### Project Architecture
+
+The application follows a clean architecture pattern with clear separation of concerns:
+
+**Frontend (Client)**
+- **Components**: Organized by purpose (common, features, layout, ui)
+- **Design System**: Consistent styling with Tailwind CSS and custom design tokens
+- **State Management**: TanStack Query for server state, React hooks for local state
+- **Routing**: Wouter for lightweight client-side routing
+
+**Backend (Server)**
+- **Controllers**: Handle HTTP requests and responses
+- **Services**: Contain business logic and data processing
+- **Models**: Type definitions and data structures
+- **Middleware**: Authentication, validation, and request processing
+
 ### Code Style
 
-This project uses ESLint and Prettier for consistent code formatting. Run the linters before committing:
+This project uses ESLint and Prettier for consistent code formatting, along with pre-commit hooks to ensure code quality:
 
 ```bash
-npm run lint
-npm run format
+npm run lint      # Fix linting issues
+npm run format    # Format code
+npm run validate  # Run all checks
 ```
+
+### Development Tools
+
+- **Husky**: Pre-commit hooks for code quality
+- **lint-staged**: Run linters on staged files
+- **VSCode**: Optimized settings and extensions included
 
 ### Database
 
