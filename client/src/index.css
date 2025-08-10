@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(222.2, 84%, 4.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(222.2, 84%, 4.9%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(222.2, 84%, 4.9%);
+  --primary: hsl(203.89, 88.28%, 53.14%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(222.2, 84%, 4.9%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215.4, 16.3%, 46.9%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(222.2, 84%, 4.9%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --border: hsl(214.3, 31.8%, 91.4%);
+  --input: hsl(214.3, 31.8%, 91.4%);
+  --ring: hsl(222.2, 84%, 4.9%);
+  --radius: 0.75rem;
+  
+  /* Custom tournament app colors */
+  --telegram-blue: hsl(201, 100%, 40%);
+  --trophy-gold: hsl(51, 100%, 50%);
+  --gaming-green: hsl(122, 39%, 49%);
+  --entry-orange: hsl(16, 100%, 59%);
+  --gray-100: hsl(210, 20%, 96%);
+}
+
+.dark {
+  --background: hsl(222.2, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --card: hsl(222.2, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --popover: hsl(222.2, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --primary: hsl(210, 40%, 98%);
+  --primary-foreground: hsl(222.2, 84%, 4.9%);
+  --secondary: hsl(217.2, 32.6%, 17.5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217.2, 32.6%, 17.5%);
+  --muted-foreground: hsl(215, 20.2%, 65.1%);
+  --accent: hsl(217.2, 32.6%, 17.5%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217.2, 32.6%, 17.5%);
+  --input: hsl(217.2, 32.6%, 17.5%);
+  --ring: hsl(212.7, 26.8%, 83.9%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-gray-100 text-foreground font-inter;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+@layer utilities {
+  .telegram-blue {
+    color: var(--telegram-blue);
+  }
+  .bg-telegram-blue {
+    background-color: var(--telegram-blue);
+  }
+  .trophy-gold {
+    color: var(--trophy-gold);
+  }
+  .bg-trophy-gold {
+    background-color: var(--trophy-gold);
+  }
+  .gaming-green {
+    color: var(--gaming-green);
+  }
+  .bg-gaming-green {
+    background-color: var(--gaming-green);
+  }
+  .entry-orange {
+    color: var(--entry-orange);
+  }
+  .bg-entry-orange {
+    background-color: var(--entry-orange);
+  }
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Custom animations */
+@keyframes pulse-dot {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s infinite;
+}
+
+/* Telegram WebApp specific styles */
+.tg-viewport {
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Mobile-first responsive adjustments */
+@media (max-width: 425px) {
+  .max-w-sm {
+    max-width: 100%;
+  }
+}
