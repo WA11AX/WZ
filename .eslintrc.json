@@ -6,8 +6,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "@typescript-eslint/recommended",
-    "@typescript-eslint/recommended-requiring-type-checking"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -18,30 +18,27 @@
       "jsx": true
     }
   },
-  "plugins": [
-    "@typescript-eslint",
-    "react",
-    "react-hooks",
-    "import"
-  ],
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "import"],
   "rules": {
     // TypeScript specific rules
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
+    ],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
-    "@typescript-eslint/prefer-const": "error",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
     "@typescript-eslint/prefer-nullish-coalescing": "error",
     "@typescript-eslint/prefer-optional-chain": "error",
-    
+
     // React specific rules
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    
+
     // Import/Export rules
     "import/order": [
       "error",
@@ -61,9 +58,9 @@
         }
       }
     ],
-    "import/no-duplicate-imports": "error",
+    "import/no-duplicates": "error",
     "import/no-unused-modules": "warn",
-    
+
     // General code quality rules
     "prefer-const": "error",
     "no-var": "error",
@@ -78,7 +75,7 @@
     "no-return-assign": "error",
     "no-throw-literal": "error",
     "prefer-promise-reject-errors": "error",
-    
+
     // Stylistic rules
     "indent": "off",
     "@typescript-eslint/indent": "off",
@@ -107,6 +104,7 @@
     "dist",
     "build",
     "node_modules",
+    "tests",
     "*.config.js",
     "*.config.ts",
     ".eslintrc.json"
