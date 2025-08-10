@@ -16,8 +16,7 @@
     "test": "echo \"Add test script here\"",
     "test:coverage": "echo \"Add test coverage script here\"",
     "type-check": "tsc --noEmit",
-    "validate": "npm run lint:check && npm run format:check && npm run type-check",
-    "prepare": "npm run validate"
+    "validate": "npm run lint:check && npm run format:check && npm run type-check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
