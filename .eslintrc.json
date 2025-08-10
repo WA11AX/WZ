@@ -35,12 +35,24 @@
     "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
     "@typescript-eslint/prefer-nullish-coalescing": "error",
     "@typescript-eslint/prefer-optional-chain": "error",
+    "@typescript-eslint/no-unnecessary-condition": "warn",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/await-thenable": "error",
+    "@typescript-eslint/no-misused-promises": "error",
+    "@typescript-eslint/prefer-readonly": "error",
+    "@typescript-eslint/prefer-string-starts-ends-with": "error",
     
     // React specific rules
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-key": "error",
+    "react/jsx-no-bind": ["warn", { "allowArrowFunctions": true }],
+    "react/jsx-no-leaked-render": "error",
+    "react/jsx-boolean-value": ["error", "never"],
+    "react/self-closing-comp": "error",
+    "react/jsx-pascal-case": "error",
     
     // Import/Export rules
     "import/order": [
@@ -63,6 +75,8 @@
     ],
     "import/no-duplicate-imports": "error",
     "import/no-unused-modules": "warn",
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
     
     // General code quality rules
     "prefer-const": "error",
@@ -78,6 +92,23 @@
     "no-return-assign": "error",
     "no-throw-literal": "error",
     "prefer-promise-reject-errors": "error",
+    "no-nested-ternary": "warn",
+    "no-unneeded-ternary": "error",
+    "no-else-return": "error",
+    "complexity": ["warn", 10],
+    "max-depth": ["warn", 4],
+    "max-lines-per-function": ["warn", 50],
+    "no-magic-numbers": ["warn", { "ignore": [0, 1, -1] }],
+    
+    // Performance rules
+    "no-loop-func": "error",
+    "no-await-in-loop": "warn",
+    
+    // Security rules
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-script-url": "error",
     
     // Stylistic rules
     "indent": "off",
@@ -90,7 +121,8 @@
     "computed-property-spacing": ["error", "never"],
     "space-in-parens": ["error", "never"],
     "no-trailing-spaces": "error",
-    "eol-last": "error"
+    "eol-last": "error",
+    "max-len": ["warn", { "code": 120, "ignoreUrls": true }]
   },
   "settings": {
     "react": {

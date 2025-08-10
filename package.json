@@ -16,7 +16,8 @@
     "test": "echo \"Add test script here\"",
     "test:coverage": "echo \"Add test coverage script here\"",
     "type-check": "tsc --noEmit",
-    "validate": "npm run lint:check && npm run format:check && npm run type-check"
+    "prepare": "npm run validate",
+    "prepare:husky": "husky install"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -110,6 +111,8 @@
     "eslint-plugin-import": "^2.28.0",
     "eslint-plugin-react": "^7.33.0",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
     "postcss": "^8.4.47",
     "prettier": "^3.0.0",
     "tailwindcss": "^3.4.17",
@@ -119,5 +122,16 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }

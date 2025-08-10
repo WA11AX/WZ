@@ -13,11 +13,29 @@ A modern TypeScript-based tournament platform for gaming competitions, built wit
 ## 🏗️ Project Structure
 
 ```
-├── client/          # React frontend application
-├── server/          # Express.js backend API
-├── shared/          # Shared types and database schemas
-├── attached_assets/ # Static assets and media files
-└── dist/           # Build output directory
+├── client/                    # React frontend application
+│   ├── src/
+│   │   ├── components/        # React components
+│   │   │   ├── common/        # Shared/reusable components
+│   │   │   ├── features/      # Feature-specific components
+│   │   │   ├── layout/        # Layout components
+│   │   │   └── ui/           # Base UI components (from shadcn/ui)
+│   │   ├── lib/              # Utility libraries and configurations
+│   │   │   ├── constants/     # Design system constants
+│   │   │   ├── hooks/         # Custom React hooks
+│   │   │   ├── types/         # TypeScript type definitions
+│   │   │   └── utils/         # Utility functions
+│   │   └── pages/            # Page components
+├── server/                   # Express.js backend API
+│   ├── api/                  # API layer
+│   │   ├── controllers/      # Route controllers
+│   │   └── routes/           # API route definitions
+│   ├── middleware/           # Express middleware
+│   ├── models/               # Database models (future)
+│   └── services/             # Business logic layer
+├── shared/                   # Shared types and database schemas
+├── attached_assets/          # Static assets and media files
+└── dist/                    # Build output directory
 ```
 
 ## 🛠️ Tech Stack
@@ -101,12 +119,82 @@ The application will be available at `http://localhost:5173`
 
 ### Code Style
 
-This project uses ESLint and Prettier for consistent code formatting. Run the linters before committing:
+This project uses ESLint and Prettier for consistent code formatting. The project includes comprehensive linting rules for TypeScript, React, and general code quality.
+
+Run the linters before committing:
 
 ```bash
-npm run lint
-npm run format
+npm run lint        # Fix linting issues
+npm run format      # Format code
+npm run validate    # Run all checks (lint, format, type-check)
 ```
+
+### Pre-commit Hooks
+
+The project uses Husky and lint-staged for pre-commit validation:
+- Automatically formats code on commit
+- Runs linting and fixes issues
+- Ensures type safety before commits
+
+### Component Development
+
+#### Design System
+
+The project includes a comprehensive design system with:
+- **Colors**: Semantic color tokens and brand colors
+- **Typography**: Font scales and text styles
+- **Spacing**: Consistent spacing scale
+- **Animations**: Pre-built animation components
+
+Import design tokens:
+```typescript
+import { colors, typography, spacing } from "@/lib/constants";
+```
+
+#### Component Organization
+
+- **`components/common/`**: Reusable components (Loading, Alert, Animations)
+- **`components/layout/`**: Layout components (Container, Stack, Grid, Header)
+- **`components/features/`**: Feature-specific components (tournaments/)
+- **`components/ui/`**: Base UI components from shadcn/ui
+
+#### Animation Components
+
+Use pre-built animation components for smooth UX:
+```typescript
+import { FadeIn, SlideIn, ScaleIn, StaggerContainer } from "@/components/common";
+
+<FadeIn delay={0.2}>
+  <YourComponent />
+</FadeIn>
+```
+
+### API Development
+
+#### Service Layer
+
+Business logic is organized in services:
+- **`UserService`**: User-related operations
+- **`TournamentService`**: Tournament management
+
+#### Controller Layer
+
+Controllers handle HTTP requests and responses:
+- **`UserController`**: User API endpoints
+- **`TournamentController`**: Tournament API endpoints
+
+#### Middleware
+
+- **`authMiddleware`**: Authentication for API routes
+- **`requireAdmin`**: Admin authorization
+
+### VSCode Setup
+
+The project includes VSCode configuration for optimal development:
+- Auto-formatting on save
+- ESLint integration
+- TypeScript IntelliSense
+- Recommended extensions
 
 ### Database
 
