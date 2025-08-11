@@ -26,6 +26,24 @@ export interface IStorage {
 
 // Database Storage Implementation
 export class DatabaseStorage implements IStorage {
+  private cache = new Map<string, { data: any; expires: number }>();
+  private cacheTimeout = 5 * 60 * 1000; // 5 минут
+
+  private getFromCache<T>(key: string): T | null {
+    const cached = this.cache.get(key);
+    if (!cached || Date.now() > cached.expires) {
+      this.cache.delete(key);
+      return null;
+    }
+    return cached.data;
+  }
+
+  private setCache(key: string, data: any): void {
+    this.cache.set(key, {
+      data,
+      expires: Date.now() + this.cacheTimeout
+    });
+  }
   async getUser(id: string): Promise<User | undefined> {
     try {
       const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -67,8 +85,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTournaments(): Promise<Tournament[]> {
-    const tournamentList = await db.select().from(tournaments).orderBy(tournaments.date);
-    return tournamentList;
+    try {
+      // Получаем только активные и предстоящие турниры по умолчанию
+      const tournamentList = await db.select()
+        .from(tournaments)
+        .where(or(eq(tournaments.status, 'upcoming'), eq(tournaments.status, 'active')))
+        .orderBy(tournaments.date)
+        .limit(50); // Ограничиваем количество для производительности
+      return tournamentList;
+    } catch (error) {
+      console.error('Error fetching tournaments:', error);
+      throw new Error('Failed to fetch tournaments');
+    }
   }
 
   async getTournament(id: string): Promise<Tournament | undefined> {

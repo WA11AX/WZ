@@ -69,9 +69,11 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
 
         if (reconnectAttempts < maxReconnectAttempts) {
           const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
-          console.log(`Attempting to reconnect in ${delay}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+          const jitter = Math.random() * 1000; // Add some randomness
+          const finalDelay = delay + jitter;
+          console.log(`Attempting to reconnect in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
           reconnectAttempts++;
-          reconnectTimeoutRef.current = setTimeout(connect, delay);
+          reconnectTimeoutRef.current = setTimeout(connect, finalDelay);
         } else {
           console.error('Max reconnection attempts reached');
           websocketCallbacks.current.forEach(callback => callback({
@@ -100,9 +102,11 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
       // Attempt to reconnect even if initial connection fails
       if (reconnectAttempts < maxReconnectAttempts) {
         const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
-        console.log(`Attempting to reconnect after initial failure in ${delay}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+        const jitter = Math.random() * 1000; // Add some randomness
+        const finalDelay = delay + jitter;
+        console.log(`Attempting to reconnect after initial failure in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`);
         reconnectAttempts++;
-        reconnectTimeoutRef.current = setTimeout(connect, delay);
+        reconnectTimeoutRef.current = setTimeout(connect, finalDelay);
       } else {
         console.error('Max reconnection attempts reached after initial failure');
       }

@@ -5,6 +5,26 @@ import { storage } from "./storage";
 import { insertUserSchema, insertTournamentSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Simple rate limiter
+const rateLimiter = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(identifier: string, maxRequests = 60, windowMs = 60000): boolean {
+  const now = Date.now();
+  const userLimit = rateLimiter.get(identifier);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimiter.set(identifier, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  
+  if (userLimit.count >= maxRequests) {
+    return false;
+  }
+  
+  userLimit.count++;
+  return true;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
@@ -39,9 +59,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Authentication middleware
   app.use('/api', (req, res, next) => {
-    // In a real app, validate Telegram Web App data here
-    // For now, we'll create a mock user if none exists
+    // Extract Telegram Web App init data from headers
+    const initData = req.headers['x-telegram-init-data'] as string;
     const telegramId = req.headers['x-telegram-user-id'] as string || 'mock-user';
+    
+    // TODO: In production, validate initData signature using bot token
+    // const isValid = validateTelegramWebAppData(initData, process.env.BOT_TOKEN);
+    // if (!isValid) {
+    //   return res.status(401).json({ message: 'Invalid Telegram data' });
+    // }
+    
     req.telegramUserId = telegramId;
     next();
   });
