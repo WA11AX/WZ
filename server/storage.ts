@@ -27,8 +27,13 @@ export interface IStorage {
 // Database Storage Implementation
 export class DatabaseStorage implements IStorage {
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user || undefined;
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw new Error(`Failed to fetch user with id ${id}`);
+    }
   }
 
   async getUserByTelegramId(telegramId: string): Promise<User | undefined> {
