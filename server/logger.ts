@@ -1,4 +1,3 @@
-
 export interface LogLevel {
   ERROR: 0;
   WARN: 1;
@@ -52,3 +51,6 @@ class Logger {
 }
 
 export const logger = new Logger();
+
+export { logger };
+export default logger;

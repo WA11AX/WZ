@@ -1,6 +1,6 @@
 import { type User, type InsertUser, type Tournament, type InsertTournament, users, tournaments } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -55,8 +55,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByTelegramId(telegramId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.telegramId, telegramId));
-    return user || undefined;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.telegramId, telegramId));
+      return user || undefined;
+    } catch (error) {
+      console.error('Error fetching user by telegram ID:', error);
+      throw new Error(`Failed to fetch user with telegram ID ${telegramId}`);
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -85,6 +90,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTournaments(): Promise<Tournament[]> {
+    const cacheKey = 'tournaments:active';
+    
+    // Проверяем кэш
+    const cached = this.getFromCache<Tournament[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    
     try {
       // Получаем только активные и предстоящие турниры по умолчанию
       const tournamentList = await db.select()
@@ -92,6 +105,10 @@ export class DatabaseStorage implements IStorage {
         .where(or(eq(tournaments.status, 'upcoming'), eq(tournaments.status, 'active')))
         .orderBy(tournaments.date)
         .limit(50); // Ограничиваем количество для производительности
+      
+      // Сохраняем в кэш
+      this.setCache(cacheKey, tournamentList);
+      
       return tournamentList;
     } catch (error) {
       console.error('Error fetching tournaments:', error);
@@ -194,8 +211,9 @@ export class DatabaseStorage implements IStorage {
 
   // Initialize with sample data if database is empty
   async initializeData(): Promise<void> {
-    const existingTournaments = await this.getTournaments();
-    if (existingTournaments.length === 0) {
+    try {
+      const existingTournaments = await db.select().from(tournaments).limit(1);
+      if (existingTournaments.length === 0) {
       // Create sample tournaments
       await this.createTournament({
         title: "Tournament on the Rebirth Island",
@@ -222,6 +240,10 @@ export class DatabaseStorage implements IStorage {
         status: "upcoming",
         tournamentType: "CHAMPIONSHIP",
       });
+      }
+    } catch (error) {
+      console.error('Error initializing data:', error);
+      // Не прерываем запуск приложения из-за ошибки инициализации
     }
   }
 }
