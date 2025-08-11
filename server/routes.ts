@@ -64,7 +64,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(user);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to get user' });
+      console.error('Error getting user:', error);
+      res.status(500).json({ 
+        message: 'Failed to get user',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+      });
     }
   });
 
@@ -74,7 +78,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tournaments = await storage.getTournaments();
       res.json(tournaments);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch tournaments' });
+      console.error('Error fetching tournaments:', error);
+      res.status(500).json({ 
+        message: 'Failed to fetch tournaments',
+        error: process.env.NODE_ENV === 'development' ? error : undefined
+      });
     }
   });
 
