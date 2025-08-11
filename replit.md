@@ -97,3 +97,9 @@ Preferred communication style: Simple, everyday language.
 - **react-hook-form**: Performant form library with minimal re-renders
 - **@hookform/resolvers**: Zod resolver integration for form validation
 - **drizzle-zod**: Auto-generated Zod schemas from Drizzle table definitions
+
+## Recent Changes (January 2025)
+
+- **Fixed Application Startup Issues**: Resolved duplicate export error in `server/db.ts` 
+- **Removed Next.js Directives**: Cleaned up all directives from Shadcn/ui components that were causing import errors in Vite environment
+- **Stabilized Development Environment**: Application now runs properly with WebSocket connections and API endpoints functioning correctly

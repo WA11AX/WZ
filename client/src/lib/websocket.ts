@@ -11,7 +11,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
-  const websocketCallbacks = useRef<(message: any) => void>([]); // Use a ref to hold the callbacks
+  const websocketCallbacks = useRef<((message: any) => void)[]>([]); // Use a ref to hold the callbacks
 
   // Function to add callbacks
   const addCallback = (callback: (message: any) => void) => {
@@ -34,6 +34,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     try {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/ws`;
+      console.log('Connecting to WebSocket at:', wsUrl);
 
       wsRef.current = new WebSocket(wsUrl);
 
