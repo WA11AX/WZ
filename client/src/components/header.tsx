@@ -1,4 +1,4 @@
-import { Trophy, Settings, Star } from "lucide-react";
+import { Trophy, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getAuthHeaders } from "@/lib/telegram";
