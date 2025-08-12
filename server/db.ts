@@ -1,5 +1,6 @@
 import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
+import { sql } from 'drizzle-orm';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
@@ -17,7 +18,7 @@ export const db = drizzle({ client: pool, schema });
 // Health check function
 export async function checkDatabaseConnection(): Promise<boolean> {
   try {
-    const result = await db.execute('SELECT 1');
+    const result = await db.execute(sql`SELECT 1`);
     console.log('Database connection successful');
     return true;
   } catch (error) {
@@ -27,7 +28,7 @@ export async function checkDatabaseConnection(): Promise<boolean> {
       console.log('Attempting to reconnect to database...');
       setTimeout(async () => {
         try {
-          await db.execute('SELECT 1');
+          await db.execute(sql`SELECT 1`);
           console.log('Database reconnection successful');
         } catch (retryError) {
           console.error('Database reconnection failed:', retryError);

@@ -1,6 +1,6 @@
 import { type User, type InsertUser, type Tournament, type InsertTournament, users, tournaments } from "@shared/schema";
 import { db } from "./db";
-import { eq, or } from "drizzle-orm";
+import { eq, or, desc } from "drizzle-orm";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -103,7 +103,7 @@ export class DatabaseStorage implements IStorage {
       const tournamentList = await db.select()
         .from(tournaments)
         .where(or(eq(tournaments.status, 'upcoming'), eq(tournaments.status, 'active')))
-        .orderBy(tournaments.date)
+        .orderBy(desc(tournaments.date))
         .limit(50); // Ограничиваем количество для производительности
       
       // Сохраняем в кэш

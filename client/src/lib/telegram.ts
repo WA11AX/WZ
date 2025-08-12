@@ -1,14 +1,28 @@
-import type { TelegramWebApp } from "@/types/telegram";
-import WebApp from '@twa-dev/sdk';
+// Use the global Telegram WebApp object
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp: any;
+    };
+  }
+}
 
-let webApp: TelegramWebApp | null = null;
+let webApp: any = null;
 
 export function initTelegram() {
   try {
     console.log('Initializing Telegram Web App');
 
+    // Get the WebApp from window object
+    const WebApp = window.Telegram?.WebApp;
+    
+    if (!WebApp) {
+      console.warn('Telegram WebApp not available');
+      return false;
+    }
+
     // Проверяем, что мы внутри Telegram
-    if (!WebApp.initDataUnsafe.user && process.env.NODE_ENV === 'production') {
+    if (!WebApp.initDataUnsafe?.user && process.env.NODE_ENV === 'production') {
       console.warn('Not running inside Telegram Web App');
       return false;
     }
@@ -16,12 +30,20 @@ export function initTelegram() {
     WebApp.ready();
     WebApp.expand();
 
-    // Настройка цветовой схемы
-    WebApp.setHeaderColor('#1f2937');
-    WebApp.setBottomBarColor('#ffffff');
+    // Настройка цветовой схемы - these methods might not exist outside Telegram
+    if (WebApp.setHeaderColor) {
+      WebApp.setHeaderColor('#1f2937');
+    }
+    if (WebApp.setBottomBarColor) {
+      WebApp.setBottomBarColor('#ffffff');
+    }
 
     // Скрываем главную кнопку по умолчанию
-    WebApp.MainButton.hide();
+    if (WebApp.MainButton) {
+      WebApp.MainButton.hide();
+    }
+    
+    webApp = WebApp;
 
     return true;
   } catch (error) {
@@ -30,7 +52,7 @@ export function initTelegram() {
   }
 }
 
-export function getTelegramWebApp(): TelegramWebApp | null {
+export function getTelegramWebApp(): any {
   // Fallback for development/testing if webApp is not initialized but WebApp SDK is available
   if (!webApp && typeof window !== 'undefined' && window.Telegram?.WebApp) {
     webApp = window.Telegram.WebApp;
@@ -42,7 +64,7 @@ export function getTelegramWebApp(): TelegramWebApp | null {
 
 export function getTelegramUser() {
   try {
-    return WebApp.initDataUnsafe.user;
+    return window.Telegram?.WebApp?.initDataUnsafe?.user || null;
   } catch (error) {
     console.error('Failed to get Telegram user:', error);
     return null;
@@ -51,9 +73,12 @@ export function getTelegramUser() {
 
 export function showMainButton(text: string, onClick: () => void) {
   try {
-    WebApp.MainButton.setText(text);
-    WebApp.MainButton.show();
-    WebApp.MainButton.onClick(onClick);
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp?.MainButton) {
+      WebApp.MainButton.setText(text);
+      WebApp.MainButton.show();
+      WebApp.MainButton.onClick(onClick);
+    }
   } catch (error) {
     console.error('Failed to show main button:', error);
   }
@@ -61,7 +86,10 @@ export function showMainButton(text: string, onClick: () => void) {
 
 export function hideMainButton() {
   try {
-    WebApp.MainButton.hide();
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp?.MainButton) {
+      WebApp.MainButton.hide();
+    }
   } catch (error) {
     console.error('Failed to hide main button:', error);
   }
@@ -69,7 +97,8 @@ export function hideMainButton() {
 
 export function showBackButton(onClick: () => void) {
   try {
-    if (WebApp.BackButton) {
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp?.BackButton) {
       WebApp.BackButton.onClick(onClick);
       WebApp.BackButton.show();
     }
@@ -80,7 +109,8 @@ export function showBackButton(onClick: () => void) {
 
 export function hideBackButton() {
   try {
-    if (WebApp.BackButton) {
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp?.BackButton) {
       WebApp.BackButton.hide();
     }
   } catch (error) {
@@ -90,7 +120,8 @@ export function hideBackButton() {
 
 export function processStarsPayment(amount: number, tournamentId: string): Promise<boolean> {
   return new Promise((resolve) => {
-    if (WebApp) {
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp?.openInvoice) {
       // In a real implementation, this would use Telegram's payment API
       // For now, we simulate the payment process
       const invoiceUrl = `https://t.me/invoice/stars?amount=${amount}&payload=${tournamentId}`;
@@ -115,17 +146,23 @@ export function getAuthHeaders(): Record<string, string> {
 
 export function showAlert(message: string) {
   try {
-    WebApp.showAlert(message);
+    const WebApp = window.Telegram?.WebApp;
+    if (WebApp?.showAlert) {
+      WebApp.showAlert(message);
+    } else {
+      // Fallback to browser alert
+      alert(message);
+    }
   } catch (error) {
     console.error('Failed to show alert:', error);
-    // Fallback to browser alert
     alert(message);
   }
 }
 
 export function hapticFeedback(type: 'impact' | 'notification' | 'selection' = 'impact') {
   try {
-    if (!WebApp.HapticFeedback) return;
+    const WebApp = window.Telegram?.WebApp;
+    if (!WebApp?.HapticFeedback) return;
 
     if (type === 'impact') {
       WebApp.HapticFeedback.impactOccurred('medium');
