@@ -11,16 +11,16 @@ const rateLimiter = new Map<string, { count: number; resetTime: number }>();
 function checkRateLimit(identifier: string, maxRequests = 60, windowMs = 60000): boolean {
   const now = Date.now();
   const userLimit = rateLimiter.get(identifier);
-  
+
   if (!userLimit || now > userLimit.resetTime) {
     rateLimiter.set(identifier, { count: 1, resetTime: now + windowMs });
     return true;
   }
-  
+
   if (userLimit.count >= maxRequests) {
     return false;
   }
-  
+
   userLimit.count++;
   return true;
 }
@@ -29,22 +29,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
   // WebSocket server for real-time updates
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
-  
-  wss.on('connection', (ws) => {
-    console.log('Client connected to WebSocket');
-    
-    ws.on('message', (message) => {
+  const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
+
+  wss.on("connection", (ws) => {
+    console.log("Client connected to WebSocket");
+
+    ws.on("message", (message) => {
       try {
         const data = JSON.parse(message.toString());
-        console.log('Received:', data);
+        console.log("Received:", data);
       } catch (error) {
-        console.error('Invalid WebSocket message:', error);
+        console.error("Invalid WebSocket message:", error);
       }
     });
 
-    ws.on('close', () => {
-      console.log('Client disconnected from WebSocket');
+    ws.on("close", () => {
+      console.log("Client disconnected from WebSocket");
     });
   });
 
@@ -58,237 +58,251 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Authentication middleware
-  app.use('/api', (req, res, next) => {
+  app.use("/api", (req, res, next) => {
     // Extract Telegram Web App init data from headers
-    const initData = req.headers['x-telegram-init-data'] as string;
-    const telegramId = req.headers['x-telegram-user-id'] as string || 'mock-user';
-    
+    const initData = req.headers["x-telegram-init-data"] as string;
+    const telegramId = (req.headers["x-telegram-user-id"] as string) || "mock-user";
+
     // TODO: In production, validate initData signature using bot token
     // const isValid = validateTelegramWebAppData(initData, process.env.BOT_TOKEN);
     // if (!isValid) {
     //   return res.status(401).json({ message: 'Invalid Telegram data' });
     // }
-    
+
     req.telegramUserId = telegramId;
     next();
   });
 
   // User routes
-  app.get('/api/user/me', async (req, res) => {
+  app.get("/api/user/me", async (req, res) => {
     try {
       let user = await storage.getUserByTelegramId(req.telegramUserId);
-      
+
       if (!user) {
         // Create new user
         user = await storage.createUser({
           telegramId: req.telegramUserId,
           username: `user_${req.telegramUserId}`,
-          firstName: 'Telegram',
-          lastName: 'User',
-          isAdmin: req.telegramUserId === 'mock-user', // Make mock user admin
+          firstName: "Telegram",
+          lastName: "User",
+          isAdmin: req.telegramUserId === "mock-user", // Make mock user admin
         });
       }
-      
+
       res.json(user);
     } catch (error) {
-      console.error('Error getting user:', error);
-      res.status(500).json({ 
-        message: 'Failed to get user',
-        error: process.env.NODE_ENV === 'development' ? error : undefined
+      console.error("Error getting user:", error);
+      res.status(500).json({
+        message: "Failed to get user",
+        error: process.env.NODE_ENV === "development" ? error : undefined,
       });
     }
   });
 
   // Tournament routes
-  app.get('/api/tournaments', async (req, res) => {
+  app.get("/api/tournaments", async (req, res) => {
     try {
       const tournaments = await storage.getTournaments();
       res.json(tournaments);
     } catch (error) {
-      console.error('Error fetching tournaments:', error);
-      res.status(500).json({ 
-        message: 'Failed to fetch tournaments',
-        error: process.env.NODE_ENV === 'development' ? error : undefined
+      console.error("Error fetching tournaments:", error);
+      res.status(500).json({
+        message: "Failed to fetch tournaments",
+        error: process.env.NODE_ENV === "development" ? error : undefined,
       });
     }
   });
 
-  app.get('/api/tournaments/:id', async (req, res) => {
+  app.get("/api/tournaments/:id", async (req, res) => {
     try {
       const tournament = await storage.getTournament(req.params.id);
       if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
+        return res.status(404).json({ message: "Tournament not found" });
       }
       res.json(tournament);
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch tournament' });
+      res.status(500).json({ message: "Failed to fetch tournament" });
     }
   });
 
-  app.post('/api/tournaments', async (req, res) => {
+  app.post("/api/tournaments", async (req, res) => {
     try {
       // Check if user is admin
       const user = await storage.getUserByTelegramId(req.telegramUserId);
       if (!user?.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
+        return res.status(403).json({ message: "Admin access required" });
       }
 
       const validatedData = insertTournamentSchema.parse(req.body);
       const tournament = await storage.createTournament(validatedData);
-      
+
       // Broadcast new tournament to all clients
-      broadcast({ type: 'tournament_created', tournament });
-      
+      broadcast({ type: "tournament_created", tournament });
+
       res.status(201).json(tournament);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: 'Invalid tournament data', errors: error.errors });
+        return res.status(400).json({ message: "Invalid tournament data", errors: error.errors });
       }
-      res.status(500).json({ message: 'Failed to create tournament' });
+      res.status(500).json({ message: "Failed to create tournament" });
     }
   });
 
-  app.put('/api/tournaments/:id', async (req, res) => {
+  app.put("/api/tournaments/:id", async (req, res) => {
     try {
       // Check if user is admin
       const user = await storage.getUserByTelegramId(req.telegramUserId);
       if (!user?.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
+        return res.status(403).json({ message: "Admin access required" });
       }
 
       // Validate input data against schema
       const validatedData = insertTournamentSchema.partial().parse(req.body);
-      
-      const tournament = await storage.updateTournament(req.params.id, validatedData);
-      if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
+
+      // Ensure status has the correct type if provided
+      if (
+        validatedData.status &&
+        !["upcoming", "active", "completed"].includes(validatedData.status)
+      ) {
+        return res.status(400).json({ message: "Invalid status value" });
       }
-      
+
+      // Cast the validated data to the correct type for updateTournament
+      const updateData = {
+        ...validatedData,
+        status: validatedData.status as "upcoming" | "active" | "completed" | undefined,
+      };
+
+      const tournament = await storage.updateTournament(req.params.id, updateData);
+      if (!tournament) {
+        return res.status(404).json({ message: "Tournament not found" });
+      }
+
       // Broadcast tournament update
-      broadcast({ type: 'tournament_updated', tournament });
-      
+      broadcast({ type: "tournament_updated", tournament });
+
       res.json(tournament);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return res.status(400).json({ message: 'Invalid tournament data', errors: error.errors });
+        return res.status(400).json({ message: "Invalid tournament data", errors: error.errors });
       }
-      res.status(500).json({ message: 'Failed to update tournament' });
+      res.status(500).json({ message: "Failed to update tournament" });
     }
   });
 
-  app.delete('/api/tournaments/:id', async (req, res) => {
+  app.delete("/api/tournaments/:id", async (req, res) => {
     try {
       // Check if user is admin
       const user = await storage.getUserByTelegramId(req.telegramUserId);
       if (!user?.isAdmin) {
-        return res.status(403).json({ message: 'Admin access required' });
+        return res.status(403).json({ message: "Admin access required" });
       }
 
       const success = await storage.deleteTournament(req.params.id);
       if (!success) {
-        return res.status(404).json({ message: 'Tournament not found' });
+        return res.status(404).json({ message: "Tournament not found" });
       }
-      
+
       // Broadcast tournament deletion
-      broadcast({ type: 'tournament_deleted', tournamentId: req.params.id });
-      
+      broadcast({ type: "tournament_deleted", tournamentId: req.params.id });
+
       res.json({ success: true });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to delete tournament' });
+      res.status(500).json({ message: "Failed to delete tournament" });
     }
   });
 
-  app.post('/api/tournaments/:id/register', async (req, res) => {
+  app.post("/api/tournaments/:id/register", async (req, res) => {
     try {
       const user = await storage.getUserByTelegramId(req.telegramUserId);
       if (!user) {
-        return res.status(401).json({ message: 'User not found' });
+        return res.status(401).json({ message: "User not found" });
       }
 
       const tournament = await storage.getTournament(req.params.id);
       if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
+        return res.status(404).json({ message: "Tournament not found" });
       }
 
       if (user.stars < tournament.entryFee) {
-        return res.status(400).json({ message: 'Insufficient stars' });
+        return res.status(400).json({ message: "Insufficient stars" });
       }
 
       if (tournament.participants.length >= tournament.maxParticipants) {
-        return res.status(400).json({ message: 'Tournament is full' });
+        return res.status(400).json({ message: "Tournament is full" });
       }
 
       const success = await storage.registerForTournament(req.params.id, user.id);
       if (!success) {
-        return res.status(400).json({ message: 'Already registered or tournament full' });
+        return res.status(400).json({ message: "Already registered or tournament full" });
       }
 
       const updatedTournament = await storage.getTournament(req.params.id);
       const updatedUser = await storage.getUser(user.id);
-      
+
       // Broadcast registration update
-      broadcast({ 
-        type: 'tournament_registration', 
+      broadcast({
+        type: "tournament_registration",
         tournament: updatedTournament,
-        userId: user.id
+        userId: user.id,
       });
-      
-      res.json({ 
-        success: true, 
+
+      res.json({
+        success: true,
         tournament: updatedTournament,
-        user: updatedUser
+        user: updatedUser,
       });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to register for tournament' });
+      res.status(500).json({ message: "Failed to register for tournament" });
     }
   });
 
-  app.delete('/api/tournaments/:id/register', async (req, res) => {
+  app.delete("/api/tournaments/:id/register", async (req, res) => {
     try {
       const user = await storage.getUserByTelegramId(req.telegramUserId);
       if (!user) {
-        return res.status(401).json({ message: 'User not found' });
+        return res.status(401).json({ message: "User not found" });
       }
 
       const success = await storage.unregisterFromTournament(req.params.id, user.id);
       if (!success) {
-        return res.status(400).json({ message: 'Not registered for this tournament' });
+        return res.status(400).json({ message: "Not registered for this tournament" });
       }
 
       const updatedTournament = await storage.getTournament(req.params.id);
       const updatedUser = await storage.getUser(user.id);
-      
+
       // Broadcast unregistration update
-      broadcast({ 
-        type: 'tournament_unregistration', 
+      broadcast({
+        type: "tournament_unregistration",
         tournament: updatedTournament,
-        userId: user.id
+        userId: user.id,
       });
-      
-      res.json({ 
-        success: true, 
+
+      res.json({
+        success: true,
         tournament: updatedTournament,
-        user: updatedUser
+        user: updatedUser,
       });
     } catch (error) {
-      res.status(500).json({ message: 'Failed to unregister from tournament' });
+      res.status(500).json({ message: "Failed to unregister from tournament" });
     }
   });
 
-  app.get('/api/tournaments/:id/participants', async (req, res) => {
+  app.get("/api/tournaments/:id/participants", async (req, res) => {
     try {
       const tournament = await storage.getTournament(req.params.id);
       if (!tournament) {
-        return res.status(404).json({ message: 'Tournament not found' });
+        return res.status(404).json({ message: "Tournament not found" });
       }
 
       const participants = await Promise.all(
-        tournament.participants.map(userId => storage.getUser(userId))
+        tournament.participants.map((userId) => storage.getUser(userId))
       );
-      
+
       res.json(participants.filter(Boolean));
     } catch (error) {
-      res.status(500).json({ message: 'Failed to fetch participants' });
+      res.status(500).json({ message: "Failed to fetch participants" });
     }
   });
 
