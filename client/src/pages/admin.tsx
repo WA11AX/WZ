@@ -6,8 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 import { queryClient } from "@/lib/queryClient";
@@ -19,35 +31,35 @@ export default function AdminPage() {
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    mapName: '',
-    mapImage: '',
-    date: '',
-    entryFee: '',
-    prize: '',
-    maxParticipants: '100',
-    status: 'upcoming' as 'upcoming' | 'active' | 'completed',
-    tournamentType: 'BATTLE ROYALE',
+    title: "",
+    description: "",
+    mapName: "",
+    mapImage: "",
+    date: "",
+    entryFee: "",
+    prize: "",
+    maxParticipants: "100",
+    status: "upcoming" as "upcoming" | "active" | "completed",
+    tournamentType: "BATTLE ROYALE",
   });
 
   // Check if user is admin
   const { data: user } = useQuery<User>({
-    queryKey: ['/api/user/me'],
+    queryKey: ["/api/user/me"],
   });
 
   // Fetch tournaments
   const { data: tournaments = [] } = useQuery<Tournament[]>({
-    queryKey: ['/api/tournaments'],
+    queryKey: ["/api/tournaments"],
   });
 
   // Create tournament mutation
   const createTournamentMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await fetch('/api/tournaments', {
-        method: 'POST',
+      const response = await fetch("/api/tournaments", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...getAuthHeaders(),
         },
         body: JSON.stringify({
@@ -60,7 +72,7 @@ export default function AdminPage() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to create tournament');
+        throw new Error(error.message || "Failed to create tournament");
       }
       return response.json();
     },
@@ -71,18 +83,18 @@ export default function AdminPage() {
       });
       setIsCreateDialogOpen(false);
       setFormData({
-        title: '',
-        description: '',
-        mapName: '',
-        mapImage: '',
-        date: '',
-        entryFee: '',
-        prize: '',
-        maxParticipants: '100',
-        status: 'upcoming',
-        tournamentType: 'BATTLE ROYALE',
+        title: "",
+        description: "",
+        mapName: "",
+        mapImage: "",
+        date: "",
+        entryFee: "",
+        prize: "",
+        maxParticipants: "100",
+        status: "upcoming",
+        tournamentType: "BATTLE ROYALE",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
     },
     onError: (error: Error) => {
       toast({
@@ -97,12 +109,12 @@ export default function AdminPage() {
   const deleteTournamentMutation = useMutation({
     mutationFn: async (tournamentId: string) => {
       const response = await fetch(`/api/tournaments/${tournamentId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: getAuthHeaders(),
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to delete tournament');
+        throw new Error(error.message || "Failed to delete tournament");
       }
       return response.json();
     },
@@ -111,7 +123,7 @@ export default function AdminPage() {
         title: "Success!",
         description: "Tournament deleted successfully!",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
     },
     onError: (error: Error) => {
       toast({
@@ -129,7 +141,7 @@ export default function AdminPage() {
           <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
           <p className="text-gray-600 mb-4">You need admin privileges to access this page.</p>
-          <Button onClick={() => setLocation('/')}>Back to Tournaments</Button>
+          <Button onClick={() => setLocation("/")}>Back to Tournaments</Button>
         </Card>
       </div>
     );
@@ -137,8 +149,14 @@ export default function AdminPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.description || !formData.date || !formData.entryFee || !formData.prize) {
+
+    if (
+      !formData.title ||
+      !formData.description ||
+      !formData.date ||
+      !formData.entryFee ||
+      !formData.prize
+    ) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -156,20 +174,18 @@ export default function AdminPage() {
     }
   };
 
-  const activeTournaments = tournaments.filter((t: Tournament) => t.status === 'active').length;
-  const totalParticipants = tournaments.reduce((acc: number, t: Tournament) => acc + t.participants.length, 0);
+  const activeTournaments = tournaments.filter((t: Tournament) => t.status === "active").length;
+  const totalParticipants = tournaments.reduce(
+    (acc: number, t: Tournament) => acc + t.participants.length,
+    0
+  );
 
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-sm mx-auto px-4 py-3 flex items-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-2 mr-2"
-            onClick={() => setLocation('/')}
-          >
+          <Button variant="ghost" size="sm" className="p-2 mr-2" onClick={() => setLocation("/")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
@@ -215,17 +231,19 @@ export default function AdminPage() {
                   <Input
                     id="title"
                     value={formData.title}
-                    onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="Enter tournament title"
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="description">Description *</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
-                    onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, description: e.target.value }))
+                    }
                     placeholder="Tournament description"
                     rows={3}
                   />
@@ -237,7 +255,9 @@ export default function AdminPage() {
                     <Input
                       id="mapName"
                       value={formData.mapName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, mapName: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, mapName: e.target.value }))
+                      }
                       placeholder="e.g. REBIRTH ISLAND"
                     />
                   </div>
@@ -245,7 +265,9 @@ export default function AdminPage() {
                     <Label htmlFor="tournamentType">Type</Label>
                     <Select
                       value={formData.tournamentType}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, tournamentType: value }))}
+                      onValueChange={(value) =>
+                        setFormData((prev) => ({ ...prev, tournamentType: value }))
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -264,7 +286,7 @@ export default function AdminPage() {
                   <Input
                     id="mapImage"
                     value={formData.mapImage}
-                    onChange={(e) => setFormData(prev => ({ ...prev, mapImage: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, mapImage: e.target.value }))}
                     placeholder="https://example.com/map-image.jpg"
                   />
                 </div>
@@ -275,7 +297,7 @@ export default function AdminPage() {
                     id="date"
                     type="datetime-local"
                     value={formData.date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
                   />
                 </div>
 
@@ -286,7 +308,9 @@ export default function AdminPage() {
                       id="entryFee"
                       type="number"
                       value={formData.entryFee}
-                      onChange={(e) => setFormData(prev => ({ ...prev, entryFee: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, entryFee: e.target.value }))
+                      }
                       placeholder="100"
                     />
                   </div>
@@ -296,7 +320,7 @@ export default function AdminPage() {
                       id="prize"
                       type="number"
                       value={formData.prize}
-                      onChange={(e) => setFormData(prev => ({ ...prev, prize: e.target.value }))}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, prize: e.target.value }))}
                       placeholder="500"
                     />
                   </div>
@@ -306,7 +330,9 @@ export default function AdminPage() {
                       id="maxParticipants"
                       type="number"
                       value={formData.maxParticipants}
-                      onChange={(e) => setFormData(prev => ({ ...prev, maxParticipants: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({ ...prev, maxParticipants: e.target.value }))
+                      }
                       placeholder="100"
                     />
                   </div>
@@ -316,8 +342,8 @@ export default function AdminPage() {
                   <Label htmlFor="status">Status</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(value: 'upcoming' | 'active' | 'completed') => 
-                      setFormData(prev => ({ ...prev, status: value }))
+                    onValueChange={(value: "upcoming" | "active" | "completed") =>
+                      setFormData((prev) => ({ ...prev, status: value }))
                     }
                   >
                     <SelectTrigger>
@@ -345,7 +371,7 @@ export default function AdminPage() {
                     className="flex-1 bg-gaming-green hover:bg-green-600"
                     disabled={createTournamentMutation.isPending}
                   >
-                    {createTournamentMutation.isPending ? 'Creating...' : 'Create'}
+                    {createTournamentMutation.isPending ? "Creating..." : "Create"}
                   </Button>
                 </div>
               </form>
@@ -376,11 +402,15 @@ export default function AdminPage() {
                             <Users className="w-3 h-3" />
                             <span>{tournament.participants.length} participants</span>
                           </span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            tournament.status === 'active' ? 'bg-gaming-green text-white' :
-                            tournament.status === 'upcoming' ? 'bg-yellow-500 text-white' :
-                            'bg-gray-500 text-white'
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              tournament.status === "active"
+                                ? "bg-gaming-green text-white"
+                                : tournament.status === "upcoming"
+                                  ? "bg-yellow-500 text-white"
+                                  : "bg-gray-500 text-white"
+                            }`}
+                          >
                             {tournament.status.toUpperCase()}
                           </span>
                         </div>

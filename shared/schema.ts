@@ -4,18 +4,25 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   telegramId: text("telegram_id").notNull().unique(),
   username: text("username").notNull(),
   firstName: text("first_name"),
   lastName: text("last_name"),
   isAdmin: boolean("is_admin").default(false).notNull(),
   stars: integer("stars").default(0).notNull(),
-  participatingTournaments: json("participating_tournaments").$type<string[]>().default([]).notNull(),
+  participatingTournaments: json("participating_tournaments")
+    .$type<string[]>()
+    .default([])
+    .notNull(),
 });
 
 export const tournaments = pgTable("tournaments", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  id: varchar("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   description: text("description").notNull(),
   mapName: text("map_name").notNull(),
@@ -27,7 +34,9 @@ export const tournaments = pgTable("tournaments", {
   participants: json("participants").$type<string[]>().default([]).notNull(),
   status: text("status").$type<"upcoming" | "active" | "completed">().default("upcoming").notNull(),
   tournamentType: text("tournament_type").default("BATTLE ROYALE").notNull(),
-  createdAt: timestamp("created_at").default(sql`now()`).notNull(),
+  createdAt: timestamp("created_at")
+    .default(sql`now()`)
+    .notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).omit({

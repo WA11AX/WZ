@@ -7,7 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
-import { getAuthHeaders, processStarsPayment, showBackButton, hideBackButton } from "@/lib/telegram";
+import {
+  getAuthHeaders,
+  processStarsPayment,
+  showBackButton,
+  hideBackButton,
+} from "@/lib/telegram";
 import { useEffect } from "react";
 import type { Tournament, User } from "@shared/schema";
 
@@ -19,18 +24,18 @@ export default function TournamentDetailPage() {
 
   // Setup Telegram back button
   useEffect(() => {
-    showBackButton(() => setLocation('/'));
+    showBackButton(() => setLocation("/"));
     return () => hideBackButton();
   }, [setLocation]);
 
   // Fetch tournament details
   const { data: tournament, isLoading: tournamentLoading } = useQuery({
-    queryKey: ['/api/tournaments', tournamentId],
+    queryKey: ["/api/tournaments", tournamentId],
     queryFn: async () => {
       const response = await fetch(`/api/tournaments/${tournamentId}`, {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Failed to fetch tournament');
+      if (!response.ok) throw new Error("Failed to fetch tournament");
       return response.json();
     },
     enabled: !!tournamentId,
@@ -38,17 +43,17 @@ export default function TournamentDetailPage() {
 
   // Fetch user data
   const { data: user } = useQuery<User>({
-    queryKey: ['/api/user/me'],
+    queryKey: ["/api/user/me"],
   });
 
   // Fetch participants
   const { data: participants = [], isLoading: participantsLoading } = useQuery({
-    queryKey: ['/api/tournaments', tournamentId, 'participants'],
+    queryKey: ["/api/tournaments", tournamentId, "participants"],
     queryFn: async () => {
       const response = await fetch(`/api/tournaments/${tournamentId}/participants`, {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Failed to fetch participants');
+      if (!response.ok) throw new Error("Failed to fetch participants");
       return response.json();
     },
     enabled: !!tournamentId,
@@ -58,15 +63,15 @@ export default function TournamentDetailPage() {
   const joinTournamentMutation = useMutation({
     mutationFn: async () => {
       const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...getAuthHeaders(),
         },
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to join tournament');
+        throw new Error(error.message || "Failed to join tournament");
       }
       return response.json();
     },
@@ -75,9 +80,11 @@ export default function TournamentDetailPage() {
         title: "Success!",
         description: "You've successfully joined the tournament!",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/tournaments', tournamentId] });
-      queryClient.invalidateQueries({ queryKey: ['/api/tournaments', tournamentId, 'participants'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user/me'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/tournaments", tournamentId] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/tournaments", tournamentId, "participants"],
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/me"] });
     },
     onError: (error: Error) => {
       toast({
@@ -111,7 +118,7 @@ export default function TournamentDetailPage() {
 
     try {
       const paymentSuccess = await processStarsPayment(tournament.entryFee, tournament.id);
-      
+
       if (paymentSuccess) {
         joinTournamentMutation.mutate();
       } else {
@@ -133,16 +140,16 @@ export default function TournamentDetailPage() {
   const formatDateTime = (date: Date) => {
     const tournamentDate = new Date(date);
     return {
-      date: tournamentDate.toLocaleDateString('en-US', { 
-        weekday: 'long',
-        month: 'long', 
-        day: 'numeric' 
+      date: tournamentDate.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
       }),
-      time: tournamentDate.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      })
+      time: tournamentDate.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      }),
     };
   };
 
@@ -173,7 +180,7 @@ export default function TournamentDetailPage() {
           <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Tournament Not Found</h3>
           <p className="text-gray-600 mb-4">The tournament you're looking for doesn't exist.</p>
-          <Button onClick={() => setLocation('/')}>Back to Tournaments</Button>
+          <Button onClick={() => setLocation("/")}>Back to Tournaments</Button>
         </Card>
       </div>
     );
@@ -187,12 +194,7 @@ export default function TournamentDetailPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-sm mx-auto px-4 py-3 flex items-center">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="p-2 mr-2"
-            onClick={() => setLocation('/')}
-          >
+          <Button variant="ghost" size="sm" className="p-2 mr-2" onClick={() => setLocation("/")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-lg font-semibold text-gray-900">Tournament Details</h1>
@@ -202,13 +204,13 @@ export default function TournamentDetailPage() {
       <div className="max-w-sm mx-auto p-4 space-y-6">
         {/* Tournament Hero */}
         <div className="relative h-48 rounded-xl overflow-hidden">
-          <img 
-            src={tournament.mapImage} 
-            alt={`${tournament.mapName} tactical gaming zone`} 
-            className="w-full h-full object-cover" 
+          <img
+            src={tournament.mapImage}
+            alt={`${tournament.mapName} tactical gaming zone`}
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-          
+
           {/* Tournament Stats Overlay */}
           <div className="absolute bottom-4 left-4 right-4">
             <h3 className="text-xl font-bold text-white mb-2">{tournament.title}</h3>
@@ -251,7 +253,7 @@ export default function TournamentDetailPage() {
                 <p className="text-sm text-gray-600">{time}</p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardContent className="p-4">
                 <h4 className="font-semibold text-gray-900 mb-1 flex items-center space-x-1">
@@ -289,7 +291,10 @@ export default function TournamentDetailPage() {
               ) : (
                 <div className="space-y-2">
                   {participants.slice(0, 5).map((participant: User) => (
-                    <div key={participant.id} className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                    <div
+                      key={participant.id}
+                      className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg"
+                    >
                       <div className="w-8 h-8 bg-telegram-blue rounded-full flex items-center justify-center">
                         <Users className="text-white w-4 h-4" />
                       </div>
@@ -317,36 +322,36 @@ export default function TournamentDetailPage() {
           {isUserRegistered ? (
             <div className="text-center p-4 bg-gaming-green bg-opacity-10 rounded-xl">
               <Trophy className="w-8 h-8 text-gaming-green mx-auto mb-2" />
-              <p className="text-gaming-green font-semibold">You're registered for this tournament!</p>
+              <p className="text-gaming-green font-semibold">
+                You're registered for this tournament!
+              </p>
               <p className="text-sm text-gray-600 mt-1">Good luck in the competition!</p>
             </div>
           ) : tournament.participants.length >= tournament.maxParticipants ? (
-            <Button 
-              className="w-full py-4 rounded-xl" 
-              disabled
-              variant="secondary"
-            >
+            <Button className="w-full py-4 rounded-xl" disabled variant="secondary">
               Tournament Full
             </Button>
           ) : (
-            <Button 
+            <Button
               className="w-full bg-telegram-blue hover:bg-blue-600 text-white font-semibold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2"
               onClick={handleJoinTournament}
               disabled={joinTournamentMutation.isPending}
             >
               <Star className="w-4 h-4 fill-current" />
               <span>
-                {joinTournamentMutation.isPending 
-                  ? 'Processing...' 
+                {joinTournamentMutation.isPending
+                  ? "Processing..."
                   : `Join for ${tournament.entryFee} stars`}
               </span>
             </Button>
           )}
-          
-          <Button 
+
+          <Button
             className="w-full bg-gray-100 text-gray-700 font-semibold py-3 rounded-xl hover:bg-gray-200 transition-colors"
             variant="secondary"
-            onClick={() => {/* Show full participant list */}}
+            onClick={() => {
+              /* Show full participant list */
+            }}
           >
             <Users className="w-4 h-4 mr-2" />
             View All Participants

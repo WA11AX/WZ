@@ -19,20 +19,20 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 
 // WebSocket message types
 export interface WebSocketMessage<T = any> {
-  type: 'tournament_update' | 'user_update' | 'notification' | 'error';
+  type: "tournament_update" | "user_update" | "notification" | "error";
   payload: T;
   timestamp: string;
 }
 
 export interface TournamentUpdateMessage {
   tournamentId: string;
-  type: 'participant_joined' | 'participant_left' | 'status_changed' | 'prize_updated';
+  type: "participant_joined" | "participant_left" | "status_changed" | "prize_updated";
   data: any;
 }
 
 // Tournament related types
-export type TournamentStatus = 'upcoming' | 'active' | 'completed';
-export type TournamentType = 'BATTLE ROYALE' | 'TEAM DEATHMATCH' | 'CAPTURE_FLAG' | 'CUSTOM';
+export type TournamentStatus = "upcoming" | "active" | "completed";
+export type TournamentType = "BATTLE ROYALE" | "TEAM DEATHMATCH" | "CAPTURE_FLAG" | "CUSTOM";
 
 export interface TournamentFilters {
   status?: TournamentStatus;
@@ -81,7 +81,7 @@ export interface AppConfig {
   apiUrl: string;
   wsUrl: string;
   telegramBotToken?: string;
-  environment: 'development' | 'production' | 'test';
+  environment: "development" | "production" | "test";
   features: {
     realTimeUpdates: boolean;
     telegramAuth: boolean;
@@ -116,14 +116,14 @@ export interface QueryOptions {
   limit?: number;
   offset?: number;
   orderBy?: string;
-  orderDirection?: 'asc' | 'desc';
+  orderDirection?: "asc" | "desc";
   include?: string[];
 }
 
 // Notification types
 export interface Notification {
   id: string;
-  type: 'info' | 'success' | 'warning' | 'error';
+  type: "info" | "success" | "warning" | "error";
   title: string;
   message: string;
   timestamp: string;
@@ -135,19 +135,19 @@ export interface Notification {
 export interface FileUpload {
   file: File;
   progress: number;
-  status: 'pending' | 'uploading' | 'completed' | 'error';
+  status: "pending" | "uploading" | "completed" | "error";
   url?: string;
   error?: string;
 }
 
 // Permission types
-export type Permission = 
-  | 'create_tournament'
-  | 'edit_tournament'
-  | 'delete_tournament'
-  | 'manage_users'
-  | 'view_analytics'
-  | 'system_admin';
+export type Permission =
+  | "create_tournament"
+  | "edit_tournament"
+  | "delete_tournament"
+  | "manage_users"
+  | "view_analytics"
+  | "system_admin";
 
 export interface UserPermissions {
   userId: string;
@@ -156,8 +156,8 @@ export interface UserPermissions {
 }
 
 // Theme types
-export type Theme = 'light' | 'dark' | 'system';
-export type Language = 'en' | 'ru' | 'es' | 'fr';
+export type Theme = "light" | "dark" | "system";
+export type Language = "en" | "ru" | "es" | "fr";
 
 export interface UserPreferences {
   theme: Theme;

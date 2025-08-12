@@ -29,7 +29,7 @@ export interface TelegramWebApp {
       language_code?: string;
     };
   };
-  colorScheme: 'light' | 'dark';
+  colorScheme: "light" | "dark";
   themeParams: {
     bg_color?: string;
     text_color?: string;
