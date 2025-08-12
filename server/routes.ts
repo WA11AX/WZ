@@ -156,7 +156,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: 'Admin access required' });
       }
 
-      const tournament = await storage.updateTournament(req.params.id, req.body);
+      // Validate input data against schema
+      const validatedData = insertTournamentSchema.partial().parse(req.body);
+      
+      const tournament = await storage.updateTournament(req.params.id, validatedData);
       if (!tournament) {
         return res.status(404).json({ message: 'Tournament not found' });
       }
@@ -166,6 +169,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(tournament);
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: 'Invalid tournament data', errors: error.errors });
+      }
       res.status(500).json({ message: 'Failed to update tournament' });
     }
   });

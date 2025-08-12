@@ -27,7 +27,24 @@ export interface IStorage {
 // Database Storage Implementation
 export class DatabaseStorage implements IStorage {
   private cache = new Map<string, { data: any; expires: number }>();
-  private cacheTimeout = 5 * 60 * 1000; // 5 минут
+  private cacheTimeout = 5 * 60 * 1000; // 5 minutes
+  private cleanupInterval: NodeJS.Timeout;
+
+  constructor() {
+    // Set up periodic cache cleanup to prevent memory leaks
+    this.cleanupInterval = setInterval(() => {
+      this.cleanupExpiredCache();
+    }, 60000); // Clean up every minute
+  }
+
+  private cleanupExpiredCache(): void {
+    const now = Date.now();
+    for (const [key, value] of this.cache.entries()) {
+      if (now > value.expires) {
+        this.cache.delete(key);
+      }
+    }
+  }
 
   private getFromCache<T>(key: string): T | null {
     const cached = this.cache.get(key);
@@ -43,6 +60,23 @@ export class DatabaseStorage implements IStorage {
       data,
       expires: Date.now() + this.cacheTimeout
     });
+  }
+
+  private invalidateCache(pattern: string): void {
+    // Invalidate cache entries that match the pattern
+    for (const key of this.cache.keys()) {
+      if (key.includes(pattern)) {
+        this.cache.delete(key);
+      }
+    }
+  }
+
+  // Cleanup method to be called when shutting down
+  destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+    this.cache.clear();
   }
   async getUser(id: string): Promise<User | undefined> {
     try {
@@ -117,27 +151,43 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTournament(id: string): Promise<Tournament | undefined> {
-    const [tournament] = await db.select().from(tournaments).where(eq(tournaments.id, id));
-    return tournament || undefined;
+    const cacheKey = `tournament:${id}`;
+    
+    // Check cache first
+    const cached = this.getFromCache<Tournament>(cacheKey);
+    if (cached) {
+      return cached;
+    }
+    
+    try {
+      const [tournament] = await db.select().from(tournaments).where(eq(tournaments.id, id));
+      
+      if (tournament) {
+        // Cache the tournament data
+        this.setCache(cacheKey, tournament);
+      }
+      
+      return tournament || undefined;
+    } catch (error) {
+      console.error('Error fetching tournament:', error);
+      throw new Error(`Failed to fetch tournament with id ${id}`);
+    }
   }
 
   async createTournament(insertTournament: InsertTournament): Promise<Tournament> {
     const [tournament] = await db
       .insert(tournaments)
       .values({
-        title: insertTournament.title,
-        description: insertTournament.description,
-        mapName: insertTournament.mapName,
-        mapImage: insertTournament.mapImage,
-        date: insertTournament.date,
-        entryFee: insertTournament.entryFee,
-        prize: insertTournament.prize,
-        maxParticipants: insertTournament.maxParticipants ?? 100,
+        id: randomUUID(),
+        ...insertTournament,
         participants: [],
-        status: (insertTournament.status ?? "upcoming") as "upcoming" | "active" | "completed",
-        tournamentType: insertTournament.tournamentType ?? "BATTLE ROYALE",
+        createdAt: new Date()
       })
       .returning();
+    
+    // Invalidate tournaments cache since we added a new tournament
+    this.invalidateCache('tournaments');
+    
     return tournament;
   }
 
@@ -147,66 +197,127 @@ export class DatabaseStorage implements IStorage {
       .set(updates)
       .where(eq(tournaments.id, id))
       .returning();
+    
+    if (tournament) {
+      // Invalidate both tournaments list cache and specific tournament cache
+      this.invalidateCache('tournaments');
+      this.invalidateCache(`tournament:${id}`);
+    }
+    
     return tournament || undefined;
   }
 
   async deleteTournament(id: string): Promise<boolean> {
     const result = await db.delete(tournaments).where(eq(tournaments.id, id));
-    return result.rowCount !== null && result.rowCount > 0;
+    
+    if (result.rowCount !== null && result.rowCount > 0) {
+      // Invalidate both tournaments list cache and specific tournament cache
+      this.invalidateCache('tournaments');
+      this.invalidateCache(`tournament:${id}`);
+      return true;
+    }
+    
+    return false;
   }
 
   async registerForTournament(tournamentId: string, userId: string): Promise<boolean> {
-    const tournament = await this.getTournament(tournamentId);
-    const user = await this.getUser(userId);
-    
-    if (!tournament || !user) return false;
-    if (tournament.participants.includes(userId)) return false;
-    if (tournament.participants.length >= tournament.maxParticipants) return false;
-    if (user.stars < tournament.entryFee) return false;
+    // Use a transaction to ensure atomicity
+    return await db.transaction(async (tx) => {
+      // Get tournament with row-level lock to prevent race conditions
+      const [tournament] = await tx
+        .select()
+        .from(tournaments)
+        .where(eq(tournaments.id, tournamentId))
+        .for('update'); // This prevents other transactions from modifying the same row
+      
+      const [user] = await tx
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .for('update');
+      
+      if (!tournament || !user) return false;
+      if (tournament.participants.includes(userId)) return false;
+      if (tournament.participants.length >= tournament.maxParticipants) return false;
+      if (user.stars < tournament.entryFee) return false;
 
-    // Update user: deduct entry fee and add tournament
-    await this.updateUser(userId, {
-      stars: user.stars - tournament.entryFee,
-      participatingTournaments: [...user.participatingTournaments, tournamentId]
+      // Update user: deduct entry fee and add tournament
+      await tx
+        .update(users)
+        .set({
+          stars: user.stars - tournament.entryFee,
+          participatingTournaments: [...user.participatingTournaments, tournamentId]
+        })
+        .where(eq(users.id, userId));
+      
+      // Update tournament: add participant
+      await tx
+        .update(tournaments)
+        .set({
+          participants: [...tournament.participants, userId]
+        })
+        .where(eq(tournaments.id, tournamentId));
+      
+      // Invalidate cache after successful registration
+      this.invalidateCache('tournaments');
+      this.invalidateCache(`tournament:${tournamentId}`);
+      
+      return true;
     });
-    
-    // Update tournament: add participant
-    await this.updateTournament(tournamentId, {
-      participants: [...tournament.participants, userId]
-    });
-    
-    return true;
   }
 
   async unregisterFromTournament(tournamentId: string, userId: string): Promise<boolean> {
-    const tournament = await this.getTournament(tournamentId);
-    const user = await this.getUser(userId);
-    
-    if (!tournament || !user) return false;
-    
-    const participantIndex = tournament.participants.indexOf(userId);
-    const userTournamentIndex = user.participatingTournaments.indexOf(tournamentId);
-    
-    if (participantIndex === -1 || userTournamentIndex === -1) return false;
-    
-    // Update user: refund entry fee and remove tournament
-    const newUserTournaments = [...user.participatingTournaments];
-    newUserTournaments.splice(userTournamentIndex, 1);
-    
-    await this.updateUser(userId, {
-      stars: user.stars + tournament.entryFee,
-      participatingTournaments: newUserTournaments
+    // Use a transaction to ensure atomicity
+    return await db.transaction(async (tx) => {
+      // Get tournament with row-level lock to prevent race conditions
+      const [tournament] = await tx
+        .select()
+        .from(tournaments)
+        .where(eq(tournaments.id, tournamentId))
+        .for('update');
+      
+      const [user] = await tx
+        .select()
+        .from(users)
+        .where(eq(users.id, userId))
+        .for('update');
+      
+      if (!tournament || !user) return false;
+      
+      const participantIndex = tournament.participants.indexOf(userId);
+      const userTournamentIndex = user.participatingTournaments.indexOf(tournamentId);
+      
+      if (participantIndex === -1 || userTournamentIndex === -1) return false;
+      
+      // Update user: refund entry fee and remove tournament
+      const newUserTournaments = [...user.participatingTournaments];
+      newUserTournaments.splice(userTournamentIndex, 1);
+      
+      await tx
+        .update(users)
+        .set({
+          stars: user.stars + tournament.entryFee,
+          participatingTournaments: newUserTournaments
+        })
+        .where(eq(users.id, userId));
+      
+      // Update tournament: remove participant
+      const newParticipants = [...tournament.participants];
+      newParticipants.splice(participantIndex, 1);
+      
+      await tx
+        .update(tournaments)
+        .set({
+          participants: newParticipants
+        })
+        .where(eq(tournaments.id, tournamentId));
+      
+      // Invalidate cache after successful unregistration
+      this.invalidateCache('tournaments');
+      this.invalidateCache(`tournament:${tournamentId}`);
+      
+      return true;
     });
-    
-    // Update tournament: remove participant
-    const newParticipants = [...tournament.participants];
-    newParticipants.splice(participantIndex, 1);
-    
-    await this.updateTournament(tournamentId, {
-      participants: newParticipants
-    });
-    
-    return true;
   }
 
   // Initialize with sample data if database is empty
@@ -252,3 +363,16 @@ export const storage = new DatabaseStorage();
 
 // Initialize sample data on startup
 storage.initializeData().catch(console.error);
+
+// Graceful shutdown handling
+process.on('SIGINT', () => {
+  console.log('Shutting down gracefully...');
+  storage.destroy();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  console.log('Shutting down gracefully...');
+  storage.destroy();
+  process.exit(0);
+});
