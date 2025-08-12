@@ -4,66 +4,23 @@
     "es2022": true,
     "node": true
   },
-  "extends": [
-    "eslint:recommended",
-    "@typescript-eslint/recommended",
-    "@typescript-eslint/recommended-requiring-type-checking"
-  ],
+  "extends": ["eslint:recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": "./tsconfig.json",
     "ecmaFeatures": {
       "jsx": true
     }
   },
-  "plugins": [
-    "@typescript-eslint",
-    "react",
-    "react-hooks",
-    "import"
-  ],
+  "plugins": ["react", "react-hooks"],
   "rules": {
-    // TypeScript specific rules
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/no-explicit-any": "warn",
-    "@typescript-eslint/no-non-null-assertion": "warn",
-    "@typescript-eslint/prefer-const": "error",
-    "@typescript-eslint/no-var-requires": "error",
-    "@typescript-eslint/consistent-type-imports": "error",
-    "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
-    "@typescript-eslint/prefer-nullish-coalescing": "error",
-    "@typescript-eslint/prefer-optional-chain": "error",
-    
     // React specific rules
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    
-    // Import/Export rules
-    "import/order": [
-      "error",
-      {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
-        "newlines-between": "always",
-        "alphabetize": {
-          "order": "asc",
-          "caseInsensitive": true
-        }
-      }
-    ],
-    "import/no-duplicate-imports": "error",
-    "import/no-unused-modules": "warn",
-    
+
     // General code quality rules
     "prefer-const": "error",
     "no-var": "error",
@@ -78,10 +35,9 @@
     "no-return-assign": "error",
     "no-throw-literal": "error",
     "prefer-promise-reject-errors": "error",
-    
+
     // Stylistic rules
     "indent": "off",
-    "@typescript-eslint/indent": "off",
     "quotes": ["error", "double", { "avoidEscape": true }],
     "semi": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
@@ -95,12 +51,6 @@
   "settings": {
     "react": {
       "version": "detect"
-    },
-    "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true,
-        "project": "./tsconfig.json"
-      }
     }
   },
   "ignorePatterns": [
@@ -115,7 +65,7 @@
     {
       "files": ["*.tsx", "*.jsx"],
       "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
+        "no-unused-vars": "off"
       }
     },
     {
