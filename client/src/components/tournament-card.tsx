@@ -144,10 +144,7 @@ export default function TournamentCard({ tournament, onJoin, showJoinButton = tr
             </div>
           </div>
           
-          {/* Tournament Type Badge */}
-          <Badge className="gradient-blue text-white font-bold px-3 py-1 shadow-lg border-0">
-            {tournament.tournamentType}
-          </Badge>
+          
         </div>
 
         {/* Action Button */}
