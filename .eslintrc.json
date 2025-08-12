@@ -6,8 +6,8 @@
   },
   "extends": [
     "eslint:recommended",
-    "@typescript-eslint/recommended",
-    "@typescript-eslint/recommended-requiring-type-checking"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -29,7 +29,6 @@
     "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
-    "@typescript-eslint/prefer-const": "error",
     "@typescript-eslint/no-var-requires": "error",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
@@ -61,7 +60,7 @@
         }
       }
     ],
-    "import/no-duplicate-imports": "error",
+    "no-duplicate-imports": "error",
     "import/no-unused-modules": "warn",
     
     // General code quality rules
@@ -95,12 +94,6 @@
   "settings": {
     "react": {
       "version": "detect"
-    },
-    "import/resolver": {
-      "typescript": {
-        "alwaysTryTypes": true,
-        "project": "./tsconfig.json"
-      }
     }
   },
   "ignorePatterns": [
