@@ -151,7 +151,12 @@ export const loggingConfig = {
  * Validate critical secrets on startup
  */
 export function validateCriticalSecrets() {
-  const criticalSecrets = ["DATABASE_URL", "TELEGRAM_BOT_TOKEN", "SESSION_SECRET"];
+  const criticalSecrets = ["DATABASE_URL", "SESSION_SECRET"];
+  
+  // Only require TELEGRAM_BOT_TOKEN in production
+  if (isProduction) {
+    criticalSecrets.push("TELEGRAM_BOT_TOKEN");
+  }
 
   const missing = criticalSecrets.filter((secret) => !process.env[secret]);
 
@@ -168,8 +173,8 @@ export function validateCriticalSecrets() {
     process.exit(1);
   }
 
-  // Validate Telegram bot token format
-  if (!/^\d+:[A-Za-z0-9_-]+$/.test(config.TELEGRAM_BOT_TOKEN)) {
+  // Validate Telegram bot token format only if provided
+  if (config.TELEGRAM_BOT_TOKEN && !/^\d+:[A-Za-z0-9_-]+$/.test(config.TELEGRAM_BOT_TOKEN)) {
     console.error("❌ TELEGRAM_BOT_TOKEN format is invalid");
     process.exit(1);
   }
@@ -204,7 +209,7 @@ if (isDevelopment) {
   console.log(`  - Environment: ${config.NODE_ENV}`);
   console.log(`  - Port: ${config.PORT}`);
   console.log(`  - Database: ${maskSecret(config.DATABASE_URL)}`);
-  console.log(`  - Telegram Bot: ${maskSecret(config.TELEGRAM_BOT_TOKEN)}`);
+  console.log(`  - Telegram Bot: ${config.TELEGRAM_BOT_TOKEN ? maskSecret(config.TELEGRAM_BOT_TOKEN) : 'not configured'}`);
   console.log(`  - Session Secret: ${maskSecret(config.SESSION_SECRET)}`);
 }
 
