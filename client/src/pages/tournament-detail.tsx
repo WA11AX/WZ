@@ -10,24 +10,20 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient } from '@/lib/queryClient';
-import {
-  getAuthHeaders,
-  processStarsPayment,
-  showBackButton,
-  hideBackButton,
-} from '@/lib/telegram';
+import { useTelegram } from '@/services/telegram';
 
 export default function TournamentDetailPage() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const tournamentId = params.id;
+  const { getAuthHeaders, processStarsPayment, showBackButton, hideBackButton } = useTelegram();
 
   // Setup Telegram back button
   useEffect(() => {
     showBackButton(() => setLocation('/'));
     return () => hideBackButton();
-  }, [setLocation]);
+  }, [setLocation, showBackButton, hideBackButton]);
 
   // Fetch tournament details
   const { data: tournament, isLoading: tournamentLoading } = useQuery({
