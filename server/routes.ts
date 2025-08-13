@@ -156,7 +156,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: 'Admin access required' });
       }
 
-      const tournament = await storage.updateTournament(req.params.id, req.body);
+      // Type-safe update - ensure status has correct type
+      const updateData = {
+        ...req.body,
+        ...(req.body.status && {
+          status: req.body.status as "upcoming" | "active" | "completed"
+        })
+      };
+      
+      const tournament = await storage.updateTournament(req.params.id, updateData);
       if (!tournament) {
         return res.status(404).json({ message: 'Tournament not found' });
       }
