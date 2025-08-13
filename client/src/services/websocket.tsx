@@ -29,7 +29,7 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     };
   };
 
-  let reconnectAttempts = 0;
+  const reconnectAttemptsRef = useRef(0);
   const maxReconnectAttempts = 5;
   const baseReconnectDelay = 1000;
 
