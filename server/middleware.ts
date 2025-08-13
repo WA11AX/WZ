@@ -153,7 +153,7 @@ export const securityHeaders = (req: Request, res: Response, _next: NextFunction
   // Content Security Policy (basic example)
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;",
   );
 
   _next();
@@ -173,7 +173,7 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
 
     // Log format: [timestamp] method url status duration ip userAgent
     console.log(
-      `[${new Date().toISOString()}] ${method} ${url} ${status} ${duration}ms ${ip} "${userAgent}"`
+      `[${new Date().toISOString()}] ${method} ${url} ${status} ${duration}ms ${ip} "${userAgent}"`,
     );
   });
 

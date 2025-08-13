@@ -127,7 +127,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         res.status(500).json({ message: "Failed to create tournament" });
       }
-    }
+    },
   );
 
   app.put("/api/tournaments/:id", rateLimiters.adminLimiter, async (req, res) => {
@@ -231,7 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (error) {
         res.status(500).json({ message: "Failed to register for tournament" });
       }
-    }
+    },
   );
 
   app.delete(
@@ -268,7 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (error) {
         res.status(500).json({ message: "Failed to unregister from tournament" });
       }
-    }
+    },
   );
 
   app.get("/api/tournaments/:id/participants", async (req, res) => {
@@ -279,7 +279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const participants = await Promise.all(
-        tournament.participants.map((userId) => storage.getUser(userId))
+        tournament.participants.map((userId) => storage.getUser(userId)),
       );
 
       res.json(participants.filter(Boolean));
