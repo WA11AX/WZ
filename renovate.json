@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchPackageNames": ["esbuild", "vite", "tsx"],
+      "automerge": true,
+      "postUpgradeTasks": {
+        "commands": ["npm audit --omit=dev"],
+        "fileFilters": ["package.json", "package-lock.json"]
+      }
+    }
+  ]
+}

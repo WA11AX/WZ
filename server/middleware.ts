@@ -181,7 +181,7 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
 };
 
 // Error handling middleware
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err);
 
@@ -219,7 +219,7 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
 };
 
 // Health check endpoint
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export const healthCheck = (_req: Request, res: Response, _next: NextFunction) => {
   const health = {
     status: 'ok',
