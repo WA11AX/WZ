@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface WebSocketMessage {
   type:
@@ -35,7 +35,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
   const maxReconnectAttempts = 5;
   const baseReconnectDelay = 1000; // 1 second
 
-  const connect = () => {
+  const connect = useCallback(() => {
     try {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -80,10 +80,10 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const jitter = Math.random() * 1000; // Add some randomness
           const finalDelay = delay + jitter;
           reconnectAttempts++;
-          reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
-        } else {
-          websocketCallbacks.current.forEach((callback) =>
-            callback({
+        reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
+      } else {
+        websocketCallbacks.current.forEach((callback) =>
+          callback({
               type: "error",
               error: "Connection failed after maximum attempts",
             }),
@@ -124,7 +124,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         // console.error("Max reconnection attempts reached after initial failure"); // Removed console.error
       }
     }
-  };
+  }, [onMessage]);
 
   useEffect(() => {
     connect();
@@ -137,7 +137,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         wsRef.current.close();
       }
     };
-  }, []);
+  }, [connect]);
 
   const sendMessage = (message: any) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
