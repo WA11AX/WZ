@@ -127,7 +127,7 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     };
   }, [connect]);
 
-  const sendMessage = (message: any) => {
+  const sendMessage = (message: WebSocketMessage) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message));
     }
