@@ -80,10 +80,10 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const jitter = Math.random() * 1000; // Add some randomness
           const finalDelay = delay + jitter;
           reconnectAttempts++;
-        reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
-      } else {
-        websocketCallbacks.current.forEach((callback) =>
-          callback({
+          reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
+        } else {
+          websocketCallbacks.current.forEach((callback) =>
+            callback({
               type: "error",
               error: "Connection failed after maximum attempts",
             }),

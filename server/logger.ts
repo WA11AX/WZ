@@ -10,15 +10,16 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple(),
-      ),
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
     }),
   ],
 });
 
-export function logRequest(req: Request, message: string, level: "info" | "warn" | "error" = "info") {
+export function logRequest(
+  req: Request,
+  message: string,
+  level: "info" | "warn" | "error" = "info",
+) {
   const userContext = {
     ip: req.ip,
     userAgent: req.get("User-Agent"),
