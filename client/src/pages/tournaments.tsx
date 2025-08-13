@@ -1,17 +1,18 @@
+import type { Tournament, User } from "@shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { Trophy, Star, Plus } from "lucide-react";
 import { useEffect } from "react";
+import { useLocation } from "wouter";
+
 import Header from "@/components/header";
 import TournamentCard from "@/components/tournament-card";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trophy, Star, Plus } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { useWebSocket, type WebSocketMessage } from "@/lib/websocket";
 import { queryClient } from "@/lib/queryClient";
 import { getAuthHeaders, processStarsPayment } from "@/lib/telegram";
-import { useLocation } from "wouter";
-import type { Tournament, User } from "@shared/schema";
+import { useWebSocket, type WebSocketMessage } from "@/lib/websocket";
 
 export default function TournamentsPage() {
   const { toast } = useToast();
@@ -19,24 +20,24 @@ export default function TournamentsPage() {
 
   // Fetch tournaments
   const { data: tournaments = [], isLoading: tournamentsLoading } = useQuery({
-    queryKey: ['/api/tournaments'],
+    queryKey: ["/api/tournaments"],
     queryFn: async () => {
-      const response = await fetch('/api/tournaments', {
+      const response = await fetch("/api/tournaments", {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Failed to fetch tournaments');
+      if (!response.ok) throw new Error("Failed to fetch tournaments");
       return response.json();
     },
   });
 
   // Fetch user data
   const { data: user } = useQuery({
-    queryKey: ['/api/user/me'],
+    queryKey: ["/api/user/me"],
     queryFn: async () => {
-      const response = await fetch('/api/user/me', {
+      const response = await fetch("/api/user/me", {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error('Failed to fetch user');
+      if (!response.ok) throw new Error("Failed to fetch user");
       return response.json();
     },
   });
@@ -45,15 +46,15 @@ export default function TournamentsPage() {
   const joinTournamentMutation = useMutation({
     mutationFn: async (tournamentId: string) => {
       const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...getAuthHeaders(),
         },
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || 'Failed to join tournament');
+        throw new Error(error.message || "Failed to join tournament");
       }
       return response.json();
     },
@@ -63,8 +64,8 @@ export default function TournamentsPage() {
         description: "You've successfully joined the tournament!",
       });
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/user/me'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/me"] });
     },
     onError: (error: Error) => {
       toast({
@@ -78,14 +79,14 @@ export default function TournamentsPage() {
   // WebSocket for real-time updates
   useWebSocket((message: WebSocketMessage) => {
     switch (message.type) {
-      case 'tournament_created':
-      case 'tournament_updated':
-      case 'tournament_registration':
-      case 'tournament_unregistration':
-        queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+      case "tournament_created":
+      case "tournament_updated":
+      case "tournament_registration":
+      case "tournament_unregistration":
+        queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
         break;
-      case 'tournament_deleted':
-        queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+      case "tournament_deleted":
+        queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
         break;
     }
   });
@@ -121,7 +122,7 @@ export default function TournamentsPage() {
     try {
       // Process payment with Telegram Stars
       const paymentSuccess = await processStarsPayment(tournament.entryFee, tournament.id);
-      
+
       if (paymentSuccess) {
         joinTournamentMutation.mutate(tournament.id);
       } else {
@@ -141,21 +142,21 @@ export default function TournamentsPage() {
   };
 
   // Featured tournament (first active tournament)
-  const featuredTournament = tournaments.find((t: Tournament) => t.status === 'active');
+  const featuredTournament = tournaments.find((t: Tournament) => t.status === "active");
 
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />
-      
+
       <main className="max-w-sm mx-auto px-4 py-4 space-y-4">
         {/* Featured Tournament Hero */}
         {featuredTournament && (
           <div className="relative bg-gradient-to-br from-purple-600 to-blue-700 rounded-2xl overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
-              <img 
-                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400" 
-                alt="Gaming tournament arena with neon lights" 
-                className="w-full h-full object-cover opacity-80" 
+              <img
+                src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=400"
+                alt="Gaming tournament arena with neon lights"
+                className="w-full h-full object-cover opacity-80"
               />
             </div>
             <div className="relative p-6 text-center">
@@ -173,7 +174,9 @@ export default function TournamentsPage() {
               </div>
               <h2 className="text-xl font-bold text-white mb-1">Take part in</h2>
               <h3 className="text-lg font-semibold text-white mb-4">Warzone Stars Tournament</h3>
-              <p className="text-sm text-gray-200 mb-2">Battle for glory in the ultimate gaming showdown</p>
+              <p className="text-sm text-gray-200 mb-2">
+                Battle for glory in the ultimate gaming showdown
+              </p>
               <div className="flex justify-center items-center space-x-4 text-sm text-gray-200">
                 <span className="flex items-center space-x-1">
                   <Trophy className="w-4 h-4" />
@@ -228,7 +231,7 @@ export default function TournamentsPage() {
         {user?.isAdmin && (
           <Button
             className="w-full bg-gaming-green hover:bg-green-600 text-white font-semibold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-dashed border-green-400 bg-opacity-90"
-            onClick={() => setLocation('/admin')}
+            onClick={() => setLocation("/admin")}
           >
             <Plus className="w-5 h-5" />
             <span>Add New Tournament</span>

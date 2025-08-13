@@ -1,6 +1,7 @@
 # Shared
 
-Shared types, schemas, and utilities used across both client and server applications.
+Shared types, schemas, and utilities used across both client and server
+applications.
 
 ## 🏗️ Structure
 
@@ -12,11 +13,13 @@ shared/
 
 ## 📊 Database Schema
 
-The shared schema defines the database structure using Drizzle ORM with PostgreSQL:
+The shared schema defines the database structure using Drizzle ORM with
+PostgreSQL:
 
 ### Tables
 
 #### Users Table
+
 ```typescript
 export const users = pgTable("users", {
   id: varchar("id").primaryKey(),
@@ -31,6 +34,7 @@ export const users = pgTable("users", {
 ```
 
 #### Tournaments Table
+
 ```typescript
 export const tournaments = pgTable("tournaments", {
   id: varchar("id").primaryKey(),
@@ -54,6 +58,7 @@ export const tournaments = pgTable("tournaments", {
 The shared package provides type-safe schemas and inference:
 
 ### Zod Schemas
+
 ```typescript
 // Input validation schemas
 export const insertUserSchema = createInsertSchema(users).omit({
@@ -70,6 +75,7 @@ export const insertTournamentSchema = createInsertSchema(tournaments).omit({
 ```
 
 ### Type Inference
+
 ```typescript
 // Inferred types for TypeScript
 export type User = typeof users.$inferSelect;
@@ -81,6 +87,7 @@ export type InsertTournament = z.infer<typeof insertTournamentSchema>;
 ## 🚀 Usage
 
 ### In Server (API)
+
 ```typescript
 import { db } from "./storage";
 import { users, tournaments, insertUserSchema } from "@shared/schema";
@@ -91,6 +98,7 @@ const allTournaments = await db.select().from(tournaments);
 ```
 
 ### In Client (Frontend)
+
 ```typescript
 import type { User, Tournament } from "@shared/schema";
 
@@ -137,6 +145,7 @@ To add new shared types or schemas:
 4. **Documentation**: Update this README with new types
 
 Example:
+
 ```typescript
 // Add new table
 export const matches = pgTable("matches", {

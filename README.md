@@ -1,14 +1,17 @@
 # WZ Tournament Platform
 
-A modern TypeScript-based tournament platform for gaming competitions, built with React, Express.js, and PostgreSQL.
+A modern TypeScript-based tournament platform for gaming competitions, built
+with React, Express.js, and PostgreSQL.
 
 ## 🚀 Features
 
-- **Tournament Management**: Create and manage gaming tournaments with customizable settings
+- **Tournament Management**: Create and manage gaming tournaments with
+  customizable settings
 - **User Authentication**: Telegram-based authentication system
 - **Real-time Updates**: WebSocket support for live tournament updates
 - **Responsive Design**: Modern UI built with React and Tailwind CSS
-- **Database Integration**: PostgreSQL with Drizzle ORM for type-safe database operations
+- **Database Integration**: PostgreSQL with Drizzle ORM for type-safe database
+  operations
 
 ## 🏗️ Project Structure
 
@@ -23,6 +26,7 @@ A modern TypeScript-based tournament platform for gaming competitions, built wit
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18** with TypeScript
 - **Vite** for fast development and building
 - **Tailwind CSS** for styling
@@ -31,6 +35,7 @@ A modern TypeScript-based tournament platform for gaming competitions, built wit
 - **Framer Motion** for animations
 
 ### Backend
+
 - **Express.js** with TypeScript
 - **PostgreSQL** database
 - **Drizzle ORM** for database operations
@@ -38,6 +43,7 @@ A modern TypeScript-based tournament platform for gaming competitions, built wit
 - **Passport.js** for authentication
 
 ### Development Tools
+
 - **TypeScript** for type safety
 - **ESLint** and **Prettier** for code quality
 - **Vite** for development server and building
@@ -53,28 +59,33 @@ A modern TypeScript-based tournament platform for gaming competitions, built wit
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd WZ
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
 ```
 
 4. Set up the database:
+
 ```bash
 npm run db:push
 ```
 
 5. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -101,7 +112,8 @@ The application will be available at `http://localhost:5173`
 
 ### Code Style
 
-This project uses ESLint and Prettier for consistent code formatting. Run the linters before committing:
+This project uses ESLint and Prettier for consistent code formatting. Run the
+linters before committing:
 
 ```bash
 npm run lint
@@ -110,15 +122,18 @@ npm run format
 
 ### Database
 
-The project uses Drizzle ORM with PostgreSQL. Schema files are located in the `shared/` directory.
+The project uses Drizzle ORM with PostgreSQL. Schema files are located in the
+`shared/` directory.
 
 To make database changes:
+
 1. Edit schema files in `shared/schema.ts`
 2. Run `npm run db:push` to apply changes
 
 ## 📦 Deployment
 
 1. Build the project:
+
 ```bash
 npm run build
 ```
@@ -126,6 +141,7 @@ npm run build
 2. Set production environment variables
 
 3. Start the production server:
+
 ```bash
 npm run start
 ```
@@ -140,4 +156,5 @@ npm run start
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for
+details.

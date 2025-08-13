@@ -27,14 +27,17 @@ The application uses a modern component library built on:
 ## 🔗 Key Features
 
 ### State Management
+
 - **TanStack Query**: Server state management and caching
 - **React Hook Form**: Form handling and validation
 
 ### Real-time Communication
+
 - **WebSocket**: Live tournament updates
 - **Telegram SDK**: Integration with Telegram Web App
 
 ### Routing
+
 - **Wouter**: Lightweight React router
 
 ## 🛠️ Development
@@ -91,10 +94,10 @@ The project uses Tailwind CSS with custom configuration:
 The app is designed to work as a Telegram Web App:
 
 ```typescript
-import WebApp from '@twa-dev/sdk'
+import WebApp from "@twa-dev/sdk";
 
 // Initialize Telegram Web App
-WebApp.ready()
+WebApp.ready();
 ```
 
 ## 🔧 Build Configuration

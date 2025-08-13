@@ -1,6 +1,6 @@
 /**
  * Example unit test setup for the WZ Tournament Platform
- * 
+ *
  * This file demonstrates how to structure tests for the application.
  * To implement full testing, you would need to:
  * 1. Install testing framework (Jest, Vitest, etc.)
@@ -113,10 +113,10 @@ mockTest("should validate API response structure", () => {
 
 // Test utility functions (example)
 const calculateUserStats = (tournaments: Tournament[], userId: string): UserStats => {
-  const userTournaments = tournaments.filter(t => 
-    t.participants.includes(userId) && t.status === "completed"
+  const userTournaments = tournaments.filter(t =>
+    t.participants.includes(userId) && t.status === "completed",
   );
-  
+
   return {
     totalTournaments: userTournaments.length,
     tournamentsWon: 0, // Would need winner data
@@ -171,7 +171,7 @@ mockTest("should handle tournament creation flow", async () => {
   // 2. Check permissions
   // 3. Create tournament
   // 4. Return response
-  
+
   const tournamentInput = {
     title: "New Tournament",
     description: "A new tournament",
@@ -197,7 +197,7 @@ mockTest("should handle tournament creation flow", async () => {
 // Performance test example
 mockTest("should handle large datasets efficiently", () => {
   const start = Date.now();
-  
+
   // Simulate processing large amount of data
   const tournaments = Array.from({ length: 1000 }, (_, i) => ({
     id: `tournament-${i}`,
@@ -207,12 +207,12 @@ mockTest("should handle large datasets efficiently", () => {
 
   // Process data
   const result = tournaments.filter(t => t.participants.length > 50);
-  
+
   const duration = Date.now() - start;
-  
+
   mockExpect(result.length).toBe(1000);
   console.log(`Processing time: ${duration}ms`);
-  
+
   // Performance assertion
   if (duration > 100) {
     throw new Error(`Performance test failed: took ${duration}ms (expected < 100ms)`);

@@ -1,6 +1,7 @@
-import type { Request, Response, NextFunction } from 'express';
-import { logger } from './logger';
-import { isDevelopment } from './config';
+import type { Request, Response, NextFunction } from "express";
+
+import { isDevelopment } from "./config";
+import { logger } from "./logger";
 
 /**
  * Secure error handling with sensitive data protection
@@ -11,88 +12,88 @@ export interface AppError extends Error {
   statusCode?: number;
   code?: string;
   isOperational?: boolean;
-  details?: any;
+  details?: unknown;
 }
 
 export class SecurityError extends Error {
   statusCode = 403;
-  code = 'SECURITY_VIOLATION';
+  code = "SECURITY_VIOLATION";
   isOperational = true;
 
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message);
-    this.name = 'SecurityError';
-    
+    this.name = "SecurityError";
+
     // Log security violations immediately
-    logger.security(message, details);
+    logger.error(message, details);
   }
 }
 
 export class ValidationError extends Error {
   statusCode = 400;
-  code = 'VALIDATION_ERROR';
+  code = "VALIDATION_ERROR";
   isOperational = true;
-  details: any;
+  details: unknown;
 
-  constructor(message: string, details?: any) {
+  constructor(message: string, details?: unknown) {
     super(message);
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
     this.details = details;
   }
 }
 
 export class AuthenticationError extends Error {
   statusCode = 401;
-  code = 'AUTHENTICATION_ERROR';
+  code = "AUTHENTICATION_ERROR";
   isOperational = true;
 
-  constructor(message: string = 'Authentication required') {
+  constructor(message: string = "Authentication required") {
     super(message);
-    this.name = 'AuthenticationError';
+    this.name = "AuthenticationError";
   }
 }
 
 export class AuthorizationError extends Error {
   statusCode = 403;
-  code = 'AUTHORIZATION_ERROR';
+  code = "AUTHORIZATION_ERROR";
   isOperational = true;
 
-  constructor(message: string = 'Insufficient permissions') {
+  constructor(message: string = "Insufficient permissions") {
     super(message);
-    this.name = 'AuthorizationError';
+    this.name = "AuthorizationError";
   }
 }
 
 export class RateLimitError extends Error {
   statusCode = 429;
-  code = 'RATE_LIMIT_EXCEEDED';
+  code = "RATE_LIMIT_EXCEEDED";
   isOperational = true;
 
-  constructor(message: string = 'Too many requests') {
+  constructor(message: string = "Too many requests") {
     super(message);
-    this.name = 'RateLimitError';
+    this.name = "RateLimitError";
   }
 }
 
 export class DatabaseError extends Error {
   statusCode = 500;
-  code = 'DATABASE_ERROR';
+  code = "DATABASE_ERROR";
   isOperational = true;
 
   constructor(message: string, originalError?: Error) {
     super(message);
-    this.name = 'DatabaseError';
-    
+    this.name = "DatabaseError";
+
     // Log database errors with sanitized details
-    logger.database('ERROR', 'unknown', undefined, originalError);
+    logger.error("Database error", { message, originalError });
   }
 }
 
 /**
  * Sanitize error details for client response
  */
-function sanitizeErrorForClient(error: AppError): any {
-  const sanitized: any = {
+function sanitizeErrorForClient(error: AppError): Record<string, unknown> {
+  const sanitized: Record<string, unknown> = {
     message: error.message,
     code: error.code,
   };
@@ -124,7 +125,7 @@ function getStatusCode(error: AppError): number {
   if (error.statusCode && error.statusCode >= 400 && error.statusCode < 600) {
     return error.statusCode;
   }
-  
+
   // Default to 500 for unknown errors
   return 500;
 }
@@ -132,13 +133,13 @@ function getStatusCode(error: AppError): number {
 /**
  * Extract user context from request for logging
  */
-function extractUserContext(req: Request): any {
-  const telegramUser = (req as any).telegramUser;
+function extractUserContext(req: Request): Record<string, unknown> {
+  const { telegramUser } = (req as any);
   return {
     userId: telegramUser?.id,
     username: telegramUser?.username,
     ip: req.ip,
-    userAgent: req.get('User-Agent'),
+    userAgent: req.get("User-Agent"),
     method: req.method,
     path: req.path,
     query: req.query,
@@ -152,39 +153,33 @@ export function errorHandler(
   error: AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void {
   const statusCode = getStatusCode(error);
   const userContext = extractUserContext(req);
-  
+
   // Log error with appropriate level
   if (statusCode >= 500) {
     // Server errors - log as error
-    logger.error(
-      `Server Error: ${error.message}`,
-      {
-        error: {
-          name: error.name,
-          message: error.message,
-          code: error.code,
-          stack: error.stack,
-        },
-        context: userContext,
-      }
-    );
+    logger.error(`Server Error: ${error.message}`, {
+      error: {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+        stack: error.stack,
+      },
+      context: userContext,
+    });
   } else if (statusCode >= 400) {
     // Client errors - log as warning
-    logger.warn(
-      `Client Error: ${error.message}`,
-      {
-        error: {
-          name: error.name,
-          message: error.message,
-          code: error.code,
-        },
-        context: userContext,
-      }
-    );
+    logger.warn(`Client Error: ${error.message}`, {
+      error: {
+        name: error.name,
+        message: error.message,
+        code: error.code,
+      },
+      context: userContext,
+    });
   }
 
   // Send appropriate response to client
@@ -195,7 +190,7 @@ export function errorHandler(
   };
 
   // Add request ID if available
-  const requestId = req.get('X-Request-ID');
+  const requestId = req.get("X-Request-ID");
   if (requestId) {
     (response as any).requestId = requestId;
   }
@@ -206,19 +201,16 @@ export function errorHandler(
 /**
  * Handle unhandled promise rejections
  */
-export function handleUnhandledRejection(reason: any, promise: Promise<any>): void {
-  logger.error(
-    'Unhandled Promise Rejection',
-    {
-      reason: reason?.message || reason,
-      stack: reason?.stack,
-      promise: promise.toString(),
-    }
-  );
-  
+export function handleUnhandledRejection(reason: unknown, promise: Promise<unknown>): void {
+  logger.error("Unhandled Promise Rejection", {
+    reason: (reason as any)?.message || reason,
+    stack: (reason as any)?.stack,
+    promise: promise.toString(),
+  });
+
   // In production, gracefully shutdown
   if (!isDevelopment) {
-    logger.error('Shutting down due to unhandled promise rejection');
+    logger.error("Shutting down due to unhandled promise rejection");
     process.exit(1);
   }
 }
@@ -227,19 +219,16 @@ export function handleUnhandledRejection(reason: any, promise: Promise<any>): vo
  * Handle uncaught exceptions
  */
 export function handleUncaughtException(error: Error): void {
-  logger.error(
-    'Uncaught Exception',
-    {
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      },
-    }
-  );
-  
+  logger.error("Uncaught Exception", {
+    error: {
+      name: error.name,
+      message: error.message,
+      stack: error.stack,
+    },
+  });
+
   // Always exit on uncaught exceptions
-  logger.error('Shutting down due to uncaught exception');
+  logger.error("Shutting down due to uncaught exception");
   process.exit(1);
 }
 
@@ -247,7 +236,7 @@ export function handleUncaughtException(error: Error): void {
  * Async error wrapper for route handlers
  */
 export function asyncHandler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
 ) {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -257,14 +246,14 @@ export function asyncHandler(
 /**
  * Validation error helper
  */
-export function createValidationError(message: string, details?: any): ValidationError {
+export function createValidationError(message: string, details?: unknown): ValidationError {
   return new ValidationError(message, details);
 }
 
 /**
  * Security error helper
  */
-export function createSecurityError(message: string, details?: any): SecurityError {
+export function createSecurityError(message: string, details?: unknown): SecurityError {
   return new SecurityError(message, details);
 }
 
@@ -279,10 +268,10 @@ export function createDatabaseError(message: string, originalError?: Error): Dat
  * Setup global error handlers
  */
 export function setupGlobalErrorHandlers(): void {
-  process.on('unhandledRejection', handleUnhandledRejection);
-  process.on('uncaughtException', handleUncaughtException);
-  
-  logger.info('Global error handlers configured');
+  process.on("unhandledRejection", handleUnhandledRejection);
+  process.on("uncaughtException", handleUncaughtException);
+
+  logger.info("Global error handlers configured");
 }
 
 /**
@@ -291,19 +280,19 @@ export function setupGlobalErrorHandlers(): void {
 export function notFoundHandler(req: Request, res: Response): void {
   const error = {
     message: `Route ${req.method} ${req.path} not found`,
-    code: 'ROUTE_NOT_FOUND',
+    code: "ROUTE_NOT_FOUND",
     timestamp: new Date().toISOString(),
     path: req.path,
     method: req.method,
   };
-  
-  logger.warn('Route not found', {
+
+  logger.warn("Route not found", {
     method: req.method,
     path: req.path,
     ip: req.ip,
-    userAgent: req.get('User-Agent'),
+    userAgent: req.get("User-Agent"),
   });
-  
+
   res.status(404).json({ error });
 }
 

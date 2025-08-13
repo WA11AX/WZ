@@ -6,7 +6,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "noEmit": true,
-    
+
     // Module system
     "module": "ESNext",
     "target": "ES2022",
@@ -17,7 +17,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    
+
     // Type checking (strict mode)
     "strict": true,
     "noImplicitAny": true,
@@ -30,16 +30,16 @@
     "exactOptionalPropertyTypes": false,
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": false,
-    
+
     // Advanced options
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": false,
-    
+
     // React JSX
     "jsx": "preserve",
     "jsxImportSource": "react",
-    
+
     // Path mapping
     "baseUrl": ".",
     "paths": {
@@ -47,7 +47,7 @@
       "@shared/*": ["./shared/*"],
       "@server/*": ["./server/*"]
     },
-    
+
     // Type definitions
     "types": ["node", "vite/client"]
   }

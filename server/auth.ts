@@ -1,6 +1,8 @@
-import crypto from 'crypto';
-import type { Request } from 'express';
-import { telegramConfig, isDevelopment } from './config';
+import crypto from "crypto";
+
+import type { Request } from "express";
+
+import { telegramConfig, isDevelopment } from "./config";
 
 /**
  * Telegram Web App initData validation
@@ -34,21 +36,21 @@ interface TelegramInitData {
  */
 export function validateTelegramInitData(
   initData: string,
-  botToken: string
+  botToken: string,
 ): TelegramInitData | null {
   try {
     // Parse URL-encoded data
     const urlParams = new URLSearchParams(initData);
     const data: Record<string, string> = {};
-    
+
     for (const [key, value] of urlParams.entries()) {
       data[key] = value;
     }
 
     // Extract hash and remove it from data for validation
-    const hash = data.hash;
+    const { hash } = data;
     if (!hash) {
-      console.warn('No hash found in initData');
+      console.warn("No hash found in initData");
       return null;
     }
     delete data.hash;
@@ -56,38 +58,35 @@ export function validateTelegramInitData(
     // Create data-check-string
     const dataCheckString = Object.keys(data)
       .sort()
-      .map(key => `${key}=${data[key]}`)
-      .join('\n');
+      .map((key) => `${key}=${data[key]}`)
+      .join("\n");
 
     // Create secret key
-    const secretKey = crypto
-      .createHmac('sha256', 'WebAppData')
-      .update(botToken)
-      .digest();
+    const secretKey = crypto.createHmac("sha256", "WebAppData").update(botToken).digest();
 
     // Calculate expected hash
     const expectedHash = crypto
-      .createHmac('sha256', secretKey)
+      .createHmac("sha256", secretKey)
       .update(dataCheckString)
-      .digest('hex');
+      .digest("hex");
 
     // Verify hash
     if (hash !== expectedHash) {
-      console.warn('Invalid initData hash');
+      console.warn("Invalid initData hash");
       return null;
     }
 
     // Parse auth_date and validate timestamp
     const authDate = parseInt(data.auth_date);
     if (isNaN(authDate)) {
-      console.warn('Invalid auth_date in initData');
+      console.warn("Invalid auth_date in initData");
       return null;
     }
 
     // Check if data is not older than 24 hours (86400 seconds)
     const currentTime = Math.floor(Date.now() / 1000);
     if (currentTime - authDate > 86400) {
-      console.warn('initData is too old');
+      console.warn("initData is too old");
       return null;
     }
 
@@ -97,7 +96,7 @@ export function validateTelegramInitData(
       try {
         user = JSON.parse(data.user);
       } catch (error) {
-        console.warn('Failed to parse user data:', error);
+        console.warn("Failed to parse user data:", error);
         return null;
       }
     }
@@ -108,10 +107,10 @@ export function validateTelegramInitData(
       chat_type: data.chat_type,
       auth_date: authDate,
       hash,
-      ...data
+      ...data,
     };
   } catch (error) {
-    console.error('Error validating Telegram initData:', error);
+    console.error("Error validating Telegram initData:", error);
     return null;
   }
 }
@@ -122,36 +121,36 @@ export function validateTelegramInitData(
  * @returns Validated Telegram data or null
  */
 export function extractTelegramData(req: Request): TelegramInitData | null {
-  const initData = req.headers['x-telegram-init-data'] as string;
-  const botToken = telegramConfig.botToken;
+  const initData = req.headers["x-telegram-init-data"] as string;
+  const { botToken } = telegramConfig;
 
   if (!initData) {
-    console.warn('No x-telegram-init-data header found');
+    console.warn("No x-telegram-init-data header found");
     return null;
   }
 
   if (!botToken) {
-    console.error('TELEGRAM_BOT_TOKEN not configured');
+    console.error("TELEGRAM_BOT_TOKEN not configured");
     return null;
   }
 
   // In development, allow bypassing validation for testing
   if (telegramConfig.skipValidation) {
-    console.warn('⚠️ Skipping Telegram validation in development mode');
+    console.warn("⚠️ Skipping Telegram validation in development mode");
     try {
       const urlParams = new URLSearchParams(initData);
-      const userData = urlParams.get('user');
+      const userData = urlParams.get("user");
       if (userData) {
         const user = JSON.parse(userData);
-        console.log('🔧 Development mode - using mock user:', user.first_name);
+        console.log("🔧 Development mode - using mock user:", user.first_name);
         return {
           user,
           auth_date: Math.floor(Date.now() / 1000),
-          hash: 'dev-mode'
+          hash: "dev-mode",
         };
       }
     } catch (error) {
-      console.warn('Failed to parse development initData:', error);
+      console.warn("Failed to parse development initData:", error);
     }
     return null;
   }
@@ -164,17 +163,17 @@ export function extractTelegramData(req: Request): TelegramInitData | null {
  */
 export function telegramAuthMiddleware(req: Request, res: any, next: any) {
   const telegramData = extractTelegramData(req);
-  
-  if (!telegramData || !telegramData.user) {
-    return res.status(401).json({ 
-      error: 'Unauthorized', 
-      message: 'Invalid or missing Telegram authentication data' 
+
+  if (!telegramData?.user) {
+    return res.status(401).json({
+      error: "Unauthorized",
+      message: "Invalid or missing Telegram authentication data",
     });
   }
 
   // Add Telegram data to request for use in routes
   (req as any).telegramData = telegramData;
   (req as any).telegramUser = telegramData.user;
-  
+
   next();
 }

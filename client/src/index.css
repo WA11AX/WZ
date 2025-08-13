@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,7 +24,7 @@
   --input: hsl(214.3, 31.8%, 91.4%);
   --ring: hsl(222.2, 84%, 4.9%);
   --radius: 0.75rem;
-  
+
   /* Custom tournament app colors */
   --telegram-blue: hsl(201, 100%, 40%);
   --trophy-gold: hsl(51, 100%, 50%);
@@ -61,7 +61,13 @@
   }
   body {
     @apply bg-gray-100 text-foreground font-inter;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      sans-serif;
   }
 }
 
@@ -91,52 +97,57 @@
     background-color: var(--entry-orange);
   }
   .font-inter {
-    font-family: 'Inter', sans-serif;
+    font-family: "Inter", sans-serif;
   }
-  
+
   /* Gradient utilities */
   .gradient-blue {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   }
-  
+
   .gradient-green {
     background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
   }
-  
+
   .gradient-orange {
     background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   }
-  
+
   .gradient-purple {
     background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   }
-  
+
   /* Glass effect */
   .glass {
     backdrop-filter: blur(10px);
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
-  
+
   .glass-dark {
     backdrop-filter: blur(10px);
     background: rgba(0, 0, 0, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
-  
+
   /* Card shadows */
   .shadow-tournament {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow:
+      0 10px 25px -5px rgba(0, 0, 0, 0.1),
+      0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
-  
+
   .shadow-tournament-hover {
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15), 0 10px 20px -5px rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 20px 40px -10px rgba(0, 0, 0, 0.15),
+      0 10px 20px -5px rgba(0, 0, 0, 0.1);
   }
 }
 
 /* Custom animations */
 @keyframes pulse-dot {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -145,7 +156,8 @@
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px);
   }
   50% {
@@ -163,7 +175,8 @@
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
   }
   50% {
@@ -181,7 +194,7 @@
 
 .animate-shimmer {
   animation: shimmer 2s infinite linear;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
   background-size: 200px 100%;
 }
 
