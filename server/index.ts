@@ -1,6 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { config, validateCriticalSecrets, isDevelopment } from "./config";
+import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from "./errorHandler";
+
+// Setup global error handlers first
+setupGlobalErrorHandlers();
+
+// Validate critical secrets before starting the server
+validateCriticalSecrets();
 
 const app = express();
 app.use(express.json());
@@ -39,18 +47,16 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
+  // 404 handler for unknown routes
+  app.use(notFoundHandler);
+  
+  // Global error handler
+  app.use(errorHandler);
 
   // importantly only setup vite in development and after
   // setting up all the other routes so the catch-all route
   // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  if (isDevelopment) {
     await setupVite(app, server);
   } else {
     serveStatic(app);
@@ -60,12 +66,16 @@ app.use((req, res, next) => {
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || '5000', 10);
+  const port = config.PORT;
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`🚀 Server running on port ${port} (${config.NODE_ENV})`);
+    if (isDevelopment) {
+      log(`📱 Frontend: http://localhost:${port}`);
+      log(`🔗 API: http://localhost:${port}/api`);
+    }
   });
 })();
