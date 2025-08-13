@@ -24,7 +24,7 @@ export default function Header() {
       <div className="max-w-sm mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <Trophy className="text-trophy-gold w-6 h-6" />
-          <h1 className="text-lg font-semibold text-gray-900">Tournaments</h1>
+          <h1 className="text-lg font-semibold text-gray-900 ml-[100px] mr-[100px]">Wrzone</h1>
         </div>
         <div className="flex items-center space-x-3">
           {/* User Stars Balance */}
