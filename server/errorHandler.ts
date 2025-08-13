@@ -114,7 +114,7 @@ function sanitizeErrorForClient(error: AppError): Record<string, unknown> {
 /**
  * Determine if error is operational (safe to expose) or programming error
  */
-function isOperationalError(error: AppError): boolean {
+function _isOperationalError(error: AppError): boolean {
   return error.isOperational === true;
 }
 

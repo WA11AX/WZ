@@ -18,7 +18,7 @@ export const db = drizzle({ client: pool, schema });
 // Health check function
 export async function checkDatabaseConnection(): Promise<boolean> {
   try {
-    const result = await db.execute(sql`SELECT 1`);
+    await db.execute(sql`SELECT 1`);
     console.log("Database connection successful");
     return true;
   } catch (error) {

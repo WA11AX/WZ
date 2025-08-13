@@ -27,14 +27,14 @@ export const createRateLimiter = (windowMs: number = 15 * 60 * 1000, max: number
   // Simple in-memory rate limiter (for production, use Redis)
   const requests = new Map<string, { count: number; resetTime: number }>();
 
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, _next: NextFunction) => {
     const key = `${req.ip}:${req.url}`;
     const now = Date.now();
     const window = requests.get(key);
 
     if (!window || now > window.resetTime) {
       requests.set(key, { count: 1, resetTime: now + windowMs });
-      return next();
+      return _next();
     }
 
     if (window.count >= max) {
@@ -45,17 +45,17 @@ export const createRateLimiter = (windowMs: number = 15 * 60 * 1000, max: number
     }
 
     window.count++;
-    next();
+    _next();
   };
 };
 
 // API key validation middleware
-export const validateApiKey = (req: Request, res: Response, next: NextFunction) => {
+export const validateApiKey = (req: Request, res: Response, _next: NextFunction) => {
   const apiKey = req.headers["x-api-key"] as string;
   const validApiKey = process.env.API_KEY;
 
   if (!validApiKey) {
-    return next(); // Skip validation if no API key is configured
+    return _next(); // Skip validation if no API key is configured
   }
 
   if (!apiKey || apiKey !== validApiKey) {
@@ -65,22 +65,22 @@ export const validateApiKey = (req: Request, res: Response, next: NextFunction) 
     });
   }
 
-  next();
+  _next();
 };
 
 // Basic authentication middleware
-export const requireAuth = (req: RequestWithSession, res: Response, next: NextFunction) => {
+export const requireAuth = (req: RequestWithSession, res: Response, _next: NextFunction) => {
   if (!req.session?.user?.id) {
     return res.status(401).json({
       error: "Authentication required",
       code: "UNAUTHORIZED",
     });
   }
-  next();
+  _next();
 };
 
 // Admin-only middleware
-export const requireAdmin = (req: RequestWithSession, res: Response, next: NextFunction) => {
+export const requireAdmin = (req: RequestWithSession, res: Response, _next: NextFunction) => {
   if (!req.session?.user?.id) {
     return res.status(401).json({
       error: "Authentication required",
@@ -95,12 +95,12 @@ export const requireAdmin = (req: RequestWithSession, res: Response, next: NextF
     });
   }
 
-  next();
+  _next();
 };
 
 // Input validation middleware
 export const validateInput = (schema: any) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, _next: NextFunction) => {
     try {
       const result = schema.safeParse(req.body);
       if (!result.success) {
@@ -111,7 +111,7 @@ export const validateInput = (schema: any) => {
         });
       }
       req.body = result.data;
-      next();
+      _next();
     } catch (error) {
       res.status(500).json({
         error: "Internal server error during validation",
@@ -140,7 +140,7 @@ export const corsOptions = {
 };
 
 // Security headers middleware
-export const securityHeaders = (req: Request, res: Response, next: NextFunction) => {
+export const securityHeaders = (req: Request, res: Response, _next: NextFunction) => {
   // Security headers
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
@@ -156,11 +156,11 @@ export const securityHeaders = (req: Request, res: Response, next: NextFunction)
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;",
   );
 
-  next();
+  _next();
 };
 
 // Request logging middleware
-export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
+export const requestLogger = (req: Request, res: Response, _next: NextFunction) => {
   const start = Date.now();
   const { method } = req;
   const { url } = req;
@@ -177,11 +177,11 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
     );
   });
 
-  next();
+  _next();
 };
 
 // Error handling middleware
-export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
   console.error("Error:", err);
 
   // Default error response
@@ -218,7 +218,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
 };
 
 // Health check endpoint
-export const healthCheck = (req: Request, res: Response) => {
+export const healthCheck = (req: Request, res: Response, _next: NextFunction) => {
   const health = {
     status: "ok",
     timestamp: new Date().toISOString(),
@@ -231,7 +231,7 @@ export const healthCheck = (req: Request, res: Response) => {
 };
 
 // Not found middleware
-export const notFound = (req: Request, res: Response) => {
+export const notFound = (req: Request, res: Response, _next: NextFunction) => {
   res.status(404).json({
     error: `Route ${req.method} ${req.path} not found`,
     code: "NOT_FOUND",

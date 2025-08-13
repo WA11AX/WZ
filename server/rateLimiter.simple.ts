@@ -20,3 +20,7 @@ export const uploadLimiter = generalLimiter;
 export function createCustomLimiter(options: any) {
   return generalLimiter;
 }
+
+export function createSimpleRateLimit(_limit: number, _window: number, _options: any) {
+  // Placeholder for simple rate limiting implementation
+}

@@ -75,7 +75,7 @@ function sanitizeString(input: string): string {
     .replace(/on\w+\s*=/gi, "") // Remove event handlers
     .replace(/javascript:/gi, "") // Remove javascript URLs
     .replace(/data:/gi, "") // Remove data URLs
-    .replace(/[\x00-\x1F\x7F]/g, "") // Remove control characters
+    .replace(/[\x01-\x1f\x7f-\x9f]/g, "") // Remove control characters
     .trim();
 }
 

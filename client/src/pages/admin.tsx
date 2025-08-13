@@ -1,6 +1,7 @@
 import type { Tournament, User } from "@shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { ArrowLeft, Plus, Edit, Trash2, Trophy, Users, Settings } from "lucide-react";
+import * as React from "react";
 import { useState } from "react";
 import { useLocation } from "wouter";
 

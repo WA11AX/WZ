@@ -1,4 +1,4 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { Express } from "express";
 
 import { config, validateCriticalSecrets, isDevelopment } from "./config";
 import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from "./errorHandler";
