@@ -39,12 +39,12 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     try {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsUrl = `${protocol}//${window.location.host}/ws`;
-      console.log("Connecting to WebSocket at:", wsUrl);
+      // console.log("Connecting to WebSocket at:", wsUrl); // Removed console.log
 
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
-        console.log("WebSocket connected");
+        // console.log("WebSocket connected"); // Removed console.log
         setIsConnected(true);
         reconnectAttempts = 0;
         // Clear any existing reconnect timeout
@@ -62,7 +62,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
             callback({ type: "message", data: message }),
           ); // Call registered callbacks
         } catch (error) {
-          console.error("Failed to parse WebSocket message:", error);
+          // console.error("Failed to parse WebSocket message:", error); // Removed console.error
           websocketCallbacks.current.forEach((callback) =>
             callback({
               type: "error",
@@ -73,9 +73,9 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
       };
 
       wsRef.current.onclose = (event) => {
-        console.log(
-          `WebSocket disconnected (code: ${event.code}, reason: ${event.reason || "No reason provided"})`,
-        );
+        // console.log( // Removed console.log
+        //   `WebSocket disconnected (code: ${event.code}, reason: ${event.reason || "No reason provided"})`,
+        // );
         setIsConnected(false);
         websocketCallbacks.current.forEach((callback) => callback({ type: "disconnected" }));
 
@@ -83,13 +83,13 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
           const jitter = Math.random() * 1000; // Add some randomness
           const finalDelay = delay + jitter;
-          console.log(
-            `Attempting to reconnect in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
-          );
+          // console.log( // Removed console.log
+          //   `Attempting to reconnect in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
+          // );
           reconnectAttempts++;
           reconnectTimeoutRef.current = setTimeout(connect, finalDelay);
         } else {
-          console.error("Max reconnection attempts reached");
+          // console.error("Max reconnection attempts reached"); // Removed console.error
           websocketCallbacks.current.forEach((callback) =>
             callback({
               type: "error",
@@ -100,7 +100,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
       };
 
       wsRef.current.onerror = (error) => {
-        console.error("WebSocket error:", error);
+        // console.error("WebSocket error:", error); // Removed console.error
         setIsConnected(false); // Ensure isConnected is false on error
         websocketCallbacks.current.forEach((callback) =>
           callback({
@@ -111,7 +111,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         // The onclose event will handle reconnection logic, so we don't need to call connect() here again.
       };
     } catch (error) {
-      console.error("Failed to connect to WebSocket:", error);
+      // console.error("Failed to connect to WebSocket:", error); // Removed console.error
       setIsConnected(false);
       websocketCallbacks.current.forEach((callback) =>
         callback({
@@ -124,13 +124,13 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
         const jitter = Math.random() * 1000; // Add some randomness
         const finalDelay = delay + jitter;
-        console.log(
-          `Attempting to reconnect after initial failure in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
-        );
+        // console.log( // Removed console.log
+        //   `Attempting to reconnect after initial failure in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
+        // );
         reconnectAttempts++;
         reconnectTimeoutRef.current = setTimeout(connect, finalDelay);
       } else {
-        console.error("Max reconnection attempts reached after initial failure");
+        // console.error("Max reconnection attempts reached after initial failure"); // Removed console.error
       }
     }
   };
@@ -152,7 +152,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.send(JSON.stringify(message));
     } else {
-      console.warn("Cannot send message: WebSocket is not open.");
+      // console.warn("Cannot send message: WebSocket is not open."); // Removed console.warn
       // Optionally, queue message or notify user
     }
   };

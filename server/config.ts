@@ -151,15 +151,13 @@ export const loggingConfig = {
  * Validate critical secrets on startup
  */
 export function validateCriticalSecrets() {
-  const criticalSecrets = ["DATABASE_URL", "TELEGRAM_BOT_TOKEN", "SESSION_SECRET"];
+  // Validate critical secrets
+  const missingSecrets = [];
+  if (!dbConfig.url) missingSecrets.push("DATABASE_URL");
+  if (!telegramConfig.botToken) missingSecrets.push("TELEGRAM_BOT_TOKEN");
 
-  const missing = criticalSecrets.filter((secret) => !process.env[secret]);
-
-  if (missing.length > 0) {
-    console.error("❌ Critical secrets missing:");
-    missing.forEach((secret) => console.error(`  - ${secret}`));
-    console.error("\n🔒 Application cannot start without these secrets.");
-    process.exit(1);
+  if (missingSecrets.length > 0) {
+    throw new Error(`Missing required environment variables: ${missingSecrets.join(", ")}`);
   }
 
   // Validate secret strength
@@ -173,8 +171,6 @@ export function validateCriticalSecrets() {
     console.error("❌ TELEGRAM_BOT_TOKEN format is invalid");
     process.exit(1);
   }
-
-  console.log("✅ All critical secrets validated");
 }
 
 /**

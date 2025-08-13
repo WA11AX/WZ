@@ -132,9 +132,13 @@ export function processStarsPayment(amount: number, tournamentId: string): Promi
 }
 
 export function getAuthHeaders(): Record<string, string> {
-  const user = getTelegramUser();
+  const initData = window.Telegram?.WebApp?.initData;
+  if (!initData) {
+    return {};
+  }
+
   return {
-    "X-Telegram-User-Id": user?.id?.toString() || "mock-user",
+    "x-telegram-init-data": initData,
   };
 }
 
