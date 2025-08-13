@@ -1,23 +1,30 @@
 {
   "name": "rest-express",
   "version": "1.0.0",
-  "type": "module",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
     "db:push": "drizzle-kit push",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "dev": "NODE_ENV=development tsx server/index.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "prepare": "if [ -z \"$CI\" ]; then npm run validate; fi",
+    "start": "NODE_ENV=production node dist/index.js",
     "test": "echo \"Add test script here\"",
     "test:coverage": "echo \"Add test coverage script here\"",
     "type-check": "tsc --noEmit",
-    "validate": "npm run lint:check && npm run format:check && npm run type-check",
-    "prepare": "husky"
+    "validate": "npm run lint:check && npm run format:check && npm run type-check"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ],
+    "*.{json,md,css,scss}": "prettier --write"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -125,12 +132,5 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "prettier --write",
-      "eslint --fix"
-    ],
-    "*.{json,md,css,scss}": "prettier --write"
   }
 }
