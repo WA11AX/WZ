@@ -2,6 +2,7 @@ import type { Tournament } from '@shared/schema';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Trophy, Star, Plus } from 'lucide-react';
 import { useLocation } from 'wouter';
+import { useEffect } from 'react';
 
 import Header from '@/components/header';
 import TournamentCard from '@/components/tournament-card';
@@ -10,12 +11,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 import { queryClient } from '@/lib/queryClient';
-import { getAuthHeaders, processStarsPayment } from '@/lib/telegram';
-import { useWebSocket, type WebSocketMessage } from '@/lib/websocket';
+import { useTelegram } from '@/services/telegram';
+import { useWebSocketService, type WebSocketMessage } from '@/services/websocket';
 
 export default function TournamentsPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const { getAuthHeaders, processStarsPayment } = useTelegram();
+  const { addCallback } = useWebSocketService();
 
   // Fetch tournaments
   const { data: tournaments = [], isLoading: tournamentsLoading } = useQuery({
@@ -76,19 +79,21 @@ export default function TournamentsPage() {
   });
 
   // WebSocket for real-time updates
-  useWebSocket((message: WebSocketMessage) => {
-    switch (message.type) {
-      case 'tournament_created':
-      case 'tournament_updated':
-      case 'tournament_registration':
-      case 'tournament_unregistration':
-        queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
-        break;
-      case 'tournament_deleted':
-        queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
-        break;
-    }
-  });
+  useEffect(() => {
+    return addCallback((message: WebSocketMessage) => {
+      switch (message.type) {
+        case 'tournament_created':
+        case 'tournament_updated':
+        case 'tournament_registration':
+        case 'tournament_unregistration':
+          queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+          break;
+        case 'tournament_deleted':
+          queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+          break;
+      }
+    });
+  }, [addCallback]);
 
   const handleJoinTournament = async (tournament: Tournament) => {
     if (!user) {
