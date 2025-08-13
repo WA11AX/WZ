@@ -9,7 +9,7 @@ function shouldSkipRateLimit(): boolean {
 
 // Safe key generator for IPv6 compatibility
 function safeKeyGenerator(req: Request, prefix = ""): string {
-  const { telegramUser } = (req as any);
+  const { telegramUser } = req as any;
   if (telegramUser?.id) {
     return `${prefix}${telegramUser.id.toString()}`;
   }
@@ -34,7 +34,7 @@ export const generalLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   keyGenerator: (req: Request) => {
     // Use Telegram user ID if available, otherwise fall back to IP
-    const { telegramUser } = (req as any);
+    const { telegramUser } = req as any;
     if (telegramUser?.id) {
       return telegramUser.id.toString();
     }
@@ -136,9 +136,7 @@ export function createCustomLimiter(options: {
     },
     standardHeaders: true,
     legacyHeaders: false,
-    keyGenerator:
-      options.keyGenerator ||
-      ((req: Request) => safeKeyGenerator(req)),
+    keyGenerator: options.keyGenerator || ((req: Request) => safeKeyGenerator(req)),
     skip: () => {
       return shouldSkipRateLimit();
     },
@@ -174,4 +172,3 @@ export default {
   search: searchLimiter,
   createCustom: createCustomLimiter,
 };
-
