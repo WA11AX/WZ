@@ -94,7 +94,7 @@ The project uses Tailwind CSS with custom configuration:
 The app is designed to work as a Telegram Web App:
 
 ```typescript
-import WebApp from "@twa-dev/sdk";
+import WebApp from '@twa-dev/sdk';
 
 // Initialize Telegram Web App
 WebApp.ready();

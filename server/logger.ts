@@ -1,8 +1,8 @@
-import { Request } from "express";
-import winston from "winston";
+import { Request } from 'express';
+import winston from 'winston';
 
 const logger = winston.createLogger({
-  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.errors({ stack: true }),
@@ -10,18 +10,19 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple(),
-      ),
+      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
     }),
   ],
 });
 
-export function logRequest(req: Request, message: string, level: "info" | "warn" | "error" = "info") {
+export function logRequest(
+  req: Request,
+  message: string,
+  level: 'info' | 'warn' | 'error' = 'info',
+) {
   const userContext = {
     ip: req.ip,
-    userAgent: req.get("User-Agent"),
+    userAgent: req.get('User-Agent'),
     method: req.method,
     url: req.url,
   };
@@ -30,8 +31,8 @@ export function logRequest(req: Request, message: string, level: "info" | "warn"
 }
 
 // Development logging
-if (process.env.NODE_ENV !== "production") {
-  logger.debug("Logger initialized in development mode");
+if (process.env.NODE_ENV !== 'production') {
+  logger.debug('Logger initialized in development mode');
 }
 
 export { logger };

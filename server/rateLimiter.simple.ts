@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from "express";
-import { isDevelopment } from "./config";
+import type { Request, Response, NextFunction } from 'express';
+import { isDevelopment } from './config';
 
 // Simple rate limiter that just passes through in development
 export const generalLimiter = (req: Request, res: Response, next: NextFunction) => {
@@ -25,4 +25,3 @@ export function createSimpleRateLimit() {
   // Placeholder for simple rate limiting implementation
   return generalLimiter;
 }
-

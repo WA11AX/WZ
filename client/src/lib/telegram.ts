@@ -1,23 +1,23 @@
 // Use the global Telegram WebApp object from types/telegram.ts
-import type { TelegramWebApp } from "../types/telegram";
+import type { TelegramWebApp } from '../types/telegram';
 
 let webApp: TelegramWebApp | null = null;
 
 export function initTelegram() {
   try {
-    console.log("Initializing Telegram Web App");
+    console.log('Initializing Telegram Web App');
 
     // Get the WebApp from window object
     const WebApp = window.Telegram?.WebApp;
 
     if (!WebApp) {
-      console.warn("Telegram WebApp not available");
+      console.warn('Telegram WebApp not available');
       return false;
     }
 
     // Проверяем, что мы внутри Telegram
-    if (!WebApp.initDataUnsafe?.user && process.env.NODE_ENV === "production") {
-      console.warn("Not running inside Telegram Web App");
+    if (!WebApp.initDataUnsafe?.user && process.env.NODE_ENV === 'production') {
+      console.warn('Not running inside Telegram Web App');
       return false;
     }
 
@@ -26,10 +26,10 @@ export function initTelegram() {
 
     // Настройка цветовой схемы - these methods might not exist outside Telegram
     if (WebApp.setHeaderColor) {
-      WebApp.setHeaderColor("#1f2937");
+      WebApp.setHeaderColor('#1f2937');
     }
     if (WebApp.setBottomBarColor) {
-      WebApp.setBottomBarColor("#ffffff");
+      WebApp.setBottomBarColor('#ffffff');
     }
 
     // Скрываем главную кнопку по умолчанию
@@ -41,7 +41,7 @@ export function initTelegram() {
 
     return true;
   } catch (error) {
-    console.error("Failed to initialize Telegram Web App:", error);
+    console.error('Failed to initialize Telegram Web App:', error);
     return false;
   }
 }
@@ -60,7 +60,7 @@ export function getTelegramUser() {
   try {
     return window.Telegram?.WebApp?.initDataUnsafe?.user || null;
   } catch (error) {
-    console.error("Failed to get Telegram user:", error);
+    console.error('Failed to get Telegram user:', error);
     return null;
   }
 }
@@ -74,7 +74,7 @@ export function showMainButton(text: string, onClick: () => void) {
       WebApp.MainButton.onClick(onClick);
     }
   } catch (error) {
-    console.error("Failed to show main button:", error);
+    console.error('Failed to show main button:', error);
   }
 }
 
@@ -85,7 +85,7 @@ export function hideMainButton() {
       WebApp.MainButton.hide();
     }
   } catch (error) {
-    console.error("Failed to hide main button:", error);
+    console.error('Failed to hide main button:', error);
   }
 }
 
@@ -97,7 +97,7 @@ export function showBackButton(onClick: () => void) {
       WebApp.BackButton.show();
     }
   } catch (error) {
-    console.error("Failed to show back button:", error);
+    console.error('Failed to show back button:', error);
   }
 }
 
@@ -108,7 +108,7 @@ export function hideBackButton() {
       WebApp.BackButton.hide();
     }
   } catch (error) {
-    console.error("Failed to hide back button:", error);
+    console.error('Failed to hide back button:', error);
   }
 }
 
@@ -121,7 +121,7 @@ export function processStarsPayment(amount: number, tournamentId: string): Promi
       const invoiceUrl = `https://t.me/invoice/stars?amount=${amount}&payload=${tournamentId}`;
 
       WebApp.openInvoice(invoiceUrl, (status: string) => {
-        resolve(status === "paid");
+        resolve(status === 'paid');
       });
     } else {
       // Fallback for development/testing
@@ -138,7 +138,7 @@ export function getAuthHeaders(): Record<string, string> {
   }
 
   return {
-    "x-telegram-init-data": initData,
+    'x-telegram-init-data': initData,
   };
 }
 
@@ -152,24 +152,24 @@ export function showAlert(message: string) {
       alert(message);
     }
   } catch (error) {
-    console.error("Failed to show alert:", error);
+    console.error('Failed to show alert:', error);
     alert(message);
   }
 }
 
-export function hapticFeedback(type: "impact" | "notification" | "selection" = "impact") {
+export function hapticFeedback(type: 'impact' | 'notification' | 'selection' = 'impact') {
   try {
     const WebApp = window.Telegram?.WebApp;
     if (!WebApp?.HapticFeedback) return;
 
-    if (type === "impact") {
-      WebApp.HapticFeedback.impactOccurred("medium");
-    } else if (type === "notification") {
-      WebApp.HapticFeedback.notificationOccurred("success");
+    if (type === 'impact') {
+      WebApp.HapticFeedback.impactOccurred('medium');
+    } else if (type === 'notification') {
+      WebApp.HapticFeedback.notificationOccurred('success');
     } else {
       WebApp.HapticFeedback.selectionChanged();
     }
   } catch (error) {
-    console.error("Haptic feedback failed:", error);
+    console.error('Haptic feedback failed:', error);
   }
 }

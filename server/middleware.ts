@@ -1,7 +1,7 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from 'express';
 
 // Extend Express Request type to include session
-declare module "express-session" {
+declare module 'express-session' {
   interface SessionData {
     user?: {
       id: string;
@@ -11,7 +11,7 @@ declare module "express-session" {
 }
 
 interface RequestWithSession extends Request {
-  session: import("express-session").Session & {
+  session: import('express-session').Session & {
     user?: {
       id: string;
       isAdmin: boolean;
@@ -39,7 +39,7 @@ export const createRateLimiter = (windowMs: number = 15 * 60 * 1000, max: number
 
     if (window.count >= max) {
       return res.status(429).json({
-        error: "Too many requests, please try again later.",
+        error: 'Too many requests, please try again later.',
         retryAfter: Math.ceil((window.resetTime - now) / 1000),
       });
     }
@@ -51,7 +51,7 @@ export const createRateLimiter = (windowMs: number = 15 * 60 * 1000, max: number
 
 // API key validation middleware
 export const validateApiKey = (req: Request, res: Response, _next: NextFunction) => {
-  const apiKey = req.headers["x-api-key"] as string;
+  const apiKey = req.headers['x-api-key'] as string;
   const validApiKey = process.env.API_KEY;
 
   if (!validApiKey) {
@@ -60,8 +60,8 @@ export const validateApiKey = (req: Request, res: Response, _next: NextFunction)
 
   if (!apiKey || apiKey !== validApiKey) {
     return res.status(401).json({
-      error: "Invalid or missing API key",
-      code: "UNAUTHORIZED",
+      error: 'Invalid or missing API key',
+      code: 'UNAUTHORIZED',
     });
   }
 
@@ -72,8 +72,8 @@ export const validateApiKey = (req: Request, res: Response, _next: NextFunction)
 export const requireAuth = (req: RequestWithSession, res: Response, _next: NextFunction) => {
   if (!req.session?.user?.id) {
     return res.status(401).json({
-      error: "Authentication required",
-      code: "UNAUTHORIZED",
+      error: 'Authentication required',
+      code: 'UNAUTHORIZED',
     });
   }
   _next();
@@ -83,15 +83,15 @@ export const requireAuth = (req: RequestWithSession, res: Response, _next: NextF
 export const requireAdmin = (req: RequestWithSession, res: Response, _next: NextFunction) => {
   if (!req.session?.user?.id) {
     return res.status(401).json({
-      error: "Authentication required",
-      code: "UNAUTHORIZED",
+      error: 'Authentication required',
+      code: 'UNAUTHORIZED',
     });
   }
 
   if (!req.session.user.isAdmin) {
     return res.status(403).json({
-      error: "Admin access required",
-      code: "FORBIDDEN",
+      error: 'Admin access required',
+      code: 'FORBIDDEN',
     });
   }
 
@@ -105,17 +105,17 @@ export const validateInput = (schema: any) => {
       const result = schema.safeParse(req.body);
       if (!result.success) {
         return res.status(400).json({
-          error: "Invalid input data",
+          error: 'Invalid input data',
           details: result.error.errors,
-          code: "VALIDATION_ERROR",
+          code: 'VALIDATION_ERROR',
         });
       }
       req.body = result.data;
       _next();
     } catch (error) {
       res.status(500).json({
-        error: "Internal server error during validation",
-        code: "INTERNAL_ERROR",
+        error: 'Internal server error during validation',
+        code: 'INTERNAL_ERROR',
       });
     }
   };
@@ -124,7 +124,7 @@ export const validateInput = (schema: any) => {
 // CORS configuration
 export const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || ["http://localhost:5173"];
+    const allowedOrigins = process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'];
 
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
@@ -132,7 +132,7 @@ export const corsOptions = {
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
@@ -142,17 +142,17 @@ export const corsOptions = {
 // Security headers middleware
 export const securityHeaders = (req: Request, res: Response, _next: NextFunction) => {
   // Security headers
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("X-XSS-Protection", "1; mode=block");
-  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Remove potentially sensitive headers
-  res.removeHeader("X-Powered-By");
+  res.removeHeader('X-Powered-By');
 
   // Content Security Policy (basic example)
   res.setHeader(
-    "Content-Security-Policy",
+    'Content-Security-Policy',
     "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;",
   );
 
@@ -164,10 +164,10 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
   const start = Date.now();
   const { method } = req;
   const { url } = req;
-  const userAgent = req.get("User-Agent") || "Unknown";
+  const userAgent = req.get('User-Agent') || 'Unknown';
   const ip = req.ip || req.connection.remoteAddress;
 
-  res.on("finish", () => {
+  res.on('finish', () => {
     const duration = Date.now() - start;
     const status = res.statusCode;
 
@@ -183,35 +183,35 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
 // Error handling middleware
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error("Error:", err);
+  console.error('Error:', err);
 
   // Default error response
   const error = {
-    error: "Internal server error",
-    code: "INTERNAL_ERROR",
-    ...(process.env.NODE_ENV === "development" && { stack: err.stack }),
+    error: 'Internal server error',
+    code: 'INTERNAL_ERROR',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
   };
 
   // Handle specific error types
-  if (err.name === "ValidationError") {
+  if (err.name === 'ValidationError') {
     return res.status(400).json({
-      error: "Validation failed",
+      error: 'Validation failed',
       details: err.details,
-      code: "VALIDATION_ERROR",
+      code: 'VALIDATION_ERROR',
     });
   }
 
-  if (err.name === "UnauthorizedError") {
+  if (err.name === 'UnauthorizedError') {
     return res.status(401).json({
-      error: "Unauthorized access",
-      code: "UNAUTHORIZED",
+      error: 'Unauthorized access',
+      code: 'UNAUTHORIZED',
     });
   }
 
-  if (err.code === "ECONNREFUSED") {
+  if (err.code === 'ECONNREFUSED') {
     return res.status(503).json({
-      error: "Service temporarily unavailable",
-      code: "SERVICE_UNAVAILABLE",
+      error: 'Service temporarily unavailable',
+      code: 'SERVICE_UNAVAILABLE',
     });
   }
 
@@ -222,11 +222,11 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const healthCheck = (_req: Request, res: Response, _next: NextFunction) => {
   const health = {
-    status: "ok",
+    status: 'ok',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || "unknown",
-    version: process.env.npm_package_version || "unknown",
+    environment: process.env.NODE_ENV || 'unknown',
+    version: process.env.npm_package_version || 'unknown',
   };
 
   res.status(200).json(health);
@@ -236,7 +236,6 @@ export const healthCheck = (_req: Request, res: Response, _next: NextFunction) =
 export const notFound = (req: Request, res: Response) => {
   res.status(404).json({
     error: `Route ${req.method} ${req.path} not found`,
-    code: "NOT_FOUND",
+    code: 'NOT_FOUND',
   });
 };
-
