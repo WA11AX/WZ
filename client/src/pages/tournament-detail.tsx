@@ -129,7 +129,7 @@ export default function TournamentDetailPage() {
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Payment Error',
         description: 'Failed to process payment',

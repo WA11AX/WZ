@@ -23,7 +23,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const data = JSON.parse(message.toString());
         console.log('Received:', data);
-      } catch (error) {
+      } catch (_error) {
         console.error('Invalid WebSocket message:', error);
       }
     });
@@ -66,7 +66,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       res.json(user);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting user:', error);
       res.status(500).json({
         message: 'Failed to get user',
@@ -80,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const tournaments = await storage.getTournaments();
       res.json(tournaments);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching tournaments:', error);
       res.status(500).json({
         message: 'Failed to fetch tournaments',
@@ -96,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Tournament not found' });
       }
       res.json(tournament);
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({ message: 'Failed to fetch tournament' });
     }
   });
@@ -121,7 +121,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         broadcast({ type: 'tournament_created', tournament });
 
         res.status(201).json(tournament);
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof z.ZodError) {
           return res.status(400).json({ message: 'Invalid tournament data', errors: error.errors });
         }
@@ -156,7 +156,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       broadcast({ type: 'tournament_updated', tournament });
 
       res.json(tournament);
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({ message: 'Failed to update tournament' });
     }
   });
@@ -179,7 +179,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       broadcast({ type: 'tournament_deleted', tournamentId: req.params.id });
 
       res.json({ success: true });
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({ message: 'Failed to delete tournament' });
     }
   });
@@ -228,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           tournament: updatedTournament,
           user: updatedUser,
         });
-      } catch (error) {
+      } catch (_error) {
         res.status(500).json({ message: 'Failed to register for tournament' });
       }
     },
@@ -265,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           tournament: updatedTournament,
           user: updatedUser,
         });
-      } catch (error) {
+      } catch (_error) {
         res.status(500).json({ message: 'Failed to unregister from tournament' });
       }
     },
@@ -283,7 +283,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       res.json(participants.filter(Boolean));
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({ message: 'Failed to fetch participants' });
     }
   });

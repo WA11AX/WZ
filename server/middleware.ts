@@ -112,7 +112,7 @@ export const validateInput = (schema: any) => {
       }
       req.body = result.data;
       _next();
-    } catch (error) {
+    } catch (_error) {
       res.status(500).json({
         error: 'Internal server error during validation',
         code: 'INTERNAL_ERROR',
@@ -181,7 +181,6 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
 };
 
 // Error handling middleware
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Error:', err);
 
@@ -219,7 +218,6 @@ export const errorHandler = (err: any, _req: Request, res: Response, _next: Next
 };
 
 // Health check endpoint
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const healthCheck = (_req: Request, res: Response, _next: NextFunction) => {
   const health = {
     status: 'ok',

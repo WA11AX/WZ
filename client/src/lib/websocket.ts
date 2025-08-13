@@ -101,7 +101,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         );
         // The onclose event will handle reconnection logic, so we don't need to call connect() here again.
       };
-    } catch (error) {
+    } catch (_error) {
       // console.error("Failed to connect to WebSocket:", error); // Removed console.error
       setIsConnected(false);
       websocketCallbacks.current.forEach((callback) =>
