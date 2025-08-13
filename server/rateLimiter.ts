@@ -138,7 +138,7 @@ export function createCustomLimiter(options: {
     legacyHeaders: false,
     keyGenerator:
       options.keyGenerator ||
-      ((req: Request) => safeKeyGenerator(req)),
+      ((_req: Request) => safeKeyGenerator(_req)),
     skip: (req: Request) => {
       return shouldSkipRateLimit();
     },

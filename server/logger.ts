@@ -1,4 +1,4 @@
-import { loggingConfig, isDevelopment, maskSecret } from "./config";
+import { loggingConfig, maskSecret } from "./config";
 
 export interface LogLevel {
   ERROR: 0;

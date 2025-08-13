@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express from "express";
 
 import { config, validateCriticalSecrets, isDevelopment } from "./config";
 import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from "./errorHandler";

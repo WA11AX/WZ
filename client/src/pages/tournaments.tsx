@@ -1,4 +1,4 @@
-import type { Tournament, User } from "@shared/schema";
+import type { Tournament } from "@shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Trophy, Star, Plus } from "lucide-react";
 import { useEffect } from "react";

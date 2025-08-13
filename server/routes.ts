@@ -1,6 +1,6 @@
 import { createServer, type Server } from "http";
 
-import { selectUserSchema, insertTournamentSchema } from "@shared/schema";
+import { insertTournamentSchema } from "@shared/schema";
 import type { Express } from "express";
 import { WebSocketServer, WebSocket } from "ws";
 import { z } from "zod";

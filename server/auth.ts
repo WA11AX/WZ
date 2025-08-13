@@ -2,7 +2,7 @@ import crypto from "crypto";
 
 import type { Request } from "express";
 
-import { telegramConfig, isDevelopment } from "./config";
+import { telegramConfig } from "./config";
 
 /**
  * Telegram Web App initData validation
