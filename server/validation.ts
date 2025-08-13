@@ -88,7 +88,7 @@ function secureString(
     pattern?: RegExp;
     allowEmpty?: boolean;
     sanitize?: boolean;
-  } = {},
+  } = {}
 ) {
   return z
     .string()
@@ -117,7 +117,7 @@ function secureString(
         }
         return true;
       },
-      { message: "Value cannot be empty" },
+      { message: "Value cannot be empty" }
     )
     .refine(
       (val) => {
@@ -126,7 +126,7 @@ function secureString(
         }
         return true;
       },
-      { message: `Minimum length is ${options.minLength}` },
+      { message: `Minimum length is ${options.minLength}` }
     )
     .refine(
       (val) => {
@@ -135,7 +135,7 @@ function secureString(
         }
         return true;
       },
-      { message: `Maximum length is ${options.maxLength}` },
+      { message: `Maximum length is ${options.maxLength}` }
     )
     .refine(
       (val) => {
@@ -144,7 +144,7 @@ function secureString(
         }
         return true;
       },
-      { message: "Invalid format" },
+      { message: "Invalid format" }
     );
 }
 
@@ -257,7 +257,7 @@ export const createTournamentSchema = z
     {
       message: "End date must be after start date",
       path: ["endDate"],
-    },
+    }
   );
 
 /**
@@ -429,4 +429,3 @@ export default {
   secureString,
   sanitizeString,
 };
-

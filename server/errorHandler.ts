@@ -129,7 +129,7 @@ function getStatusCode(error: AppError): number {
  * Extract user context from request for logging
  */
 function extractUserContext(req: Request): Record<string, unknown> {
-  const { telegramUser } = (req as any);
+  const { telegramUser } = req as any;
   return {
     userId: telegramUser?.id,
     username: telegramUser?.username,
@@ -149,7 +149,7 @@ export function errorHandler(
   req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: NextFunction,
+  _next: NextFunction
 ): void {
   const statusCode = getStatusCode(error);
   const userContext = extractUserContext(req);
@@ -232,7 +232,7 @@ export function handleUncaughtException(error: Error): void {
  * Async error wrapper for route handlers
  */
 export function asyncHandler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>
 ) {
   return (req: Request, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
@@ -307,4 +307,3 @@ export default {
   createSecurityError,
   createDatabaseError,
 };
-
