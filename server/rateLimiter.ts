@@ -48,20 +48,6 @@ export const generalLimiter = rateLimit({
   },
 });
 
-// Strict limiter for authentication attempts - 5 requests per 15 minutes
-export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 auth attempts per windowMs
-  message: {
-    error: 'Too many authentication attempts',
-    message: 'Too many authentication attempts, please try again later.',
-    retryAfter: '15 minutes',
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: true, // Don't count successful requests
-});
-
 // Tournament creation limiter - 10 requests per hour
 export const tournamentCreationLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
@@ -74,6 +60,7 @@ export const tournamentCreationLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req: Request) => safeKeyGenerator(req),
+  skip: () => shouldSkipRateLimit(),
 });
 
 // Tournament registration limiter - 20 requests per 10 minutes
@@ -88,6 +75,7 @@ export const tournamentRegistrationLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req: Request) => safeKeyGenerator(req),
+  skip: () => shouldSkipRateLimit(),
 });
 
 // Admin operations limiter - 50 requests per 15 minutes
@@ -102,19 +90,7 @@ export const adminLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req: Request) => safeKeyGenerator(req, 'admin_'),
-});
-
-// WebSocket connection limiter - 10 connections per minute
-export const websocketLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 10, // Limit WebSocket connections
-  message: {
-    error: 'WebSocket connection limit exceeded',
-    message: 'Too many WebSocket connection attempts.',
-    retryAfter: '1 minute',
-  },
-  standardHeaders: true,
-  legacyHeaders: false,
+  skip: () => shouldSkipRateLimit(),
 });
 
 /**
@@ -143,32 +119,10 @@ export function createCustomLimiter(options: {
   });
 }
 
-/**
- * Rate limiter for file uploads
- */
-export const uploadLimiter = createCustomLimiter({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 uploads per 15 minutes
-  message: 'Too many file uploads. Please try again later.',
-});
-
-/**
- * Rate limiter for search operations
- */
-export const searchLimiter = createCustomLimiter({
-  windowMs: 60 * 1000, // 1 minute
-  max: 30, // 30 searches per minute
-  message: 'Too many search requests. Please slow down.',
-});
-
 export default {
   general: generalLimiter,
-  auth: authLimiter,
   tournamentCreation: tournamentCreationLimiter,
   tournamentRegistration: tournamentRegistrationLimiter,
   admin: adminLimiter,
-  websocket: websocketLimiter,
-  upload: uploadLimiter,
-  search: searchLimiter,
   createCustom: createCustomLimiter,
 };
