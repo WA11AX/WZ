@@ -114,7 +114,7 @@
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.4",
-    "esbuild": "^0.25.9",
+    "esbuild": "^0.23",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-import": "^2.28.0",
@@ -126,7 +126,7 @@
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.19.1",
+    "tsx": "^4",
     "typescript": "5.6.3",
     "vite": "^6.3.5"
   },
@@ -134,6 +134,6 @@
     "bufferutil": "^4.0.8"
   },
   "overrides": {
-    "esbuild": "^0.25.9"
+    "esbuild": "^0.23"
   }
 }
