@@ -52,6 +52,9 @@ npm run start
 # Push schema changes to database
 npm run db:push
 
+# Seed demo tournaments (optional)
+npm run seed
+
 # View database configuration
 cat drizzle.config.ts
 ```
