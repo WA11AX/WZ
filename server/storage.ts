@@ -11,6 +11,7 @@ import {
 import { eq, or, desc } from "drizzle-orm";
 
 import { db } from "./db";
+import { logger } from "./logger";
 
 export interface IStorage {
   // User methods
@@ -56,7 +57,7 @@ export class DatabaseStorage implements IStorage {
       const [user] = await db.select().from(users).where(eq(users.id, id));
       return user || undefined;
     } catch (error) {
-      console.error("Error fetching user:", error);
+      logger.error("Error fetching user", { error });
       throw new Error(`Failed to fetch user with id ${id}`);
     }
   }
@@ -66,7 +67,7 @@ export class DatabaseStorage implements IStorage {
       const [user] = await db.select().from(users).where(eq(users.telegramId, telegramId));
       return user || undefined;
     } catch (error) {
-      console.error("Error fetching user by telegram ID:", error);
+      logger.error("Error fetching user by telegram ID", { error });
       throw new Error(`Failed to fetch user with telegram ID ${telegramId}`);
     }
   }
@@ -115,7 +116,7 @@ export class DatabaseStorage implements IStorage {
 
       return tournamentList;
     } catch (error) {
-      console.error("Error fetching tournaments:", error);
+      logger.error("Error fetching tournaments", { error });
       throw new Error("Failed to fetch tournaments");
     }
   }
@@ -251,7 +252,7 @@ export class DatabaseStorage implements IStorage {
         });
       }
     } catch (error) {
-      console.error("Error initializing data:", error);
+      logger.error("Error initializing data", { error });
       // Не прерываем запуск приложения из-за ошибки инициализации
     }
   }
@@ -260,4 +261,4 @@ export class DatabaseStorage implements IStorage {
 export const storage = new DatabaseStorage();
 
 // Initialize sample data on startup
-storage.initializeData().catch(console.error);
+storage.initializeData().catch((error) => logger.error("Error initializing data", { error }));

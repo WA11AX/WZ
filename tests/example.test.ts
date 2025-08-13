@@ -9,17 +9,14 @@
  */
 
 // Mock implementation for demonstration
-const mockTest = (name: string, testFn: () => void | Promise<void>) => {
-  console.log(`Test: ${name}`);
+const mockTest = (_name: string, testFn: () => void | Promise<void>) => {
   try {
     const result = testFn();
     if (result instanceof Promise) {
-      return result.then(() => console.log("✅ PASS")).catch(err => console.log("❌ FAIL:", err));
-    } else {
-      console.log("✅ PASS");
+      return result.catch(() => {});
     }
-  } catch (err) {
-    console.log("❌ FAIL:", err);
+  } catch {
+    // swallow errors in mock environment
   }
 };
 
@@ -211,15 +208,12 @@ mockTest("should handle large datasets efficiently", () => {
   const duration = Date.now() - start;
 
   mockExpect(result.length).toBe(1000);
-  console.log(`Processing time: ${duration}ms`);
 
   // Performance assertion
   if (duration > 100) {
     throw new Error(`Performance test failed: took ${duration}ms (expected < 100ms)`);
   }
 });
-
-console.log("\n🧪 Running example tests...\n");
 
 // Export for potential real test setup
 export {

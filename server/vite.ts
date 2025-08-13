@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import { createServer as createViteServer, createLogger } from "vite";
 
 import viteConfig from "../vite.config";
+import { logger } from "./logger";
 
 const viteLogger = createLogger();
 
@@ -18,7 +19,7 @@ export function log(message: string, source = "express") {
     hour12: true,
   });
 
-  console.log(`${formattedTime} [${source}] ${message}`);
+  logger.info(`${formattedTime} [${source}] ${message}`);
 }
 
 export async function setupVite(app: Express, server: Server) {

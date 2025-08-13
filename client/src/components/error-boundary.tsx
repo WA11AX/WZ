@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import React, { Component } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   children: ReactNode;
@@ -21,8 +22,12 @@ export class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+  override componentDidCatch(error: Error, _errorInfo: React.ErrorInfo) {
+    toast({
+      variant: "destructive",
+      title: "Unexpected error",
+      description: error.message,
+    });
   }
 
   override render() {

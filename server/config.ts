@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { logger } from "./logger";
 
 /**
  * Environment configuration with validation
@@ -64,9 +65,9 @@ function validateEnv() {
     return envSchema.parse(process.env);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.error("❌ Environment validation failed:");
+      logger.error("❌ Environment validation failed:");
       error.errors.forEach((err) => {
-        console.error(`  - ${err.path.join(".")}: ${err.message}`);
+        logger.error(`  - ${err.path.join(".")}: ${err.message}`);
       });
 
       // Show missing required variables
@@ -75,11 +76,11 @@ function validateEnv() {
         .map((err) => err.path.join("."));
 
       if (missingVars.length > 0) {
-        console.error("\n📝 Missing required environment variables:");
+        logger.error("\n📝 Missing required environment variables:");
         missingVars.forEach((varName) => {
-          console.error(`  - ${varName}`);
+          logger.error(`  - ${varName}`);
         });
-        console.error("\n💡 Please check your .env file or environment configuration.");
+        logger.error("\n💡 Please check your .env file or environment configuration.");
       }
     }
 
@@ -162,13 +163,13 @@ export function validateCriticalSecrets() {
 
   // Validate secret strength
   if (config.SESSION_SECRET.length < 32) {
-    console.error("❌ SESSION_SECRET must be at least 32 characters long");
+    logger.error("❌ SESSION_SECRET must be at least 32 characters long");
     process.exit(1);
   }
 
   // Validate Telegram bot token format
   if (!/^\d+:[A-Za-z0-9_-]+$/.test(config.TELEGRAM_BOT_TOKEN)) {
-    console.error("❌ TELEGRAM_BOT_TOKEN format is invalid");
+    logger.error("❌ TELEGRAM_BOT_TOKEN format is invalid");
     process.exit(1);
   }
 }
@@ -195,12 +196,12 @@ export function maskSecret(value: string, visibleChars: number = 4): string {
 
 // Log configuration on startup (with masked secrets)
 if (isDevelopment) {
-  console.log("🔧 Configuration loaded:");
-  console.log(`  - Environment: ${config.NODE_ENV}`);
-  console.log(`  - Port: ${config.PORT}`);
-  console.log(`  - Database: ${maskSecret(config.DATABASE_URL)}`);
-  console.log(`  - Telegram Bot: ${maskSecret(config.TELEGRAM_BOT_TOKEN)}`);
-  console.log(`  - Session Secret: ${maskSecret(config.SESSION_SECRET)}`);
+  logger.debug("🔧 Configuration loaded:");
+  logger.debug(`  - Environment: ${config.NODE_ENV}`);
+  logger.debug(`  - Port: ${config.PORT}`);
+  logger.debug(`  - Database: ${maskSecret(config.DATABASE_URL)}`);
+  logger.debug(`  - Telegram Bot: ${maskSecret(config.TELEGRAM_BOT_TOKEN)}`);
+  logger.debug(`  - Session Secret: ${maskSecret(config.SESSION_SECRET)}`);
 }
 
 export default config;

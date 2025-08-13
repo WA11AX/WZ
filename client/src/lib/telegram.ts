@@ -1,23 +1,22 @@
 // Use the global Telegram WebApp object from types/telegram.ts
 import type { TelegramWebApp } from "../types/telegram";
+import { toast } from "@/hooks/use-toast";
 
 let webApp: TelegramWebApp | null = null;
 
 export function initTelegram() {
   try {
-    console.log("Initializing Telegram Web App");
-
     // Get the WebApp from window object
     const WebApp = window.Telegram?.WebApp;
 
     if (!WebApp) {
-      console.warn("Telegram WebApp not available");
+      toast({ variant: "destructive", description: "Telegram WebApp not available" });
       return false;
     }
 
     // Проверяем, что мы внутри Telegram
     if (!WebApp.initDataUnsafe?.user && process.env.NODE_ENV === "production") {
-      console.warn("Not running inside Telegram Web App");
+      toast({ variant: "destructive", description: "Not running inside Telegram Web App" });
       return false;
     }
 
@@ -41,7 +40,7 @@ export function initTelegram() {
 
     return true;
   } catch (error) {
-    console.error("Failed to initialize Telegram Web App:", error);
+    toast({ variant: "destructive", description: "Failed to initialize Telegram Web App" });
     return false;
   }
 }
@@ -60,7 +59,7 @@ export function getTelegramUser() {
   try {
     return window.Telegram?.WebApp?.initDataUnsafe?.user || null;
   } catch (error) {
-    console.error("Failed to get Telegram user:", error);
+    toast({ variant: "destructive", description: "Failed to get Telegram user" });
     return null;
   }
 }
@@ -74,7 +73,7 @@ export function showMainButton(text: string, onClick: () => void) {
       WebApp.MainButton.onClick(onClick);
     }
   } catch (error) {
-    console.error("Failed to show main button:", error);
+    toast({ variant: "destructive", description: "Failed to show main button" });
   }
 }
 
@@ -85,7 +84,7 @@ export function hideMainButton() {
       WebApp.MainButton.hide();
     }
   } catch (error) {
-    console.error("Failed to hide main button:", error);
+    toast({ variant: "destructive", description: "Failed to hide main button" });
   }
 }
 
@@ -97,7 +96,7 @@ export function showBackButton(onClick: () => void) {
       WebApp.BackButton.show();
     }
   } catch (error) {
-    console.error("Failed to show back button:", error);
+    toast({ variant: "destructive", description: "Failed to show back button" });
   }
 }
 
@@ -108,7 +107,7 @@ export function hideBackButton() {
       WebApp.BackButton.hide();
     }
   } catch (error) {
-    console.error("Failed to hide back button:", error);
+    toast({ variant: "destructive", description: "Failed to hide back button" });
   }
 }
 
@@ -125,8 +124,8 @@ export function processStarsPayment(amount: number, tournamentId: string): Promi
       });
     } else {
       // Fallback for development/testing
-      const confirmed = window.confirm(`Pay ${amount} Telegram Stars to join tournament?`);
-      resolve(confirmed);
+      toast({ description: `Simulated payment of ${amount} Telegram Stars` });
+      resolve(true);
     }
   });
 }
@@ -148,12 +147,11 @@ export function showAlert(message: string) {
     if (WebApp?.showAlert) {
       WebApp.showAlert(message);
     } else {
-      // Fallback to browser alert
-      alert(message);
+      toast({ description: message });
     }
   } catch (error) {
-    console.error("Failed to show alert:", error);
-    alert(message);
+    toast({ variant: "destructive", description: "Failed to show alert" });
+    toast({ description: message });
   }
 }
 
@@ -170,6 +168,6 @@ export function hapticFeedback(type: "impact" | "notification" | "selection" = "
       WebApp.HapticFeedback.selectionChanged();
     }
   } catch (error) {
-    console.error("Haptic feedback failed:", error);
+    toast({ variant: "destructive", description: "Haptic feedback failed" });
   }
 }
