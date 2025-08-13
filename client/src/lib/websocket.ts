@@ -13,7 +13,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
   // `setTimeout` returns different types in browser and Node environments.
   // Using `ReturnType<typeof setTimeout>` keeps the hook portable between
   // environments and avoids build-time type mismatches.
-  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const reconnectTimeoutRef = useRef<number | null>(null);
 
   const connect = () => {
     try {
