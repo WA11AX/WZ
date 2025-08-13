@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 import { telegramAuthMiddleware } from './auth';
 import { telegramConfig, isDevelopment } from './config';
-import * as rateLimiters from './rateLimiter.simple';
+import * as rateLimiters from './rateLimiter';
 import { storage } from './storage';
 
 export async function registerRoutes(app: Express): Promise<Server> {
