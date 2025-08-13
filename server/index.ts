@@ -1,8 +1,9 @@
 import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+
 import { config, validateCriticalSecrets, isDevelopment } from "./config";
 import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from "./errorHandler";
+import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
 
 // Setup global error handlers first
 setupGlobalErrorHandlers();
@@ -16,7 +17,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use((req, res, next) => {
   const start = Date.now();
-  const path = req.path;
+  const { path } = req;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
 
   const originalResJson = res.json;
@@ -34,7 +35,7 @@ app.use((req, res, next) => {
       }
 
       if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
+        logLine = `${logLine.slice(0, 79)}…`;
       }
 
       log(logLine);
@@ -49,7 +50,7 @@ app.use((req, res, next) => {
 
   // 404 handler for unknown routes
   app.use(notFoundHandler);
-  
+
   // Global error handler
   app.use(errorHandler);
 
@@ -67,15 +68,18 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const port = config.PORT;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`🚀 Server running on port ${port} (${config.NODE_ENV})`);
-    if (isDevelopment) {
-      log(`📱 Frontend: http://localhost:${port}`);
-      log(`🔗 API: http://localhost:${port}/api`);
-    }
-  });
+  server.listen(
+    {
+      port,
+      host: "0.0.0.0",
+      reusePort: true,
+    },
+    () => {
+      log(`🚀 Server running on port ${port} (${config.NODE_ENV})`);
+      if (isDevelopment) {
+        log(`📱 Frontend: http://localhost:${port}`);
+        log(`🔗 API: http://localhost:${port}/api`);
+      }
+    },
+  );
 })();

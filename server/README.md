@@ -15,16 +15,19 @@ server/
 ## 🚀 Features
 
 ### API Endpoints
+
 - **Tournament Management**: CRUD operations for tournaments
 - **User Management**: User registration, authentication, and profiles
 - **Real-time Communication**: WebSocket support for live updates
 
 ### Database Integration
+
 - **Drizzle ORM**: Type-safe database operations
 - **PostgreSQL**: Robust relational database
 - **Connection Pooling**: Efficient database connection management
 
 ### Authentication
+
 - **Session-based Auth**: Express sessions with secure storage
 - **Telegram Integration**: Authentication via Telegram Web App
 
@@ -75,15 +78,18 @@ app.get("/api/tournaments", async (req, res) => {
 ## 🔐 Security Features
 
 ### Session Management
+
 - **Secure Sessions**: HTTP-only cookies with secure settings
 - **Session Store**: Persistent session storage
 - **CSRF Protection**: Cross-site request forgery protection
 
 ### Input Validation
+
 - **Zod Schemas**: Runtime type validation using shared schemas
 - **Request Sanitization**: Input sanitization and validation
 
 ### Error Handling
+
 - **Centralized Error Handling**: Consistent error responses
 - **Request Logging**: Comprehensive request/response logging
 
@@ -101,12 +107,14 @@ const newUser = await db.insert(users).values(validatedUserData);
 ## 🔧 Configuration
 
 ### Environment Variables
+
 - `NODE_ENV`: Environment (development/production)
 - `DATABASE_URL`: PostgreSQL connection string
 - `SESSION_SECRET`: Session encryption secret
 - `PORT`: Server port (default: 3000)
 
 ### Middleware Stack
+
 1. **JSON Parser**: Express JSON body parser
 2. **Session Management**: Express session middleware
 3. **Request Logging**: Custom request/response logging
@@ -118,13 +126,13 @@ const newUser = await db.insert(users).values(validatedUserData);
 Real-time features are implemented using WebSockets:
 
 ```typescript
-import { WebSocketServer } from 'ws';
+import { WebSocketServer } from "ws";
 
 // WebSocket server for real-time updates
 const wss = new WebSocketServer({ port: 8080 });
 
-wss.on('connection', (ws) => {
-  ws.on('message', (data) => {
+wss.on("connection", (ws) => {
+  ws.on("message", (data) => {
     // Handle real-time tournament updates
   });
 });

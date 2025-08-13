@@ -58,8 +58,8 @@ export default {
         "entry-orange": "var(--entry-orange)",
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        system: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        inter: ["Inter", "sans-serif"],
+        system: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {

@@ -26,24 +26,24 @@ interface RequestWithSession extends Request {
 export const createRateLimiter = (windowMs: number = 15 * 60 * 1000, max: number = 100) => {
   // Simple in-memory rate limiter (for production, use Redis)
   const requests = new Map<string, { count: number; resetTime: number }>();
-  
+
   return (req: Request, res: Response, next: NextFunction) => {
-    const key = req.ip + ":" + req.url;
+    const key = `${req.ip}:${req.url}`;
     const now = Date.now();
     const window = requests.get(key);
-    
+
     if (!window || now > window.resetTime) {
       requests.set(key, { count: 1, resetTime: now + windowMs });
       return next();
     }
-    
+
     if (window.count >= max) {
       return res.status(429).json({
         error: "Too many requests, please try again later.",
         retryAfter: Math.ceil((window.resetTime - now) / 1000),
       });
     }
-    
+
     window.count++;
     next();
   };
@@ -125,10 +125,10 @@ export const validateInput = (schema: any) => {
 export const corsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     const allowedOrigins = process.env.CORS_ORIGIN?.split(",") || ["http://localhost:5173"];
-    
+
     // Allow requests with no origin (mobile apps, etc.)
     if (!origin) return callback(null, true);
-    
+
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -146,14 +146,14 @@ export const securityHeaders = (req: Request, res: Response, next: NextFunction)
   res.setHeader("X-Frame-Options", "DENY");
   res.setHeader("X-XSS-Protection", "1; mode=block");
   res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-  
+
   // Remove potentially sensitive headers
   res.removeHeader("X-Powered-By");
-  
+
   // Content Security Policy (basic example)
   res.setHeader(
     "Content-Security-Policy",
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;",
   );
 
   next();
@@ -162,18 +162,18 @@ export const securityHeaders = (req: Request, res: Response, next: NextFunction)
 // Request logging middleware
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
-  const method = req.method;
-  const url = req.url;
+  const { method } = req;
+  const { url } = req;
   const userAgent = req.get("User-Agent") || "Unknown";
   const ip = req.ip || req.connection.remoteAddress;
 
   res.on("finish", () => {
     const duration = Date.now() - start;
     const status = res.statusCode;
-    
+
     // Log format: [timestamp] method url status duration ip userAgent
     console.log(
-      `[${new Date().toISOString()}] ${method} ${url} ${status} ${duration}ms ${ip} "${userAgent}"`
+      `[${new Date().toISOString()}] ${method} ${url} ${status} ${duration}ms ${ip} "${userAgent}"`,
     );
   });
 

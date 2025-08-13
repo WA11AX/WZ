@@ -13,6 +13,11 @@ export interface TelegramWebApp {
     show(): void;
     hide(): void;
   };
+  HapticFeedback?: {
+    impactOccurred(style: "light" | "medium" | "heavy"): void;
+    notificationOccurred(type: "error" | "success" | "warning"): void;
+    selectionChanged(): void;
+  };
   BackButton: {
     isVisible: boolean;
     onClick(callback: () => void): void;
@@ -29,7 +34,7 @@ export interface TelegramWebApp {
       language_code?: string;
     };
   };
-  colorScheme: 'light' | 'dark';
+  colorScheme: "light" | "dark";
   themeParams: {
     bg_color?: string;
     text_color?: string;
@@ -40,6 +45,9 @@ export interface TelegramWebApp {
   };
   sendData(data: string): void;
   openInvoice(url: string, callback?: (status: string) => void): void;
+  setBottomBarColor?(color: string): void;
+  setHeaderColor?(color: string): void;
+  showAlert?(message: string): void;
 }
 
 declare global {
