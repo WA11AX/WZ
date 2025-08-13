@@ -116,7 +116,7 @@ const newUser = await db.insert(users).values(validatedUserData);
 - `DATABASE_URL`: PostgreSQL connection string
 - `SESSION_SECRET`: Session encryption secret
 - `TELEGRAM_BOT_TOKEN`: Telegram bot API token
-- `ADMIN_TELEGRAM_ID` (optional): Telegram user ID with admin access
+- `ADMIN_TELEGRAM_ID` (optional): Telegram user ID with admin access. If not set, no user will have admin privileges via Telegram, and admin-only features will be disabled or inaccessible.
 
 ### Middleware Stack
 
