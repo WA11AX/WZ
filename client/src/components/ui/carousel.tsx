@@ -14,7 +14,7 @@ interface CarouselProps {
   opts?: CarouselOptions;
   plugins?: CarouselPlugin;
   orientation?: "horizontal" | "vertical";
-  setApi?: (api: CarouselApi) => void;
+  setApi?: (carouselApi: CarouselApi) => void;
 }
 
 type CarouselContextProps = {

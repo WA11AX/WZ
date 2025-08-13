@@ -75,8 +75,8 @@ const SidebarProvider = React.forwardRef<
     const [_open, _setOpen] = React.useState(defaultOpen);
     const open = openProp ?? _open;
     const setOpen = React.useCallback(
-      (value: boolean | ((value: boolean) => boolean)) => {
-        const openState = typeof value === "function" ? value(open) : value;
+      (newValue: boolean | ((value: boolean) => boolean)) => {
+        const openState = typeof newValue === "function" ? newValue(open) : newValue;
         if (setOpenProp) {
           setOpenProp(openState);
         } else {
@@ -562,9 +562,10 @@ const SidebarMenuButton = React.forwardRef<
     }
 
     if (typeof tooltip === "string") {
-      tooltip = {
+      const tooltipContent = {
         children: tooltip,
       };
+      tooltip = tooltipContent;
     }
 
     return (
