@@ -239,4 +239,3 @@ export const notFound = (req: Request, res: Response) => {
     code: "NOT_FOUND",
   });
 };
-

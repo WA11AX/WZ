@@ -129,7 +129,7 @@ function getStatusCode(error: AppError): number {
  * Extract user context from request for logging
  */
 function extractUserContext(req: Request): Record<string, unknown> {
-  const { telegramUser } = (req as any);
+  const { telegramUser } = req as any;
   return {
     userId: telegramUser?.id,
     username: telegramUser?.username,
@@ -307,4 +307,3 @@ export default {
   createSecurityError,
   createDatabaseError,
 };
-

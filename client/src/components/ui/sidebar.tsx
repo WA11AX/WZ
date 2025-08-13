@@ -561,9 +561,7 @@ const SidebarMenuButton = React.forwardRef<
       return button;
     }
 
-    const tooltipConfig = typeof tooltip === "string"
-      ? { children: tooltip }
-      : tooltip;
+    const tooltipConfig = typeof tooltip === "string" ? { children: tooltip } : tooltip;
 
     const tooltipProps = {
       delayDuration: 0,

@@ -432,7 +432,7 @@ export default function AdminPage() {
                           size="sm"
                           variant="ghost"
                           className="p-1 h-auto"
-                          onClick={() => handleDelete(tournament.id, tournament.title)}
+                          onClick={() => handleDelete(tournament.id)}
                           disabled={deleteTournamentMutation.isPending}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
