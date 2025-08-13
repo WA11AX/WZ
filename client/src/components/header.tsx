@@ -1,4 +1,4 @@
-import { Trophy, Settings } from "lucide-react";
+import { Trophy, Settings, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getAuthHeaders } from "@/lib/telegram";
@@ -26,7 +26,13 @@ export default function Header() {
           <h1 className="text-lg font-semibold text-gray-900">Tournaments</h1>
         </div>
         <div className="flex items-center space-x-3">
-          
+          {/* User Stars Balance */}
+          <div className="flex items-center space-x-1 bg-telegram-blue bg-opacity-10 px-2 py-1 rounded-full">
+            <Star className="text-telegram-blue w-4 h-4 fill-current" />
+            <span className="text-sm font-medium text-telegram-blue">
+              {user?.stars || 0}
+            </span>
+          </div>
           
           {/* Admin Panel Toggle */}
           {user?.isAdmin && (

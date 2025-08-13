@@ -26,7 +26,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Database & Data Layer
 - **ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL via Supabase (as of January 2025)
+- **Database**: PostgreSQL configured with Replit Database integration
 - **Schema Management**: Shared TypeScript schemas using Drizzle with Zod validation
 - **Storage**: DatabaseStorage implementation using PostgreSQL for persistent data
 
@@ -71,8 +71,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Core Dependencies
 - **@twa-dev/sdk**: Telegram WebApp SDK for native app integration and user authentication
-- **@supabase/supabase-js**: Supabase client for database, auth, storage, and realtime features
-- **pg**: PostgreSQL driver for Supabase database connectivity
+- **@neondatabase/serverless**: Serverless PostgreSQL driver for database connectivity
 - **drizzle-orm**: Type-safe ORM with PostgreSQL dialect support
 - **@tanstack/react-query**: Server state management and caching solution
 
@@ -104,5 +103,3 @@ Preferred communication style: Simple, everyday language.
 - **Fixed Application Startup Issues**: Resolved duplicate export error in `server/db.ts` 
 - **Removed Next.js Directives**: Cleaned up all directives from Shadcn/ui components that were causing import errors in Vite environment
 - **Stabilized Development Environment**: Application now runs properly with WebSocket connections and API endpoints functioning correctly
-- **Switched to Supabase Database**: Migrated from Replit Database to Supabase for PostgreSQL hosting
-- **UI Improvements**: Removed tournament type badges and stars balance display from header for cleaner interface
