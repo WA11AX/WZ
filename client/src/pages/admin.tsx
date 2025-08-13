@@ -28,11 +28,24 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { getAuthHeaders } from "@/lib/telegram";
 
+interface TournamentFormData {
+  title: string;
+  description: string;
+  mapName: string;
+  mapImage: string;
+  date: string;
+  entryFee: string;
+  prize: string;
+  maxParticipants: string;
+  status: "upcoming" | "active" | "completed";
+  tournamentType: string;
+}
+
 export default function AdminPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<TournamentFormData>({
     title: "",
     description: "",
     mapName: "",
@@ -57,7 +70,7 @@ export default function AdminPage() {
 
   // Create tournament mutation
   const createTournamentMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: TournamentFormData) => {
       const response = await fetch("/api/tournaments", {
         method: "POST",
         headers: {
@@ -432,7 +445,7 @@ export default function AdminPage() {
                           size="sm"
                           variant="ghost"
                           className="p-1 h-auto"
-                          onClick={() => handleDelete(tournament.id, tournament.title)}
+                          onClick={() => handleDelete(tournament.id)}
                           disabled={deleteTournamentMutation.isPending}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />

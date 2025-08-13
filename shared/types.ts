@@ -1,7 +1,7 @@
 // Shared types and interfaces for the WZ Tournament Platform
 
 // API Response types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -18,16 +18,16 @@ export interface PaginatedResponse<T> extends ApiResponse<T[]> {
 }
 
 // WebSocket message types
-export interface WebSocketMessage<T = any> {
+export interface WebSocketMessage<T = unknown> {
   type: "tournament_update" | "user_update" | "notification" | "error";
   payload: T;
   timestamp: string;
 }
 
-export interface TournamentUpdateMessage {
+export interface TournamentUpdateMessage<T = unknown> {
   tournamentId: string;
   type: "participant_joined" | "participant_left" | "status_changed" | "prize_updated";
-  data: any;
+  data: T;
 }
 
 // Tournament related types
@@ -99,7 +99,7 @@ export type RequiredKeys<T> = {
 export interface AnalyticsEvent {
   event: string;
   userId?: string;
-  properties: Record<string, any>;
+  properties: Record<string, unknown>;
   timestamp: string;
 }
 
@@ -107,7 +107,7 @@ export interface AnalyticsEvent {
 export interface AppError {
   code: string;
   message: string;
-  details?: any;
+  details?: unknown;
   stack?: string;
 }
 
