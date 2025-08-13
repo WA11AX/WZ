@@ -5,6 +5,7 @@ import { drizzle } from "drizzle-orm/neon-serverless";
 import ws from "ws";
 
 import { dbConfig } from "./config";
+import { logger } from "./logger";
 
 neonConfig.webSocketConstructor = ws;
 
@@ -19,19 +20,19 @@ export const db = drizzle({ client: pool, schema });
 export async function checkDatabaseConnection(): Promise<boolean> {
   try {
     await db.execute(sql`SELECT 1`);
-    console.log("Database connection successful");
+    logger.info("Database connection successful");
     return true;
   } catch (error) {
-    console.error("Database connection failed:", error);
+    logger.error("Database connection failed", { error });
     // Попробуем переподключиться через несколько секунд
     if (error instanceof Error && error.message.includes("connection")) {
-      console.log("Attempting to reconnect to database...");
+      logger.warn("Attempting to reconnect to database...");
       setTimeout(async () => {
         try {
           await db.execute(sql`SELECT 1`);
-          console.log("Database reconnection successful");
+          logger.info("Database reconnection successful");
         } catch (retryError) {
-          console.error("Database reconnection failed:", retryError);
+          logger.error("Database reconnection failed", { error: retryError });
         }
       }, 5000);
     }

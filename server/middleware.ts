@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
+import { logger } from "./logger";
 
 // Extend Express Request type to include session
 declare module "express-session" {
@@ -172,7 +173,7 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
     const status = res.statusCode;
 
     // Log format: [timestamp] method url status duration ip userAgent
-    console.log(
+    logger.info(
       `[${new Date().toISOString()}] ${method} ${url} ${status} ${duration}ms ${ip} "${userAgent}"`,
     );
   });
@@ -183,7 +184,7 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
 // Error handling middleware
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error("Error:", err);
+  logger.error("Error", { error: err });
 
   // Default error response
   const error = {

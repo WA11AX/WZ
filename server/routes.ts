@@ -9,6 +9,7 @@ import { telegramAuthMiddleware } from "./auth";
 import { telegramConfig, isDevelopment } from "./config";
 import * as rateLimiters from "./rateLimiter.simple";
 import { storage } from "./storage";
+import { logger } from "./logger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -17,19 +18,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const wss = new WebSocketServer({ server: httpServer, path: "/ws" });
 
   wss.on("connection", (ws) => {
-    console.log("Client connected to WebSocket");
+    logger.info("Client connected to WebSocket");
 
     ws.on("message", (message) => {
       try {
         const data = JSON.parse(message.toString());
-        console.log("Received:", data);
+        logger.debug("Received WebSocket message", { data });
       } catch (error) {
-        console.error("Invalid WebSocket message:", error);
+        logger.error("Invalid WebSocket message", { error });
       }
     });
 
     ws.on("close", () => {
-      console.log("Client disconnected from WebSocket");
+      logger.info("Client disconnected from WebSocket");
     });
   });
 
@@ -67,7 +68,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(user);
     } catch (error) {
-      console.error("Error getting user:", error);
+      logger.error("Error getting user", { error });
       res.status(500).json({
         message: "Failed to get user",
         error: isDevelopment ? error : undefined,
@@ -81,7 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tournaments = await storage.getTournaments();
       res.json(tournaments);
     } catch (error) {
-      console.error("Error fetching tournaments:", error);
+      logger.error("Error fetching tournaments", { error });
       res.status(500).json({
         message: "Failed to fetch tournaments",
         error: isDevelopment ? error : undefined,
