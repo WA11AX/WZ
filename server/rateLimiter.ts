@@ -14,7 +14,7 @@ function safeKeyGenerator(req: Request, prefix = ""): string {
     return `${prefix}${telegramUser.id.toString()}`;
   }
   const ip = req.ip || req.socket.remoteAddress || "unknown";
-  return `${prefix}${ip.replace(/:/g, '_')}`;
+  return `${prefix}${ip.replace(/:/g, "_")}`;
 }
 
 /**
@@ -40,7 +40,7 @@ export const generalLimiter = rateLimit({
     }
     // Safe IP handling for IPv6
     const ip = req.ip || req.socket.remoteAddress || "unknown";
-    return ip.replace(/:/g, '_'); // Replace colons for IPv6 compatibility
+    return ip.replace(/:/g, "_"); // Replace colons for IPv6 compatibility
   },
   skip: (req: Request) => {
     // Skip rate limiting in development if specified
@@ -174,3 +174,4 @@ export default {
   search: searchLimiter,
   createCustom: createCustomLimiter,
 };
+

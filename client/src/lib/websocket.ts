@@ -15,7 +15,7 @@ export interface WebSocketMessage {
 export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<number>();
   const websocketCallbacks = useRef<((message: any) => void)[]>([]); // Use a ref to hold the callbacks
 
   // Function to add callbacks
@@ -54,15 +54,14 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         websocketCallbacks.current.forEach((callback) => callback({ type: "connected" }));
       };
 
-      wsRef.current.onmessage = (event) => {
+      wsRef.current.onmessage = (_event) => {
         try {
-          const message = JSON.parse(event.data);
+          const message = JSON.parse(_event.data);
           onMessage?.(message); // Call the primary onMessage handler
           websocketCallbacks.current.forEach((callback) =>
             callback({ type: "message", data: message }),
           ); // Call registered callbacks
-        } catch (error) {
-          // console.error("Failed to parse WebSocket message:", error); // Removed console.error
+        } catch (_error) {
           websocketCallbacks.current.forEach((callback) =>
             callback({
               type: "error",
@@ -72,10 +71,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         }
       };
 
-      wsRef.current.onclose = (event) => {
-        // console.log( // Removed console.log
-        //   `WebSocket disconnected (code: ${event.code}, reason: ${event.reason || "No reason provided"})`,
-        // );
+      wsRef.current.onclose = (_event) => {
         setIsConnected(false);
         websocketCallbacks.current.forEach((callback) => callback({ type: "disconnected" }));
 
@@ -83,13 +79,9 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
           const jitter = Math.random() * 1000; // Add some randomness
           const finalDelay = delay + jitter;
-          // console.log( // Removed console.log
-          //   `Attempting to reconnect in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
-          // );
           reconnectAttempts++;
-          reconnectTimeoutRef.current = setTimeout(connect, finalDelay);
+          reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
         } else {
-          // console.error("Max reconnection attempts reached"); // Removed console.error
           websocketCallbacks.current.forEach((callback) =>
             callback({
               type: "error",
@@ -99,8 +91,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         }
       };
 
-      wsRef.current.onerror = (error) => {
-        // console.error("WebSocket error:", error); // Removed console.error
+      wsRef.current.onerror = (_error) => {
         setIsConnected(false); // Ensure isConnected is false on error
         websocketCallbacks.current.forEach((callback) =>
           callback({
@@ -128,7 +119,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         //   `Attempting to reconnect after initial failure in ${Math.round(finalDelay)}ms... (attempt ${reconnectAttempts + 1}/${maxReconnectAttempts})`,
         // );
         reconnectAttempts++;
-        reconnectTimeoutRef.current = setTimeout(connect, finalDelay);
+        reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
       } else {
         // console.error("Max reconnection attempts reached after initial failure"); // Removed console.error
       }

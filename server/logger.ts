@@ -34,4 +34,5 @@ if (process.env.NODE_ENV !== "production") {
   logger.debug("Logger initialized in development mode");
 }
 
+export { logger };
 export default logger;
