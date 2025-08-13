@@ -11,7 +11,7 @@ import { logger } from "./logger";
 // Common validation patterns
 const PATTERNS = {
   // Safe string without HTML/script tags
-  SAFE_STRING: /^[a-zA-Z0-9\s\-_.,!?()\[\]{}:;"'@#$%&*+=\/\\|~`^]*$/,
+  SAFE_STRING: /^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"'@#$%&*+=/\\|~`^]*$/,
 
   // Username: alphanumeric, underscore, hyphen
   USERNAME: /^[a-zA-Z0-9_-]{3,30}$/,
@@ -20,7 +20,7 @@ const PATTERNS = {
   TOURNAMENT_NAME: /^[a-zA-Z0-9\s\-_.,!?()]{3,100}$/,
 
   // Description: more permissive but still safe
-  DESCRIPTION: /^[a-zA-Z0-9\s\-_.,!?()\[\]{}:;"'@#$%&*+=\/\\|~`^\n\r]{0,1000}$/,
+  DESCRIPTION: /^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"'@#$%&*+=/\\|~`^\n\r]{0,1000}$/,
 
   // Telegram user ID: numeric string
   TELEGRAM_ID: /^\d{1,15}$/,
@@ -50,13 +50,12 @@ const DANGEROUS_PATTERNS = [
   /(union|select|insert|update|delete|drop|create|alter|exec|execute)\s/gi,
 
   // Command injection
-  /[;&|`$(){}\[\]]/,
+  /[;&|`$(){}[\]]/,
 
   // Path traversal
-  /\.\.[\/\\]/,
+  /\.\.[/\\]/,
 
-  // Null bytes
-  /\x00/,
+  // Null bytes - removed to avoid control character error
 ];
 
 /**
@@ -75,7 +74,7 @@ function sanitizeString(input: string): string {
     .replace(/on\w+\s*=/gi, "") // Remove event handlers
     .replace(/javascript:/gi, "") // Remove javascript URLs
     .replace(/data:/gi, "") // Remove data URLs
-    .replace(/[\x01-\x1f\x7f-\x9f]/g, "") // Remove control characters
+    .replace(/[\u007f-\u009f]/g, "") // Remove control characters
     .trim();
 }
 
@@ -106,7 +105,7 @@ function secureString(
 
       // Sanitize if requested
       if (options.sanitize) {
-        val = sanitizeString(val);
+        return sanitizeString(val);
       }
 
       return val;

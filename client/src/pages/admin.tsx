@@ -170,7 +170,7 @@ export default function AdminPage() {
     createTournamentMutation.mutate(formData);
   };
 
-  const handleDelete = (tournamentId: string, tournamentTitle: string) => {
+  const handleDelete = (tournamentId: string) => {
     // Use a proper confirmation dialog instead of window.confirm
     const confirmed = true; // Replace with proper dialog implementation
     if (confirmed) {

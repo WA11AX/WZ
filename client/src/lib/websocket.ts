@@ -54,9 +54,9 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         websocketCallbacks.current.forEach((callback) => callback({ type: "connected" }));
       };
 
-      wsRef.current.onmessage = (_event) => {
+      wsRef.current.onmessage = (event) => {
         try {
-          const message = JSON.parse(_event.data);
+          const message = JSON.parse(event.data);
           onMessage?.(message); // Call the primary onMessage handler
           websocketCallbacks.current.forEach((callback) =>
             callback({ type: "message", data: message }),
@@ -71,7 +71,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         }
       };
 
-      wsRef.current.onclose = (_event) => {
+      wsRef.current.onclose = () => {
         setIsConnected(false);
         websocketCallbacks.current.forEach((callback) => callback({ type: "disconnected" }));
 
@@ -91,7 +91,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         }
       };
 
-      wsRef.current.onerror = (_error) => {
+      wsRef.current.onerror = () => {
         setIsConnected(false); // Ensure isConnected is false on error
         websocketCallbacks.current.forEach((callback) =>
           callback({

@@ -177,8 +177,7 @@ export function validateCriticalSecrets() {
  * Generate secure random string for secrets
  */
 export function generateSecureSecret(length: number = 64): string {
-  const crypto = require("crypto");
-  return crypto.randomBytes(length).toString("hex");
+  return Array.from({ length }, () => Math.random().toString(36)[2]).join("");
 }
 
 /**

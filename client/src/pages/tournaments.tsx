@@ -1,7 +1,6 @@
 import type { Tournament } from "@shared/schema";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Trophy, Star, Plus } from "lucide-react";
-import { useEffect } from "react";
 import { useLocation } from "wouter";
 
 import Header from "@/components/header";
@@ -58,7 +57,7 @@ export default function TournamentsPage() {
       }
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Success!",
         description: "You've successfully joined the tournament!",

@@ -111,12 +111,7 @@ function sanitizeErrorForClient(error: AppError): Record<string, unknown> {
   return sanitized;
 }
 
-/**
- * Determine if error is operational (safe to expose) or programming error
- */
-function _isOperationalError(error: AppError): boolean {
-  return error.isOperational === true;
-}
+// Removed unused function _isOperationalError
 
 /**
  * Get appropriate HTTP status code for error
@@ -153,7 +148,8 @@ export function errorHandler(
   error: AppError,
   req: Request,
   res: Response,
-  next: NextFunction,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _next: NextFunction,
 ): void {
   const statusCode = getStatusCode(error);
   const userContext = extractUserContext(req);

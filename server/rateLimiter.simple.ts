@@ -17,11 +17,11 @@ export const adminLimiter = generalLimiter;
 export const websocketLimiter = generalLimiter;
 export const uploadLimiter = generalLimiter;
 
-export function createCustomLimiter(_options: any) {
+export function createCustomLimiter() {
   return generalLimiter;
 }
 
-export function createSimpleRateLimit(_limit: number, _window: number, _options: any) {
+export function createSimpleRateLimit() {
   // Placeholder for simple rate limiting implementation
   return generalLimiter;
 }

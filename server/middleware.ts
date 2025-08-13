@@ -181,7 +181,8 @@ export const requestLogger = (req: Request, res: Response, _next: NextFunction) 
 };
 
 // Error handling middleware
-export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error("Error:", err);
 
   // Default error response
@@ -218,7 +219,8 @@ export const errorHandler = (err: any, req: Request, res: Response, _next: NextF
 };
 
 // Health check endpoint
-export const healthCheck = (req: Request, res: Response, _next: NextFunction) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const healthCheck = (_req: Request, res: Response, _next: NextFunction) => {
   const health = {
     status: "ok",
     timestamp: new Date().toISOString(),
@@ -231,7 +233,7 @@ export const healthCheck = (req: Request, res: Response, _next: NextFunction) =>
 };
 
 // Not found middleware
-export const notFound = (req: Request, res: Response, _next: NextFunction) => {
+export const notFound = (req: Request, res: Response) => {
   res.status(404).json({
     error: `Route ${req.method} ${req.path} not found`,
     code: "NOT_FOUND",

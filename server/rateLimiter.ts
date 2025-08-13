@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Request } from "express";
 import rateLimit from "express-rate-limit";
 
 import { securityConfig, isDevelopment } from "./config";
@@ -42,7 +42,7 @@ export const generalLimiter = rateLimit({
     const ip = req.ip || req.socket.remoteAddress || "unknown";
     return ip.replace(/:/g, "_"); // Replace colons for IPv6 compatibility
   },
-  skip: (req: Request) => {
+  skip: () => {
     // Skip rate limiting in development if specified
     return shouldSkipRateLimit();
   },
@@ -138,8 +138,8 @@ export function createCustomLimiter(options: {
     legacyHeaders: false,
     keyGenerator:
       options.keyGenerator ||
-      ((_req: Request) => safeKeyGenerator(_req)),
-    skip: (req: Request) => {
+      ((req: Request) => safeKeyGenerator(req)),
+    skip: () => {
       return shouldSkipRateLimit();
     },
   });
