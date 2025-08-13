@@ -1,19 +1,42 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
 import { sql } from 'drizzle-orm';
-import ws from "ws";
 import * as schema from "@shared/schema";
 
-neonConfig.webSocketConstructor = ws;
+// Conditional imports based on which database we're using
+const isSupabase = !!process.env.SUPABASE_DATABASE_URL;
 
-if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
-  );
+let pool: any;
+let db: any;
+
+if (isSupabase) {
+  // Use standard PostgreSQL for Supabase
+  const { Pool } = await import('pg');
+  const { drizzle } = await import('drizzle-orm/node-postgres');
+  
+  const databaseUrl = process.env.SUPABASE_DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("SUPABASE_DATABASE_URL must be set.");
+  }
+  
+  pool = new Pool({ connectionString: databaseUrl });
+  db = drizzle(pool, { schema });
+} else {
+  // Use Neon for other databases
+  const { Pool, neonConfig } = await import('@neondatabase/serverless');
+  const { drizzle } = await import('drizzle-orm/neon-serverless');
+  const ws = await import('ws');
+  
+  neonConfig.webSocketConstructor = ws.default;
+  
+  const databaseUrl = process.env.DATABASE_URL;
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL must be set.");
+  }
+  
+  pool = new Pool({ connectionString: databaseUrl });
+  db = drizzle({ client: pool, schema });
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-export const db = drizzle({ client: pool, schema });
+export { pool, db };
 
 // Health check function
 export async function checkDatabaseConnection(): Promise<boolean> {
