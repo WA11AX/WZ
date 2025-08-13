@@ -36,7 +36,7 @@ interface TelegramInitData {
  */
 export function validateTelegramInitData(
   initData: string,
-  botToken: string
+  botToken: string,
 ): TelegramInitData | null {
   try {
     // Parse URL-encoded data

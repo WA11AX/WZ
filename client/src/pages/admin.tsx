@@ -181,7 +181,7 @@ export default function AdminPage() {
   const activeTournaments = tournaments.filter((t: Tournament) => t.status === "active").length;
   const totalParticipants = tournaments.reduce(
     (acc: number, t: Tournament) => acc + t.participants.length,
-    0
+    0,
   );
 
   return (

@@ -147,7 +147,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateTournament(
     id: string,
-    updates: Partial<Tournament>
+    updates: Partial<Tournament>,
   ): Promise<Tournament | undefined> {
     const [tournament] = await db
       .update(tournaments)
