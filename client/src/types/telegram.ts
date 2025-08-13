@@ -14,8 +14,8 @@ export interface TelegramWebApp {
     hide(): void;
   };
   HapticFeedback?: {
-    impactOccurred(style: "light" | "medium" | "heavy"): void;
-    notificationOccurred(type: "error" | "success" | "warning"): void;
+    impactOccurred(style: 'light' | 'medium' | 'heavy'): void;
+    notificationOccurred(type: 'error' | 'success' | 'warning'): void;
     selectionChanged(): void;
   };
   BackButton: {
@@ -34,7 +34,7 @@ export interface TelegramWebApp {
       language_code?: string;
     };
   };
-  colorScheme: "light" | "dark";
+  colorScheme: 'light' | 'dark';
   themeParams: {
     bg_color?: string;
     text_color?: string;

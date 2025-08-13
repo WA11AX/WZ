@@ -1,20 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { Trophy, Settings, Star } from "lucide-react";
-import { useLocation } from "wouter";
+import { useQuery } from '@tanstack/react-query';
+import { Trophy, Settings, Star } from 'lucide-react';
+import { useLocation } from 'wouter';
 
-import { Button } from "@/components/ui/button";
-import { getAuthHeaders } from "@/lib/telegram";
+import { Button } from '@/components/ui/button';
+import { getAuthHeaders } from '@/lib/telegram';
 
 export default function Header() {
   const [, setLocation] = useLocation();
 
   const { data: user } = useQuery({
-    queryKey: ["/api/user/me"],
+    queryKey: ['/api/user/me'],
     queryFn: async () => {
-      const response = await fetch("/api/user/me", {
+      const response = await fetch('/api/user/me', {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error("Failed to fetch user");
+      if (!response.ok) throw new Error('Failed to fetch user');
       return response.json();
     },
   });
@@ -39,7 +39,7 @@ export default function Header() {
               variant="ghost"
               size="sm"
               className="p-2 h-auto"
-              onClick={() => setLocation("/admin")}
+              onClick={() => setLocation('/admin')}
             >
               <Settings className="w-5 h-5 text-gray-600" />
             </Button>

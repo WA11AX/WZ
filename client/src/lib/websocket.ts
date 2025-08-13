@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface WebSocketMessage {
   type:
-    | "tournament_created"
-    | "tournament_updated"
-    | "tournament_deleted"
-    | "tournament_registration"
-    | "tournament_unregistration";
+    | 'tournament_created'
+    | 'tournament_updated'
+    | 'tournament_deleted'
+    | 'tournament_registration'
+    | 'tournament_unregistration';
   tournament?: any;
   tournamentId?: string;
   userId?: string;
@@ -23,7 +23,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
     websocketCallbacks.current.push(callback);
     // Ensure initial connection status is reflected if already connected
     if (isConnected) {
-      callback({ type: "connected" });
+      callback({ type: 'connected' });
     }
     return () => {
       // Remove callback on cleanup
@@ -37,7 +37,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
 
   const connect = useCallback(() => {
     try {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/ws`;
       // console.log("Connecting to WebSocket at:", wsUrl); // Removed console.log
 
@@ -51,7 +51,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
         }
-        websocketCallbacks.current.forEach((callback) => callback({ type: "connected" }));
+        websocketCallbacks.current.forEach((callback) => callback({ type: 'connected' }));
       };
 
       wsRef.current.onmessage = (event) => {
@@ -59,13 +59,13 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const message = JSON.parse(event.data);
           onMessage?.(message); // Call the primary onMessage handler
           websocketCallbacks.current.forEach((callback) =>
-            callback({ type: "message", data: message }),
+            callback({ type: 'message', data: message }),
           ); // Call registered callbacks
         } catch (_error) {
           websocketCallbacks.current.forEach((callback) =>
             callback({
-              type: "error",
-              error: "Failed to parse message",
+              type: 'error',
+              error: 'Failed to parse message',
             }),
           );
         }
@@ -73,19 +73,19 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
 
       wsRef.current.onclose = () => {
         setIsConnected(false);
-        websocketCallbacks.current.forEach((callback) => callback({ type: "disconnected" }));
+        websocketCallbacks.current.forEach((callback) => callback({ type: 'disconnected' }));
 
         if (reconnectAttempts < maxReconnectAttempts) {
           const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
           const jitter = Math.random() * 1000; // Add some randomness
           const finalDelay = delay + jitter;
           reconnectAttempts++;
-        reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
-      } else {
-        websocketCallbacks.current.forEach((callback) =>
-          callback({
-              type: "error",
-              error: "Connection failed after maximum attempts",
+          reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
+        } else {
+          websocketCallbacks.current.forEach((callback) =>
+            callback({
+              type: 'error',
+              error: 'Connection failed after maximum attempts',
             }),
           );
         }
@@ -95,8 +95,8 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         setIsConnected(false); // Ensure isConnected is false on error
         websocketCallbacks.current.forEach((callback) =>
           callback({
-            type: "error",
-            error: "WebSocket connection error",
+            type: 'error',
+            error: 'WebSocket connection error',
           }),
         );
         // The onclose event will handle reconnection logic, so we don't need to call connect() here again.
@@ -106,8 +106,8 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
       setIsConnected(false);
       websocketCallbacks.current.forEach((callback) =>
         callback({
-          type: "error",
-          error: "Failed to initiate WebSocket connection",
+          type: 'error',
+          error: 'Failed to initiate WebSocket connection',
         }),
       );
       // Attempt to reconnect even if initial connection fails

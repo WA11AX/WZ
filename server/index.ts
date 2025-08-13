@@ -1,9 +1,9 @@
-import express from "express";
+import express from 'express';
 
-import { config, validateCriticalSecrets, isDevelopment } from "./config";
-import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from "./errorHandler";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { config, validateCriticalSecrets, isDevelopment } from './config';
+import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from './errorHandler';
+import { registerRoutes } from './routes';
+import { setupVite, serveStatic, log } from './vite';
 
 // Setup global error handlers first
 setupGlobalErrorHandlers();
@@ -26,9 +26,9 @@ app.use((req, res, next) => {
     return originalResJson.apply(res, [bodyJson, ...args]);
   };
 
-  res.on("finish", () => {
+  res.on('finish', () => {
     const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
+    if (path.startsWith('/api')) {
       let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
@@ -71,7 +71,7 @@ app.use((req, res, next) => {
   server.listen(
     {
       port,
-      host: "0.0.0.0",
+      host: '0.0.0.0',
       reusePort: true,
     },
     () => {

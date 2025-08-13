@@ -21,35 +21,35 @@ PostgreSQL:
 #### Users Table
 
 ```typescript
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey(),
-  telegramId: text("telegram_id").notNull().unique(),
-  username: text("username").notNull(),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  isAdmin: boolean("is_admin").default(false),
-  stars: integer("stars").default(0),
-  participatingTournaments: json("participating_tournaments").$type<string[]>(),
+export const users = pgTable('users', {
+  id: varchar('id').primaryKey(),
+  telegramId: text('telegram_id').notNull().unique(),
+  username: text('username').notNull(),
+  firstName: text('first_name'),
+  lastName: text('last_name'),
+  isAdmin: boolean('is_admin').default(false),
+  stars: integer('stars').default(0),
+  participatingTournaments: json('participating_tournaments').$type<string[]>(),
 });
 ```
 
 #### Tournaments Table
 
 ```typescript
-export const tournaments = pgTable("tournaments", {
-  id: varchar("id").primaryKey(),
-  title: text("title").notNull(),
-  description: text("description").notNull(),
-  mapName: text("map_name").notNull(),
-  mapImage: text("map_image").notNull(),
-  date: timestamp("date").notNull(),
-  entryFee: integer("entry_fee").notNull(),
-  prize: integer("prize").notNull(),
-  maxParticipants: integer("max_participants").default(100),
-  participants: json("participants").$type<string[]>(),
-  status: text("status").$type<"upcoming" | "active" | "completed">(),
-  tournamentType: text("tournament_type").default("BATTLE ROYALE"),
-  createdAt: timestamp("created_at").default(sql`now()`),
+export const tournaments = pgTable('tournaments', {
+  id: varchar('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  mapName: text('map_name').notNull(),
+  mapImage: text('map_image').notNull(),
+  date: timestamp('date').notNull(),
+  entryFee: integer('entry_fee').notNull(),
+  prize: integer('prize').notNull(),
+  maxParticipants: integer('max_participants').default(100),
+  participants: json('participants').$type<string[]>(),
+  status: text('status').$type<'upcoming' | 'active' | 'completed'>(),
+  tournamentType: text('tournament_type').default('BATTLE ROYALE'),
+  createdAt: timestamp('created_at').default(sql`now()`),
 });
 ```
 
@@ -89,8 +89,8 @@ export type InsertTournament = z.infer<typeof insertTournamentSchema>;
 ### In Server (API)
 
 ```typescript
-import { db } from "./storage";
-import { users, tournaments, insertUserSchema } from "@shared/schema";
+import { db } from './storage';
+import { users, tournaments, insertUserSchema } from '@shared/schema';
 
 // Type-safe database operations
 const newUser = await db.insert(users).values(validatedUserData);
@@ -100,7 +100,7 @@ const allTournaments = await db.select().from(tournaments);
 ### In Client (Frontend)
 
 ```typescript
-import type { User, Tournament } from "@shared/schema";
+import type { User, Tournament } from '@shared/schema';
 
 // Type-safe component props
 interface TournamentCardProps {
@@ -114,7 +114,7 @@ interface TournamentCardProps {
 The shared schemas provide runtime validation using Zod:
 
 ```typescript
-import { insertUserSchema } from "@shared/schema";
+import { insertUserSchema } from '@shared/schema';
 
 // Validate user input
 const result = insertUserSchema.safeParse(userInput);
@@ -148,9 +148,9 @@ Example:
 
 ```typescript
 // Add new table
-export const matches = pgTable("matches", {
-  id: varchar("id").primaryKey(),
-  tournamentId: varchar("tournament_id").references(() => tournaments.id),
+export const matches = pgTable('matches', {
+  id: varchar('id').primaryKey(),
+  tournamentId: varchar('tournament_id').references(() => tournaments.id),
   // ... other fields
 });
 
