@@ -41,18 +41,6 @@ const envSchema = z.object({
   MAX_FILE_SIZE: z.string().transform(Number).pipe(z.number().positive()).default('5242880'), // 5MB
   UPLOAD_DIR: z.string().default('./uploads'),
 
-  // Redis (optional)
-  REDIS_URL: z.string().url().optional(),
-
-  // Email (optional)
-  SMTP_HOST: z.string().optional(),
-  SMTP_PORT: z.string().transform(Number).pipe(z.number().positive()).optional(),
-  SMTP_USER: z.string().optional(),
-  SMTP_PASS: z.string().optional(),
-
-  // Analytics (optional)
-  ANALYTICS_ID: z.string().optional(),
-
   // Logging
   LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
   LOG_FILE: z.string().optional(),

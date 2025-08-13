@@ -112,10 +112,11 @@ const newUser = await db.insert(users).values(validatedUserData);
 ### Environment Variables
 
 - `NODE_ENV`: Environment (development/production)
+- `PORT`: Server port (default: 3000)
 - `DATABASE_URL`: PostgreSQL connection string
 - `SESSION_SECRET`: Session encryption secret
-- `PORT`: Server port (default: 3000)
-- `SKIP_RATE_LIMITING`: Disable all rate limiting when set to `true` (defaults to enabled in development)
+- `TELEGRAM_BOT_TOKEN`: Telegram bot API token
+- `ADMIN_TELEGRAM_ID` (optional): Telegram user ID with admin access
 
 ### Middleware Stack
 
