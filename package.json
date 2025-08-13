@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "type": "module",
+  "engines": { "node": ">=20 <21" },
   "scripts": {
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "check": "tsc",
@@ -10,8 +11,8 @@
     "dev": "NODE_ENV=development tsx server/index.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "lint:check": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint": "eslint . --fix --max-warnings=0",
+    "lint:check": "eslint . --max-warnings=0",
     "prepare": "if [ -z \"$CI\" ]; then npm run validate; fi",
     "start": "NODE_ENV=production node dist/index.js",
     "test": "echo \"Add test script here\"",
@@ -109,34 +110,34 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/ws": "^8.5.13",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "@eslint/js": "^9.33.0",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.4",
-    "esbuild": "^0.25.9",
-    "eslint": "^8.45.0",
+    "esbuild": "0.25.9",
+    "eslint": "^9.33.0",
+    "globals": "^16.3.0",
+    "typescript-eslint": "^8.39.1",
     "eslint-config-prettier": "^9.1.2",
-    "eslint-plugin-import": "^2.28.0",
-    "eslint-plugin-prettier": "^5.5.4",
-    "eslint-plugin-react": "^7.33.0",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "5.2.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.5",
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.20.4",
+    "tsx": "4.20.4",
     "typescript": "5.6.3",
-    "vite": "^7.1.2"
+    "vite": "7.1.2"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
   },
   "overrides": {
-    "esbuild": "^0.25.9",
-    "esbuild-register": "^3.6.0",
-    "tsx": "^4.20.4",
-    "vite": "^7.1.2"
+    "esbuild": "0.25.9",
+    "tsx": "4.20.4",
+    "vite": "7.1.2"
   }
 }
