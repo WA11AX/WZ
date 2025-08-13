@@ -15,6 +15,7 @@
     "lint:check": "eslint . --max-warnings=0",
     "prepare": "if [ -z \"$CI\" ]; then npm run validate; fi",
     "start": "NODE_ENV=production node dist/index.js",
+    "seed": "NODE_ENV=development tsx server/seed.ts",
     "test": "echo \"Add test script here\"",
     "test:coverage": "echo \"Add test coverage script here\"",
     "type-check": "tsc --noEmit",

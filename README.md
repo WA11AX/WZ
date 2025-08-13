@@ -84,7 +84,13 @@ cp .env.example .env
 npm run db:push
 ```
 
-5. Start the development server:
+5. (Optional) Seed demo tournaments:
+
+```bash
+npm run seed
+```
+
+6. Start the development server:
 
 ```bash
 npm run dev
@@ -99,6 +105,7 @@ The application will be available at `http://localhost:5173`
 - `npm run start` - Start production server
 - `npm run check` - Type check with TypeScript
 - `npm run db:push` - Push database schema changes
+- `npm run seed` - Seed demo tournaments with sample data
 
 ## 🏆 Tournament Features
 
