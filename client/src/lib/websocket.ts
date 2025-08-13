@@ -59,14 +59,14 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const message = JSON.parse(event.data);
           onMessage?.(message); // Call the primary onMessage handler
           websocketCallbacks.current.forEach((callback) =>
-            callback({ type: "message", data: message }),
+            callback({ type: "message", data: message })
           ); // Call registered callbacks
         } catch (_error) {
           websocketCallbacks.current.forEach((callback) =>
             callback({
               type: "error",
               error: "Failed to parse message",
-            }),
+            })
           );
         }
       };
@@ -80,13 +80,13 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           const jitter = Math.random() * 1000; // Add some randomness
           const finalDelay = delay + jitter;
           reconnectAttempts++;
-        reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
-      } else {
-        websocketCallbacks.current.forEach((callback) =>
-          callback({
+          reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
+        } else {
+          websocketCallbacks.current.forEach((callback) =>
+            callback({
               type: "error",
               error: "Connection failed after maximum attempts",
-            }),
+            })
           );
         }
       };
@@ -97,7 +97,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
           callback({
             type: "error",
             error: "WebSocket connection error",
-          }),
+          })
         );
         // The onclose event will handle reconnection logic, so we don't need to call connect() here again.
       };
@@ -108,7 +108,7 @@ export function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         callback({
           type: "error",
           error: "Failed to initiate WebSocket connection",
-        }),
+        })
       );
       // Attempt to reconnect even if initial connection fails
       if (reconnectAttempts < maxReconnectAttempts) {

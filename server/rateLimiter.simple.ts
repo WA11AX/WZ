@@ -25,4 +25,3 @@ export function createSimpleRateLimit() {
   // Placeholder for simple rate limiting implementation
   return generalLimiter;
 }
-
