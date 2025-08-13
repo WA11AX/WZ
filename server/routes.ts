@@ -7,7 +7,7 @@ import { z } from "zod";
 
 import { telegramAuthMiddleware } from "./auth";
 import { telegramConfig, isDevelopment } from "./config";
-import rateLimiters from "./rateLimiter";
+import * as rateLimiters from "./rateLimiter.simple";
 import { storage } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -43,7 +43,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Apply general rate limiting to all API routes
-  app.use("/api", rateLimiters.general);
+  app.use("/api", rateLimiters.generalLimiter);
 
   // Telegram authentication middleware
   app.use("/api", telegramAuthMiddleware);
@@ -76,7 +76,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Tournament routes
-  app.get("/api/tournaments", rateLimiters.search, async (req, res) => {
+  app.get("/api/tournaments", rateLimiters.generalLimiter, async (req, res) => {
     try {
       const tournaments = await storage.getTournaments();
       res.json(tournaments);
@@ -103,8 +103,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post(
     "/api/tournaments",
-    rateLimiters.tournamentCreation,
-    rateLimiters.admin,
+    rateLimiters.tournamentCreationLimiter,
+    rateLimiters.adminLimiter,
     async (req, res) => {
       try {
         // Check if user is admin
@@ -130,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   );
 
-  app.put("/api/tournaments/:id", rateLimiters.admin, async (req, res) => {
+  app.put("/api/tournaments/:id", rateLimiters.adminLimiter, async (req, res) => {
     try {
       // Check if user is admin
       const { telegramUser } = req as any;
@@ -161,7 +161,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/tournaments/:id", rateLimiters.admin, async (req, res) => {
+  app.delete("/api/tournaments/:id", rateLimiters.adminLimiter, async (req, res) => {
     try {
       // Check if user is admin
       const { telegramUser } = req as any;
@@ -186,7 +186,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post(
     "/api/tournaments/:id/register",
-    rateLimiters.tournamentRegistration,
+    rateLimiters.tournamentRegistrationLimiter,
     async (req, res) => {
       try {
         const { telegramUser } = req as any;
@@ -236,7 +236,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete(
     "/api/tournaments/:id/register",
-    rateLimiters.tournamentRegistration,
+    rateLimiters.tournamentRegistrationLimiter,
     async (req, res) => {
       try {
         const { telegramUser } = req as any;

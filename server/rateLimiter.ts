@@ -4,7 +4,17 @@ import rateLimit from "express-rate-limit";
 import { securityConfig, isDevelopment } from "./config";
 
 function shouldSkipRateLimit(): boolean {
-  return securityConfig.skipRateLimiting || false;
+  return securityConfig.skipRateLimiting || isDevelopment;
+}
+
+// Safe key generator for IPv6 compatibility
+function safeKeyGenerator(req: Request, prefix = ""): string {
+  const { telegramUser } = (req as any);
+  if (telegramUser?.id) {
+    return `${prefix}${telegramUser.id.toString()}`;
+  }
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  return `${prefix}${ip.replace(/:/g, '_')}`;
 }
 
 /**
@@ -25,7 +35,12 @@ export const generalLimiter = rateLimit({
   keyGenerator: (req: Request) => {
     // Use Telegram user ID if available, otherwise fall back to IP
     const { telegramUser } = (req as any);
-    return telegramUser?.id?.toString() || req.ip || "unknown";
+    if (telegramUser?.id) {
+      return telegramUser.id.toString();
+    }
+    // Safe IP handling for IPv6
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
+    return ip.replace(/:/g, '_'); // Replace colons for IPv6 compatibility
   },
   skip: (req: Request) => {
     // Skip rate limiting in development if specified
@@ -58,10 +73,7 @@ export const tournamentCreationLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    const { telegramUser } = (req as any);
-    return telegramUser?.id?.toString() || req.ip || "unknown";
-  },
+  keyGenerator: (req: Request) => safeKeyGenerator(req),
 });
 
 // Tournament registration limiter - 20 requests per 10 minutes
@@ -75,10 +87,7 @@ export const tournamentRegistrationLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    const { telegramUser } = (req as any);
-    return telegramUser?.id?.toString() || req.ip || "unknown";
-  },
+  keyGenerator: (req: Request) => safeKeyGenerator(req),
 });
 
 // Admin operations limiter - 50 requests per 15 minutes
@@ -92,10 +101,7 @@ export const adminLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req: Request) => {
-    const { telegramUser } = (req as any);
-    return `admin_${telegramUser?.id?.toString() || req.ip || "unknown"}`;
-  },
+  keyGenerator: (req: Request) => safeKeyGenerator(req, "admin_"),
 });
 
 // WebSocket connection limiter - 10 connections per minute
@@ -132,10 +138,7 @@ export function createCustomLimiter(options: {
     legacyHeaders: false,
     keyGenerator:
       options.keyGenerator ||
-      ((req: Request) => {
-        const { telegramUser } = req as any;
-        return telegramUser?.id?.toString() || req.ip || "unknown";
-      }),
+      ((req: Request) => safeKeyGenerator(req)),
     skip: (req: Request) => {
       return shouldSkipRateLimit();
     },
