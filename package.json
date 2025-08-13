@@ -103,7 +103,7 @@
     "@types/connect-pg-simple": "^7.0.3",
     "@types/express": "4.17.21",
     "@types/express-session": "^1.18.0",
-    "@types/node": "20.16.11",
+    "@types/node": "^20.19.0",
     "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
     "@types/react": "^18.3.11",
@@ -111,10 +111,10 @@
     "@types/ws": "^8.5.13",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "@vitejs/plugin-react": "^4.3.2",
+    "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.4",
-    "esbuild": "^0.23",
+    "esbuild": "^0.25.9",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^9.1.2",
     "eslint-plugin-import": "^2.28.0",
@@ -126,14 +126,17 @@
     "postcss": "^8.4.47",
     "prettier": "^3.6.2",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4",
+    "tsx": "^4.20.4",
     "typescript": "5.6.3",
-    "vite": "^6.3.5"
+    "vite": "^7.1.2"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
   },
   "overrides": {
-    "esbuild": "^0.23"
+    "esbuild": "^0.25.9",
+    "esbuild-register": "^3.6.0",
+    "tsx": "^4.20.4",
+    "vite": "^7.1.2"
   }
 }

@@ -106,14 +106,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 'lts/*'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify esbuild version
+        run: npm ls esbuild
+
       - name: Run security audit
-        run: npm audit --audit-level high
+        run: npm audit --omit=dev --audit-level=high
 
       - name: Run dependency check
         run: npx audit-ci --config audit-ci.json
