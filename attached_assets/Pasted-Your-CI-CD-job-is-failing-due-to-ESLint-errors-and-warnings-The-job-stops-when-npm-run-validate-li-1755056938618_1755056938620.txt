@@ -1,0 +1,68 @@
+Your CI/CD job is failing due to ESLint errors and warnings. The job stops when npm run validate (likely linting) fails. Here are the most critical issues and how to fix them:
+
+Key Issues and Solutions
+1. Lint Errors (Must-fix for CI to pass)
+no-alert / no-unused-vars / no-console / eol-last / quotes / no-undef / no-var-requires / no-useless-escape / no-control-regex / no-param-reassign
+These are all ESLint rules being violated. Examples:
+
+Use of alert, confirm, and console statements: Remove or replace them in production code.
+Unused variable: Remove or use the declared variable (e.g., tournamentTitle, useEffect, data).
+Missing newline at end of file: Add a newline at the end of each file flagged by eol-last.
+Use double quotes instead of single quotes where flagged by quotes.
+NodeJS and Response not defined: Import them or remove if unused.
+Require not part of import: Use import instead of require in TypeScript.
+Unnecessary escape character in RegExp: Remove unnecessary backslashes.
+Unexpected control character in RegExp: Review the regex for invalid control characters.
+Assignment to function parameter: Avoid reassigning parameters.
+2. TypeScript-specific Warnings
+@typescript-eslint/no-explicit-any
+Replace all any types with specific types.
+
+@typescript-eslint/no-non-null-assertion
+Avoid using ! for non-null assertions if possible.
+
+3. Unused Function Parameters
+Rename unused parameters in function signatures to start with _, e.g.:
+ts
+function example(_unusedParam: Type) { ... }
+4. Automated Fixes
+Run the following command to auto-fix many of these issues:
+Code
+npx eslint . --ext .ts,.tsx --fix
+Then manually address any remaining errors.
+Example Fixes
+Remove or Replace Alerts/Confirms/Consoles
+ts
+// Replace or remove
+alert('message'); // REMOVE or replace with a custom UI modal
+
+confirm('Are you sure?'); // REMOVE or replace with a custom UI modal
+
+console.log('debug'); // REMOVE or use a logger in production
+Add Missing Newlines
+At the end of each file flagged, simply add an empty line.
+
+Avoid Unused Variables
+If a variable is not used, remove it:
+
+ts
+// Remove unused variable
+// let tournamentTitle = ...;
+Replace Any Types
+ts
+// Before
+function foo(bar: any): any { ... }
+// After
+function foo(bar: string): number { ... }
+Use Import Instead of Require
+ts
+// Before
+const fs = require('fs');
+// After
+import fs from 'fs';
+Next Steps
+Run the autofix command above.
+Manually fix any remaining errors.
+Commit and push the changes.
+Re-run your pipeline.
+If you need specific code changes for a particular file or error, please specify which one and I can provide the exact code fix.
