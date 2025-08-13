@@ -26,7 +26,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Database & Data Layer
 - **ORM**: Drizzle ORM for type-safe database operations
-- **Database**: PostgreSQL configured with Replit Database integration
+- **Database**: PostgreSQL via Supabase (as of January 2025)
 - **Schema Management**: Shared TypeScript schemas using Drizzle with Zod validation
 - **Storage**: DatabaseStorage implementation using PostgreSQL for persistent data
 
@@ -103,3 +103,5 @@ Preferred communication style: Simple, everyday language.
 - **Fixed Application Startup Issues**: Resolved duplicate export error in `server/db.ts` 
 - **Removed Next.js Directives**: Cleaned up all directives from Shadcn/ui components that were causing import errors in Vite environment
 - **Stabilized Development Environment**: Application now runs properly with WebSocket connections and API endpoints functioning correctly
+- **Switched to Supabase Database**: Migrated from Replit Database to Supabase for PostgreSQL hosting
+- **UI Improvements**: Removed tournament type badges and stars balance display from header for cleaner interface
