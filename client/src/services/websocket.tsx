@@ -15,7 +15,18 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
   const reconnectTimeoutRef = useRef<number>();
   const websocketCallbacks = useRef<((message: any) => void)[]>([]);
 
-  const addCallback = (callback: (message: any) => void) => {
+// Union type for all messages passed to callbacks
+type WebSocketCallbackMessage =
+  | WebSocketMessage
+  | { type: 'connected' | 'disconnected' | 'error' | 'message'; data?: any; error?: string };
+
+function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
+  const [isConnected, setIsConnected] = useState(false);
+  const wsRef = useRef<WebSocket | null>(null);
+  const reconnectTimeoutRef = useRef<number>();
+  const websocketCallbacks = useRef<((message: WebSocketCallbackMessage) => void)[]>([]);
+
+  const addCallback = (callback: (message: WebSocketCallbackMessage) => void) => {
     websocketCallbacks.current.push(callback);
     if (isConnected) {
       callback({ type: 'connected' });
