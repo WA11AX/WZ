@@ -3,27 +3,10 @@ import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { insertUserSchema, insertTournamentSchema } from "@shared/schema";
+import { telegramAuthMiddleware } from "./auth";
+import rateLimiters from "./rateLimiter";
+import { telegramConfig, isDevelopment } from "./config";
 import { z } from "zod";
-
-// Simple rate limiter
-const rateLimiter = new Map<string, { count: number; resetTime: number }>();
-
-function checkRateLimit(identifier: string, maxRequests = 60, windowMs = 60000): boolean {
-  const now = Date.now();
-  const userLimit = rateLimiter.get(identifier);
-  
-  if (!userLimit || now > userLimit.resetTime) {
-    rateLimiter.set(identifier, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-  
-  if (userLimit.count >= maxRequests) {
-    return false;
-  }
-  
-  userLimit.count++;
-  return true;
-}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -57,35 +40,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // Authentication middleware
-  app.use('/api', (req, res, next) => {
-    // Extract Telegram Web App init data from headers
-    const initData = req.headers['x-telegram-init-data'] as string;
-    const telegramId = req.headers['x-telegram-user-id'] as string || 'mock-user';
-    
-    // TODO: In production, validate initData signature using bot token
-    // const isValid = validateTelegramWebAppData(initData, process.env.BOT_TOKEN);
-    // if (!isValid) {
-    //   return res.status(401).json({ message: 'Invalid Telegram data' });
-    // }
-    
-    req.telegramUserId = telegramId;
-    next();
-  });
+  // Apply general rate limiting to all API routes
+  app.use('/api', rateLimiters.general);
+  
+  // Telegram authentication middleware
+  app.use('/api', telegramAuthMiddleware);
 
   // User routes
   app.get('/api/user/me', async (req, res) => {
     try {
-      let user = await storage.getUserByTelegramId(req.telegramUserId);
+      const telegramUser = (req as any).telegramUser;
+      let user = await storage.getUserByTelegramId(telegramUser.id.toString());
       
       if (!user) {
         // Create new user
         user = await storage.createUser({
-          telegramId: req.telegramUserId,
-          username: `user_${req.telegramUserId}`,
-          firstName: 'Telegram',
-          lastName: 'User',
-          isAdmin: req.telegramUserId === 'mock-user', // Make mock user admin
+          telegramId: telegramUser.id.toString(),
+          username: telegramUser.username || `user_${telegramUser.id}`,
+          firstName: telegramUser.first_name || 'Telegram',
+          lastName: telegramUser.last_name || 'User',
+          isAdmin: telegramUser.id.toString() === telegramConfig.adminId || false,
         });
       }
       
@@ -94,13 +68,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error getting user:', error);
       res.status(500).json({ 
         message: 'Failed to get user',
-        error: process.env.NODE_ENV === 'development' ? error : undefined
+        error: isDevelopment ? error : undefined
       });
     }
   });
 
   // Tournament routes
-  app.get('/api/tournaments', async (req, res) => {
+  app.get('/api/tournaments', rateLimiters.search, async (req, res) => {
     try {
       const tournaments = await storage.getTournaments();
       res.json(tournaments);
@@ -108,7 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Error fetching tournaments:', error);
       res.status(500).json({ 
         message: 'Failed to fetch tournaments',
-        error: process.env.NODE_ENV === 'development' ? error : undefined
+        error: isDevelopment ? error : undefined
       });
     }
   });
@@ -125,10 +99,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/tournaments', async (req, res) => {
+  app.post('/api/tournaments', rateLimiters.tournamentCreation, rateLimiters.admin, async (req, res) => {
     try {
       // Check if user is admin
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
+      const telegramUser = (req as any).telegramUser;
+      const user = await storage.getUserByTelegramId(telegramUser.id.toString());
       if (!user?.isAdmin) {
         return res.status(403).json({ message: 'Admin access required' });
       }
@@ -148,10 +123,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/tournaments/:id', async (req, res) => {
+  app.put('/api/tournaments/:id', rateLimiters.admin, async (req, res) => {
     try {
       // Check if user is admin
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
+      const telegramUser = (req as any).telegramUser;
+      const user = await storage.getUserByTelegramId(telegramUser.id.toString());
       if (!user?.isAdmin) {
         return res.status(403).json({ message: 'Admin access required' });
       }
@@ -178,10 +154,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/tournaments/:id', async (req, res) => {
+  app.delete('/api/tournaments/:id', rateLimiters.admin, async (req, res) => {
     try {
       // Check if user is admin
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
+      const telegramUser = (req as any).telegramUser;
+      const user = await storage.getUserByTelegramId(telegramUser.id.toString());
       if (!user?.isAdmin) {
         return res.status(403).json({ message: 'Admin access required' });
       }
@@ -200,9 +177,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/tournaments/:id/register', async (req, res) => {
+  app.post('/api/tournaments/:id/register', rateLimiters.tournamentRegistration, async (req, res) => {
     try {
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
+      const telegramUser = (req as any).telegramUser;
+      const user = await storage.getUserByTelegramId(telegramUser.id.toString());
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
@@ -245,9 +223,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/tournaments/:id/register', async (req, res) => {
+  app.delete('/api/tournaments/:id/register', rateLimiters.tournamentRegistration, async (req, res) => {
     try {
-      const user = await storage.getUserByTelegramId(req.telegramUserId);
+      const telegramUser = (req as any).telegramUser;
+      const user = await storage.getUserByTelegramId(telegramUser.id.toString());
       if (!user) {
         return res.status(401).json({ message: 'User not found' });
       }
@@ -301,7 +280,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 declare global {
   namespace Express {
     interface Request {
-      telegramUserId: string;
+      telegramUser: any;
     }
   }
 }

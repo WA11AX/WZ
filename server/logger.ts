@@ -1,3 +1,5 @@
+import { loggingConfig, isDevelopment, maskSecret } from './config';
+
 export interface LogLevel {
   ERROR: 0;
   WARN: 1;
@@ -14,14 +16,48 @@ export const LOG_LEVELS: LogLevel = {
 
 class Logger {
   private level: number;
+  private sensitiveFields = [
+    'password', 'token', 'secret', 'key', 'auth', 'session',
+    'x-telegram-init-data', 'telegram_bot_token', 'database_url'
+  ];
 
   constructor() {
-    this.level = process.env.NODE_ENV === 'development' ? LOG_LEVELS.DEBUG : LOG_LEVELS.INFO;
+    this.level = this.getLogLevel(loggingConfig.level);
+  }
+
+  private getLogLevel(level: string): number {
+    switch (level.toLowerCase()) {
+      case 'error': return LOG_LEVELS.ERROR;
+      case 'warn': return LOG_LEVELS.WARN;
+      case 'info': return LOG_LEVELS.INFO;
+      case 'debug': return LOG_LEVELS.DEBUG;
+      default: return LOG_LEVELS.INFO;
+    }
+  }
+
+  private sanitizeData(data: any): any {
+    if (!data) return data;
+    
+    if (typeof data === 'object' && data !== null) {
+      const sanitized: any = {};
+      for (const [key, value] of Object.entries(data)) {
+        const lowerKey = key.toLowerCase();
+        if (this.sensitiveFields.some(field => lowerKey.includes(field))) {
+          sanitized[key] = maskSecret(String(value));
+        } else {
+          sanitized[key] = value;
+        }
+      }
+      return sanitized;
+    }
+    
+    return data;
   }
 
   private formatMessage(level: string, message: string, meta?: any): string {
     const timestamp = new Date().toISOString();
-    const metaStr = meta ? ` ${JSON.stringify(meta)}` : '';
+    const sanitizedMeta = meta ? this.sanitizeData(meta) : undefined;
+    const metaStr = sanitizedMeta ? ` ${JSON.stringify(sanitizedMeta)}` : '';
     return `[${timestamp}] ${level}: ${message}${metaStr}`;
   }
 
