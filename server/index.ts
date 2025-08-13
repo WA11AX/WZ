@@ -80,6 +80,6 @@ app.use((req, res, next) => {
         log(`📱 Frontend: http://localhost:${port}`);
         log(`🔗 API: http://localhost:${port}/api`);
       }
-    }
+    },
   );
 })();
