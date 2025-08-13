@@ -14,8 +14,8 @@ const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().url("DATABASE_URL must be a valid URL"),
 
-  // Telegram Bot
-  TELEGRAM_BOT_TOKEN: z.string().min(1, "TELEGRAM_BOT_TOKEN is required"),
+  // Telegram Bot (optional in development)
+  TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
   ADMIN_TELEGRAM_ID: z.string().optional(),
 
   // Session secrets
@@ -107,7 +107,7 @@ export const dbConfig = {
  * Telegram configuration
  */
 export const telegramConfig = {
-  botToken: config.TELEGRAM_BOT_TOKEN,
+  botToken: config.TELEGRAM_BOT_TOKEN || (isDevelopment ? 'dev-mode' : undefined),
   adminId: config.ADMIN_TELEGRAM_ID,
   skipValidation: config.SKIP_TELEGRAM_VALIDATION && isDevelopment,
 };
