@@ -138,7 +138,7 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
 
 interface WebSocketContextValue {
   isConnected: boolean;
-  sendMessage: (message: any) => void;
+  sendMessage: (message: WebSocketOutboundMessage) => void;
   sendMessage: (message: WebSocketMessage) => void;
   addCallback: (callback: (message: WebSocketMessage) => void) => () => void;
 }
