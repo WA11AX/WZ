@@ -34,6 +34,7 @@
     // Import/Export rules
 
     // General code quality rules
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     "prefer-const": "error",
     "no-var": "error",
     "no-console": "warn",

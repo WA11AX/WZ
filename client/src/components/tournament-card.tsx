@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 
 interface TournamentCardProps {
   tournament: Tournament;
-  onJoin?: (tournament: Tournament) => void;
+  onJoin?: (_tournament: Tournament) => void;
   showJoinButton?: boolean;
 }
 
