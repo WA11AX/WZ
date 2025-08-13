@@ -8,7 +8,7 @@ export interface WebSocketMessage {
     | 'tournament_deleted'
     | 'tournament_registration'
     | 'tournament_unregistration';
-  tournament?: any;
+  tournament?: Tournament;
   tournamentId?: string;
   userId?: string;
 }
