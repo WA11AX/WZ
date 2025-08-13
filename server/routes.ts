@@ -4,6 +4,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { insertUserSchema, insertTournamentSchema } from "@shared/schema";
 import { z } from "zod";
+import { supabase } from "./supabase";
 
 // Simple rate limiter
 const rateLimiter = new Map<string, { count: number; resetTime: number }>();
@@ -71,6 +72,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     
     req.telegramUserId = telegramId;
     next();
+  });
+
+  // Health check for Supabase
+  app.get('/api/health', async (req, res) => {
+    const status = {
+      database: false,
+      supabase: false,
+      supabaseUrl: process.env.SUPABASE_URL || 'Not configured',
+      hasApiKey: !!process.env.SUPABASE_ANON_KEY
+    };
+    
+    // Check database connection
+    try {
+      await storage.getTournaments();
+      status.database = true;
+    } catch (error) {
+      console.error('Database check failed:', error);
+    }
+    
+    // Check Supabase client
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.from('tournaments').select('count').limit(1);
+        if (!error) {
+          status.supabase = true;
+        }
+      } catch (error) {
+        console.error('Supabase check failed:', error);
+      }
+    }
+    
+    res.json(status);
   });
 
   // User routes

@@ -71,7 +71,8 @@ Preferred communication style: Simple, everyday language.
 
 ### Core Dependencies
 - **@twa-dev/sdk**: Telegram WebApp SDK for native app integration and user authentication
-- **@neondatabase/serverless**: Serverless PostgreSQL driver for database connectivity
+- **@supabase/supabase-js**: Supabase client for database, auth, storage, and realtime features
+- **pg**: PostgreSQL driver for Supabase database connectivity
 - **drizzle-orm**: Type-safe ORM with PostgreSQL dialect support
 - **@tanstack/react-query**: Server state management and caching solution
 
