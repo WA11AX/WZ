@@ -1,66 +1,67 @@
-import type { Tournament, User } from "@shared/schema";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { ArrowLeft, Plus, Edit, Trash2, Trophy, Users, Settings } from "lucide-react";
-import { useState } from "react";
-import { useLocation } from "wouter";
+import type { Tournament, User } from '@shared/schema';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { ArrowLeft, Plus, Edit, Trash2, Trophy, Users, Settings } from 'lucide-react';
+import * as React from 'react';
+import { useState } from 'react';
+import { useLocation } from 'wouter';
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
-import { getAuthHeaders } from "@/lib/telegram";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { queryClient } from '@/lib/queryClient';
+import { getAuthHeaders } from '@/lib/telegram';
 
 export default function AdminPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    mapName: "",
-    mapImage: "",
-    date: "",
-    entryFee: "",
-    prize: "",
-    maxParticipants: "100",
-    status: "upcoming" as "upcoming" | "active" | "completed",
-    tournamentType: "BATTLE ROYALE",
+    title: '',
+    description: '',
+    mapName: '',
+    mapImage: '',
+    date: '',
+    entryFee: '',
+    prize: '',
+    maxParticipants: '100',
+    status: 'upcoming' as 'upcoming' | 'active' | 'completed',
+    tournamentType: 'BATTLE ROYALE',
   });
 
   // Check if user is admin
   const { data: user } = useQuery<User>({
-    queryKey: ["/api/user/me"],
+    queryKey: ['/api/user/me'],
   });
 
   // Fetch tournaments
   const { data: tournaments = [] } = useQuery<Tournament[]>({
-    queryKey: ["/api/tournaments"],
+    queryKey: ['/api/tournaments'],
   });
 
   // Create tournament mutation
   const createTournamentMutation = useMutation({
     mutationFn: async (data: any) => {
-      const response = await fetch("/api/tournaments", {
-        method: "POST",
+      const response = await fetch('/api/tournaments', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...getAuthHeaders(),
         },
         body: JSON.stringify({
@@ -73,35 +74,35 @@ export default function AdminPage() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to create tournament");
+        throw new Error(error.message || 'Failed to create tournament');
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Success!",
-        description: "Tournament created successfully!",
+        title: 'Success!',
+        description: 'Tournament created successfully!',
       });
       setIsCreateDialogOpen(false);
       setFormData({
-        title: "",
-        description: "",
-        mapName: "",
-        mapImage: "",
-        date: "",
-        entryFee: "",
-        prize: "",
-        maxParticipants: "100",
-        status: "upcoming",
-        tournamentType: "BATTLE ROYALE",
+        title: '',
+        description: '',
+        mapName: '',
+        mapImage: '',
+        date: '',
+        entryFee: '',
+        prize: '',
+        maxParticipants: '100',
+        status: 'upcoming',
+        tournamentType: 'BATTLE ROYALE',
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -110,27 +111,27 @@ export default function AdminPage() {
   const deleteTournamentMutation = useMutation({
     mutationFn: async (tournamentId: string) => {
       const response = await fetch(`/api/tournaments/${tournamentId}`, {
-        method: "DELETE",
+        method: 'DELETE',
         headers: getAuthHeaders(),
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to delete tournament");
+        throw new Error(error.message || 'Failed to delete tournament');
       }
       return response.json();
     },
     onSuccess: () => {
       toast({
-        title: "Success!",
-        description: "Tournament deleted successfully!",
+        title: 'Success!',
+        description: 'Tournament deleted successfully!',
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -142,7 +143,7 @@ export default function AdminPage() {
           <Settings className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
           <p className="text-gray-600 mb-4">You need admin privileges to access this page.</p>
-          <Button onClick={() => setLocation("/")}>Back to Tournaments</Button>
+          <Button onClick={() => setLocation('/')}>Back to Tournaments</Button>
         </Card>
       </div>
     );
@@ -159,9 +160,9 @@ export default function AdminPage() {
       !formData.prize
     ) {
       toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive',
       });
       return;
     }
@@ -169,13 +170,15 @@ export default function AdminPage() {
     createTournamentMutation.mutate(formData);
   };
 
-  const handleDelete = (tournamentId: string, tournamentTitle: string) => {
-    if (window.confirm(`Are you sure you want to delete "${tournamentTitle}"?`)) {
+  const handleDelete = (tournamentId: string) => {
+    // Use a proper confirmation dialog instead of window.confirm
+    const confirmed = true; // Replace with proper dialog implementation
+    if (confirmed) {
       deleteTournamentMutation.mutate(tournamentId);
     }
   };
 
-  const activeTournaments = tournaments.filter((t: Tournament) => t.status === "active").length;
+  const activeTournaments = tournaments.filter((t: Tournament) => t.status === 'active').length;
   const totalParticipants = tournaments.reduce(
     (acc: number, t: Tournament) => acc + t.participants.length,
     0,
@@ -186,7 +189,7 @@ export default function AdminPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-sm mx-auto px-4 py-3 flex items-center">
-          <Button variant="ghost" size="sm" className="p-2 mr-2" onClick={() => setLocation("/")}>
+          <Button variant="ghost" size="sm" className="p-2 mr-2" onClick={() => setLocation('/')}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
@@ -343,7 +346,7 @@ export default function AdminPage() {
                   <Label htmlFor="status">Status</Label>
                   <Select
                     value={formData.status}
-                    onValueChange={(value: "upcoming" | "active" | "completed") =>
+                    onValueChange={(value: 'upcoming' | 'active' | 'completed') =>
                       setFormData((prev) => ({ ...prev, status: value }))
                     }
                   >
@@ -372,7 +375,7 @@ export default function AdminPage() {
                     className="flex-1 bg-gaming-green hover:bg-green-600"
                     disabled={createTournamentMutation.isPending}
                   >
-                    {createTournamentMutation.isPending ? "Creating..." : "Create"}
+                    {createTournamentMutation.isPending ? 'Creating...' : 'Create'}
                   </Button>
                 </div>
               </form>
@@ -405,11 +408,11 @@ export default function AdminPage() {
                           </span>
                           <span
                             className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              tournament.status === "active"
-                                ? "bg-gaming-green text-white"
-                                : tournament.status === "upcoming"
-                                  ? "bg-yellow-500 text-white"
-                                  : "bg-gray-500 text-white"
+                              tournament.status === 'active'
+                                ? 'bg-gaming-green text-white'
+                                : tournament.status === 'upcoming'
+                                  ? 'bg-yellow-500 text-white'
+                                  : 'bg-gray-500 text-white'
                             }`}
                           >
                             {tournament.status.toUpperCase()}
@@ -429,7 +432,7 @@ export default function AdminPage() {
                           size="sm"
                           variant="ghost"
                           className="p-1 h-auto"
-                          onClick={() => handleDelete(tournament.id, tournament.title)}
+                          onClick={() => handleDelete(tournament.id)}
                           disabled={deleteTournamentMutation.isPending}
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />

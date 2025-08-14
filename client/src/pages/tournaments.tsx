@@ -1,43 +1,45 @@
-import type { Tournament, User } from "@shared/schema";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Trophy, Star, Plus } from "lucide-react";
-import { useEffect } from "react";
-import { useLocation } from "wouter";
+import type { Tournament } from '@shared/schema';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { Trophy, Star, Plus } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { useEffect } from 'react';
 
-import Header from "@/components/header";
-import TournamentCard from "@/components/tournament-card";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
-import { getAuthHeaders, processStarsPayment } from "@/lib/telegram";
-import { useWebSocket, type WebSocketMessage } from "@/lib/websocket";
+import Header from '@/components/header';
+import TournamentCard from '@/components/tournament-card';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
+import { queryClient } from '@/lib/queryClient';
+import { useTelegram } from '@/services/telegram';
+import { useWebSocketService, type WebSocketMessage } from '@/services/websocket';
 
 export default function TournamentsPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const { getAuthHeaders, processStarsPayment } = useTelegram();
+  const { addCallback } = useWebSocketService();
 
   // Fetch tournaments
   const { data: tournaments = [], isLoading: tournamentsLoading } = useQuery({
-    queryKey: ["/api/tournaments"],
+    queryKey: ['/api/tournaments'],
     queryFn: async () => {
-      const response = await fetch("/api/tournaments", {
+      const response = await fetch('/api/tournaments', {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error("Failed to fetch tournaments");
+      if (!response.ok) throw new Error('Failed to fetch tournaments');
       return response.json();
     },
   });
 
   // Fetch user data
   const { data: user } = useQuery({
-    queryKey: ["/api/user/me"],
+    queryKey: ['/api/user/me'],
     queryFn: async () => {
-      const response = await fetch("/api/user/me", {
+      const response = await fetch('/api/user/me', {
         headers: getAuthHeaders(),
       });
-      if (!response.ok) throw new Error("Failed to fetch user");
+      if (!response.ok) throw new Error('Failed to fetch user');
       return response.json();
     },
   });
@@ -46,75 +48,77 @@ export default function TournamentsPage() {
   const joinTournamentMutation = useMutation({
     mutationFn: async (tournamentId: string) => {
       const response = await fetch(`/api/tournaments/${tournamentId}/register`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...getAuthHeaders(),
         },
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message || "Failed to join tournament");
+        throw new Error(error.message || 'Failed to join tournament');
       }
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
-        title: "Success!",
+        title: 'Success!',
         description: "You've successfully joined the tournament!",
       });
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/user/me"] });
+      queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/user/me'] });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
 
   // WebSocket for real-time updates
-  useWebSocket((message: WebSocketMessage) => {
-    switch (message.type) {
-      case "tournament_created":
-      case "tournament_updated":
-      case "tournament_registration":
-      case "tournament_unregistration":
-        queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
-        break;
-      case "tournament_deleted":
-        queryClient.invalidateQueries({ queryKey: ["/api/tournaments"] });
-        break;
-    }
-  });
+  useEffect(() => {
+    return addCallback((message: WebSocketMessage) => {
+      switch (message.type) {
+        case 'tournament_created':
+        case 'tournament_updated':
+        case 'tournament_registration':
+        case 'tournament_unregistration':
+          queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+          break;
+        case 'tournament_deleted':
+          queryClient.invalidateQueries({ queryKey: ['/api/tournaments'] });
+          break;
+      }
+    });
+  }, [addCallback]);
 
   const handleJoinTournament = async (tournament: Tournament) => {
     if (!user) {
       toast({
-        title: "Error",
-        description: "Please authenticate first",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Please authenticate first',
+        variant: 'destructive',
       });
       return;
     }
 
     if (user.stars < tournament.entryFee) {
       toast({
-        title: "Insufficient Stars",
+        title: 'Insufficient Stars',
         description: `You need ${tournament.entryFee} stars to join this tournament`,
-        variant: "destructive",
+        variant: 'destructive',
       });
       return;
     }
 
     if (tournament.participants.includes(user.id)) {
       toast({
-        title: "Already Joined",
+        title: 'Already Joined',
         description: "You're already registered for this tournament",
-        variant: "destructive",
+        variant: 'destructive',
       });
       return;
     }
@@ -127,22 +131,22 @@ export default function TournamentsPage() {
         joinTournamentMutation.mutate(tournament.id);
       } else {
         toast({
-          title: "Payment Cancelled",
-          description: "Tournament registration was cancelled",
-          variant: "destructive",
+          title: 'Payment Cancelled',
+          description: 'Tournament registration was cancelled',
+          variant: 'destructive',
         });
       }
     } catch (error) {
       toast({
-        title: "Payment Error",
-        description: "Failed to process payment",
-        variant: "destructive",
+        title: 'Payment Error',
+        description: 'Failed to process payment',
+        variant: 'destructive',
       });
     }
   };
 
   // Featured tournament (first active tournament)
-  const featuredTournament = tournaments.find((t: Tournament) => t.status === "active");
+  const featuredTournament = tournaments.find((t: Tournament) => t.status === 'active');
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -231,7 +235,7 @@ export default function TournamentsPage() {
         {user?.isAdmin && (
           <Button
             className="w-full bg-gaming-green hover:bg-green-600 text-white font-semibold py-4 rounded-xl transition-colors flex items-center justify-center space-x-2 border-2 border-dashed border-green-400 bg-opacity-90"
-            onClick={() => setLocation("/admin")}
+            onClick={() => setLocation('/admin')}
           >
             <Plus className="w-5 h-5" />
             <span>Add New Tournament</span>

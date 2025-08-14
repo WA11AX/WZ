@@ -1,0 +1,69 @@
+﻿2025-08-13T03:38:27.5448035Z ##[group]Run actions/checkout@v4
+2025-08-13T03:38:27.5449091Z with:
+2025-08-13T03:38:27.5449523Z   repository: WA11AX/WZ
+2025-08-13T03:38:27.5450151Z   token: ***
+2025-08-13T03:38:27.5450552Z   ssh-strict: true
+2025-08-13T03:38:27.5451384Z   ssh-user: git
+2025-08-13T03:38:27.5451832Z   persist-credentials: true
+2025-08-13T03:38:27.5452324Z   clean: true
+2025-08-13T03:38:27.5452758Z   sparse-checkout-cone-mode: true
+2025-08-13T03:38:27.5453268Z   fetch-depth: 1
+2025-08-13T03:38:27.5453681Z   fetch-tags: false
+2025-08-13T03:38:27.5454102Z   show-progress: true
+2025-08-13T03:38:27.5454553Z   lfs: false
+2025-08-13T03:38:27.5454949Z   submodules: false
+2025-08-13T03:38:27.5455379Z   set-safe-directory: true
+2025-08-13T03:38:27.5456167Z ##[endgroup]
+2025-08-13T03:38:27.6495293Z Syncing repository: WA11AX/WZ
+2025-08-13T03:38:27.6497218Z ##[group]Getting Git version info
+2025-08-13T03:38:27.6498008Z Working directory is '/home/runner/work/WZ/WZ'
+2025-08-13T03:38:27.6498947Z [command]/usr/bin/git version
+2025-08-13T03:38:27.6562444Z git version 2.50.1
+2025-08-13T03:38:27.6588638Z ##[endgroup]
+2025-08-13T03:38:27.6610324Z Temporarily overriding HOME='/home/runner/work/_temp/f29b38a6-03b9-4819-814f-7a17ca3c3436' before making global git config changes
+2025-08-13T03:38:27.6613421Z Adding repository directory to the temporary git global config as a safe directory
+2025-08-13T03:38:27.6616286Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/WZ/WZ
+2025-08-13T03:38:27.6652222Z Deleting the contents of '/home/runner/work/WZ/WZ'
+2025-08-13T03:38:27.6656213Z ##[group]Initializing the repository
+2025-08-13T03:38:27.6660839Z [command]/usr/bin/git init /home/runner/work/WZ/WZ
+2025-08-13T03:38:27.6753294Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-08-13T03:38:27.6754738Z hint: is subject to change. To configure the initial branch name to use in all
+2025-08-13T03:38:27.6755683Z hint: of your new repositories, which will suppress this warning, call:
+2025-08-13T03:38:27.6756424Z hint:
+2025-08-13T03:38:27.6757168Z hint: 	git config --global init.defaultBranch <name>
+2025-08-13T03:38:27.6758000Z hint:
+2025-08-13T03:38:27.6758600Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-08-13T03:38:27.6759806Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-08-13T03:38:27.6760557Z hint:
+2025-08-13T03:38:27.6761232Z hint: 	git branch -m <name>
+2025-08-13T03:38:27.6761721Z hint:
+2025-08-13T03:38:27.6762351Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-08-13T03:38:27.6764014Z Initialized empty Git repository in /home/runner/work/WZ/WZ/.git/
+2025-08-13T03:38:27.6768649Z [command]/usr/bin/git remote add origin https://github.com/WA11AX/WZ
+2025-08-13T03:38:27.6801628Z ##[endgroup]
+2025-08-13T03:38:27.6802851Z ##[group]Disabling automatic garbage collection
+2025-08-13T03:38:27.6805063Z [command]/usr/bin/git config --local gc.auto 0
+2025-08-13T03:38:27.6832435Z ##[endgroup]
+2025-08-13T03:38:27.6833196Z ##[group]Setting up auth
+2025-08-13T03:38:27.6840056Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-08-13T03:38:27.6870821Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-08-13T03:38:27.7216474Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-08-13T03:38:27.7246221Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-08-13T03:38:27.7462394Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-08-13T03:38:27.7504649Z ##[endgroup]
+2025-08-13T03:38:27.7505866Z ##[group]Fetching the repository
+2025-08-13T03:38:27.7513197Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +fe0fd5cdeb13261fd8156ae40d93031eaafdda52:refs/remotes/origin/main
+2025-08-13T03:38:28.4282198Z From https://github.com/WA11AX/WZ
+2025-08-13T03:38:28.4283293Z  * [new ref]         fe0fd5cdeb13261fd8156ae40d93031eaafdda52 -> origin/main
+2025-08-13T03:38:28.4306265Z ##[endgroup]
+2025-08-13T03:38:28.4306968Z ##[group]Determining the checkout info
+2025-08-13T03:38:28.4308615Z ##[endgroup]
+2025-08-13T03:38:28.4314212Z [command]/usr/bin/git sparse-checkout disable
+2025-08-13T03:38:28.4354133Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-08-13T03:38:28.4381704Z ##[group]Checking out the ref
+2025-08-13T03:38:28.4385961Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2025-08-13T03:38:28.4526303Z Switched to a new branch 'main'
+2025-08-13T03:38:28.4529308Z branch 'main' set up to track 'origin/main'.
+2025-08-13T03:38:28.4536807Z ##[endgroup]
+2025-08-13T03:38:28.4575916Z [command]/usr/bin/git log -1 --format=%H
+2025-08-13T03:38:28.4598438Z fe0fd5cdeb13261fd8156ae40d93031eaafdda52

@@ -1,4 +1,4 @@
-import { randomUUID } from "crypto";
+// Storage utilities for file operations
 
 import {
   type User,
@@ -7,10 +7,10 @@ import {
   type InsertTournament,
   users,
   tournaments,
-} from "@shared/schema";
-import { eq, or, desc } from "drizzle-orm";
+} from '@shared/schema';
+import { eq, or, desc } from 'drizzle-orm';
 
-import { db } from "./db";
+import { db } from './db';
 
 export interface IStorage {
   // User methods
@@ -56,7 +56,7 @@ export class DatabaseStorage implements IStorage {
       const [user] = await db.select().from(users).where(eq(users.id, id));
       return user || undefined;
     } catch (error) {
-      console.error("Error fetching user:", error);
+      console.error('Error fetching user:', error);
       throw new Error(`Failed to fetch user with id ${id}`);
     }
   }
@@ -66,7 +66,7 @@ export class DatabaseStorage implements IStorage {
       const [user] = await db.select().from(users).where(eq(users.telegramId, telegramId));
       return user || undefined;
     } catch (error) {
-      console.error("Error fetching user by telegram ID:", error);
+      console.error('Error fetching user by telegram ID:', error);
       throw new Error(`Failed to fetch user with telegram ID ${telegramId}`);
     }
   }
@@ -93,7 +93,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getTournaments(): Promise<Tournament[]> {
-    const cacheKey = "tournaments:active";
+    const cacheKey = 'tournaments:active';
 
     // Проверяем кэш
     const cached = this.getFromCache<Tournament[]>(cacheKey);
@@ -106,7 +106,7 @@ export class DatabaseStorage implements IStorage {
       const tournamentList = await db
         .select()
         .from(tournaments)
-        .where(or(eq(tournaments.status, "upcoming"), eq(tournaments.status, "active")))
+        .where(or(eq(tournaments.status, 'upcoming'), eq(tournaments.status, 'active')))
         .orderBy(desc(tournaments.date))
         .limit(50); // Ограничиваем количество для производительности
 
@@ -115,8 +115,8 @@ export class DatabaseStorage implements IStorage {
 
       return tournamentList;
     } catch (error) {
-      console.error("Error fetching tournaments:", error);
-      throw new Error("Failed to fetch tournaments");
+      console.error('Error fetching tournaments:', error);
+      throw new Error('Failed to fetch tournaments');
     }
   }
 
@@ -138,8 +138,8 @@ export class DatabaseStorage implements IStorage {
         prize: insertTournament.prize,
         maxParticipants: insertTournament.maxParticipants ?? 100,
         participants: [],
-        status: (insertTournament.status ?? "upcoming") as "upcoming" | "active" | "completed",
-        tournamentType: insertTournament.tournamentType ?? "BATTLE ROYALE",
+        status: (insertTournament.status ?? 'upcoming') as 'upcoming' | 'active' | 'completed',
+        tournamentType: insertTournament.tournamentType ?? 'BATTLE ROYALE',
       })
       .returning();
     return tournament;
@@ -223,41 +223,38 @@ export class DatabaseStorage implements IStorage {
       if (existingTournaments.length === 0) {
         // Create sample tournaments
         await this.createTournament({
-          title: "Tournament on the Rebirth Island",
-          description: "Intense battle royale action on the iconic Rebirth Island map",
-          mapName: "REBIRTH ISLAND",
+          title: 'Tournament on the Rebirth Island',
+          description: 'Intense battle royale action on the iconic Rebirth Island map',
+          mapName: 'REBIRTH ISLAND',
           mapImage:
-            "https://images.unsplash.com/photo-1538481199464-7160b8f4a85a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+            'https://images.unsplash.com/photo-1538481199464-7160b8f4a85a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300',
           date: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 hours from now
           entryFee: 100,
           prize: 2500,
           maxParticipants: 100,
-          status: "active",
-          tournamentType: "BATTLE ROYALE",
+          status: 'active',
+          tournamentType: 'BATTLE ROYALE',
         });
 
         await this.createTournament({
-          title: "Championship Finals",
-          description: "Elite tournament with the highest stakes and rewards",
-          mapName: "CYBER CITY",
+          title: 'Championship Finals',
+          description: 'Elite tournament with the highest stakes and rewards',
+          mapName: 'CYBER CITY',
           mapImage:
-            "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300",
+            'https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=300',
           date: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
           entryFee: 250,
           prize: 1250,
           maxParticipants: 50,
-          status: "upcoming",
-          tournamentType: "CHAMPIONSHIP",
+          status: 'upcoming',
+          tournamentType: 'CHAMPIONSHIP',
         });
       }
     } catch (error) {
-      console.error("Error initializing data:", error);
+      console.error('Error initializing data:', error);
       // Не прерываем запуск приложения из-за ошибки инициализации
     }
   }
 }
 
 export const storage = new DatabaseStorage();
-
-// Initialize sample data on startup
-storage.initializeData().catch(console.error);

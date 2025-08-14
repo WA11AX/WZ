@@ -1,14 +1,14 @@
-import type { Tournament } from "@shared/schema";
-import { Star, Trophy, Users, Clock, Zap, Target } from "lucide-react";
-import { useLocation } from "wouter";
+import type { Tournament } from '@shared/schema';
+import { Star, Trophy, Users, Clock, Zap, Target } from 'lucide-react';
+import { useLocation } from 'wouter';
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 interface TournamentCardProps {
   tournament: Tournament;
-  onJoin?: (tournament: Tournament) => void;
+  onJoin?: (_tournament: Tournament) => void;
   showJoinButton?: boolean;
 }
 
@@ -25,9 +25,9 @@ export default function TournamentCard({
     const isToday = tournamentDate.toDateString() === now.toDateString();
 
     if (isToday) {
-      return `Today ${tournamentDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
+      return `Today ${tournamentDate.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
         hour12: false,
       })}`;
     }
@@ -36,41 +36,41 @@ export default function TournamentCard({
       new Date(now.getTime() + 24 * 60 * 60 * 1000).toDateString() ===
       tournamentDate.toDateString();
     if (isTomorrow) {
-      return `Tomorrow ${tournamentDate.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
+      return `Tomorrow ${tournamentDate.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
         hour12: false,
       })}`;
     }
 
-    return tournamentDate.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+    return tournamentDate.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
     });
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
-        return "gradient-green animate-glow";
-      case "upcoming":
-        return "gradient-orange";
-      case "completed":
-        return "bg-gray-500";
+      case 'active':
+        return 'gradient-green animate-glow';
+      case 'upcoming':
+        return 'gradient-orange';
+      case 'completed':
+        return 'bg-gray-500';
       default:
-        return "bg-gray-400";
+        return 'bg-gray-400';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "active":
+      case 'active':
         return <Zap className="w-3 h-3 text-white" />;
-      case "upcoming":
+      case 'upcoming':
         return <Clock className="w-3 h-3 text-white" />;
-      case "completed":
+      case 'completed':
         return <Target className="w-3 h-3 text-white" />;
       default:
         return <Clock className="w-3 h-3 text-white" />;

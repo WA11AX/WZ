@@ -9,6 +9,7 @@ src/
 ├── components/     # Reusable UI components
 ├── hooks/         # Custom React hooks
 ├── lib/           # Utility libraries and configurations
+├── services/      # Shared WebSocket and Telegram services
 ├── pages/         # Page components and routing
 ├── types/         # TypeScript type definitions
 ├── App.tsx        # Main application component
@@ -35,6 +36,26 @@ The application uses a modern component library built on:
 
 - **WebSocket**: Live tournament updates
 - **Telegram SDK**: Integration with Telegram Web App
+
+### Services
+
+Shared logic for WebSocket connections and Telegram SDK is centralized in `src/services` and exposed via React contexts:
+
+```tsx
+import { TelegramProvider, useTelegram } from '@/services/telegram';
+import { WebSocketProvider, useWebSocketService } from '@/services/websocket';
+
+// Wrap your app
+<TelegramProvider>
+  <WebSocketProvider>
+    <App />
+  </WebSocketProvider>
+</TelegramProvider>;
+
+// Inside components
+const { getAuthHeaders, processStarsPayment } = useTelegram();
+const { addCallback } = useWebSocketService();
+```
 
 ### Routing
 
@@ -94,7 +115,7 @@ The project uses Tailwind CSS with custom configuration:
 The app is designed to work as a Telegram Web App:
 
 ```typescript
-import WebApp from "@twa-dev/sdk";
+import WebApp from '@twa-dev/sdk';
 
 // Initialize Telegram Web App
 WebApp.ready();

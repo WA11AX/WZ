@@ -1,0 +1,92 @@
+Окей. Вот готовая «задача для Replit-агента», которую можно вставить как один промпт.
+
+---
+
+# Задача: Починить пайплайн “Lint and Type Check” (ESLint errors)
+
+## Контекст
+
+Пайплайн падает из-за ошибок ESLint типа `no-unused-vars` в нескольких файлах фронтенда и бэкенда. Примеры из логов:
+
+* `client/src/components/tournament-card.tsx` — `tournament` не используется (11:13).
+* `client/src/components/ui/carousel.tsx` — `carouselApi` не используется (17:13).
+* `client/src/components/ui/chart.tsx` — `key` не используется (10:4).
+* `client/src/components/ui/sidebar.tsx` — `open` (32:13, 34:19, 55:21) и `prev` (78:30) не используются.
+* `server/errorHandler.ts` — `_next` объявлён, но не используется (152:3).
+* `server/middleware.ts` — `_next` не используется (185:70, 223:59).
+
+## Цель
+
+Сделать так, чтобы `npm run validate` проходил без **errors** от ESLint (warnings допустимы), а job “Lint and Type Check” завершался успешно.
+
+## Правила
+
+1. Не маскируй ошибки без причины. Если переменная реально не нужна — удаляй.
+2. Если параметр обязателен по сигнатуре (например, Express `next`), оставь его с префиксом `_` и настрой ESLint игнор для аргументов, начинающихся с подчёркивания.
+
+## План работ
+
+1. Запусти локально линт: `npm run lint` (или `npm run validate`) и зафиксируй текущий список ошибок.
+2. Исправь **только errors** `no-unused-vars` по файлам:
+
+   * `client/src/components/tournament-card.tsx`: удалить или использовать `tournament`.
+   * `client/src/components/ui/carousel.tsx`: удалить или использовать `carouselApi`.
+   * `client/src/components/ui/chart.tsx`: удалить или использовать `key`.
+   * `client/src/components/ui/sidebar.tsx`: удалить или использовать `open`, `prev`.
+   * `server/errorHandler.ts`: оставить `(_err, _req, _res, _next)`; если `next` не вызывается — не удалять параметр, он сохраняет сигнатуру error-middleware.
+   * `server/middleware.ts`: аналогично `(_req, _res, _next)`; если `next` не нужен — оставить `_next`.
+3. В `.eslintrc.*` добавь правило, чтобы не считать неиспользуемыми **аргументы, начинающиеся с `_`**:
+
+   ```json
+   {
+     "rules": {
+       "no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+     }
+   }
+   ```
+
+   > Если правило уже есть — не дублировать, а расширить.
+4. Пробеги автофикс, где возможно:
+
+   ```bash
+   npm run lint -- --fix || true
+   ```
+5. Повтори `npm run validate` и убедись, что **errors нет**, допускаются warnings (например, `no-console`, `no-alert`, `@typescript-eslint/no-explicit-any`).
+6. Закоммить изменения отдельным коммитом `fix(lint): resolve no-unused-vars errors and allow _args`.
+
+## Подсказки по правкам (типовые)
+
+* Неиспользуемый пропс/стейт/переменная:
+
+  * Удалить объявление **и** места, где он передаётся.
+  * Если скоро понадобится — временно переименовать в `_name`.
+* Express middleware:
+
+  ```ts
+  // error handler
+  export function errorHandler(_err: unknown, _req: Request, res: Response, _next: NextFunction) {
+    // логика…
+    return res.status(500).json({ ok: false });
+  }
+
+  // обычный middleware
+  export function someMiddleware(_req: Request, res: Response, _next: NextFunction) {
+    // логика…
+    return res.setHeader('X-Foo', 'bar');
+  }
+  ```
+
+## Проверка (Acceptance Criteria)
+
+* Команда `npm run validate` завершается кодом 0.
+* В выводе ESLint отсутствуют **errors**; количество **warnings** неважно.
+* GitHub Actions job “Lint and Type Check” зелёный.
+
+## Что не делать
+
+* Не отключать глобально `no-unused-vars`.
+* Не понижать ESLint до старых версий и не менять Node версии раннера.
+
+---
+
+Хочешь, добавлю ещё блок «если агент не найдёт `.eslintrc`, то где его создать и в каком формате»? Или так ок?

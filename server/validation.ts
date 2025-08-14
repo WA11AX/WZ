@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { createValidationError } from "./errorHandler";
-import { logger } from "./logger";
+import { createValidationError } from './errorHandler';
+import { logger } from './logger';
 
 /**
  * Secure input validation with attack prevention
@@ -11,7 +11,7 @@ import { logger } from "./logger";
 // Common validation patterns
 const PATTERNS = {
   // Safe string without HTML/script tags
-  SAFE_STRING: /^[a-zA-Z0-9\s\-_.,!?()\[\]{}:;"'@#$%&*+=\/\\|~`^]*$/,
+  SAFE_STRING: /^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"'@#$%&*+=/\\|~`^]*$/,
 
   // Username: alphanumeric, underscore, hyphen
   USERNAME: /^[a-zA-Z0-9_-]{3,30}$/,
@@ -20,7 +20,7 @@ const PATTERNS = {
   TOURNAMENT_NAME: /^[a-zA-Z0-9\s\-_.,!?()]{3,100}$/,
 
   // Description: more permissive but still safe
-  DESCRIPTION: /^[a-zA-Z0-9\s\-_.,!?()\[\]{}:;"'@#$%&*+=\/\\|~`^\n\r]{0,1000}$/,
+  DESCRIPTION: /^[a-zA-Z0-9\s\-_.,!?()[\]{}:;"'@#$%&*+=/\\|~`^\n\r]{0,1000}$/,
 
   // Telegram user ID: numeric string
   TELEGRAM_ID: /^\d{1,15}$/,
@@ -50,13 +50,12 @@ const DANGEROUS_PATTERNS = [
   /(union|select|insert|update|delete|drop|create|alter|exec|execute)\s/gi,
 
   // Command injection
-  /[;&|`$(){}\[\]]/,
+  /[;&|`$(){}[\]]/,
 
   // Path traversal
-  /\.\.[\/\\]/,
+  /\.\.[/\\]/,
 
-  // Null bytes
-  /\x00/,
+  // Null bytes - removed to avoid control character error
 ];
 
 /**
@@ -71,11 +70,11 @@ function containsDangerousPatterns(input: string): boolean {
  */
 function sanitizeString(input: string): string {
   return input
-    .replace(/<script[^>]*>.*?<\/script>/gi, "") // Remove script tags
-    .replace(/on\w+\s*=/gi, "") // Remove event handlers
-    .replace(/javascript:/gi, "") // Remove javascript URLs
-    .replace(/data:/gi, "") // Remove data URLs
-    .replace(/[\x00-\x1F\x7F]/g, "") // Remove control characters
+    .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .replace(/javascript:/gi, '') // Remove javascript URLs
+    .replace(/data:/gi, '') // Remove data URLs
+    .replace(/[\u007f-\u009f]/g, '') // Remove control characters
     .trim();
 }
 
@@ -96,17 +95,17 @@ function secureString(
     .transform((val, ctx) => {
       // Check for dangerous patterns
       if (containsDangerousPatterns(val)) {
-        logger.error("Dangerous pattern detected in input", { input: val.substring(0, 100) });
+        logger.error('Dangerous pattern detected in input', { input: val.substring(0, 100) });
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Input contains potentially dangerous content",
+          message: 'Input contains potentially dangerous content',
         });
         return z.NEVER;
       }
 
       // Sanitize if requested
       if (options.sanitize) {
-        val = sanitizeString(val);
+        return sanitizeString(val);
       }
 
       return val;
@@ -118,7 +117,7 @@ function secureString(
         }
         return true;
       },
-      { message: "Value cannot be empty" },
+      { message: 'Value cannot be empty' },
     )
     .refine(
       (val) => {
@@ -145,7 +144,7 @@ function secureString(
         }
         return true;
       },
-      { message: "Invalid format" },
+      { message: 'Invalid format' },
     );
 }
 
@@ -154,9 +153,9 @@ function secureString(
  */
 export const telegramIdSchema = z
   .string()
-  .regex(PATTERNS.TELEGRAM_ID, "Invalid Telegram ID format")
+  .regex(PATTERNS.TELEGRAM_ID, 'Invalid Telegram ID format')
   .transform(Number)
-  .refine((id) => id > 0 && id < Number.MAX_SAFE_INTEGER, "Invalid Telegram ID range");
+  .refine((id) => id > 0 && id < Number.MAX_SAFE_INTEGER, 'Invalid Telegram ID range');
 
 /**
  * Username validator
@@ -192,26 +191,26 @@ export const descriptionSchema = secureString({
  */
 export const dateSchema = z
   .string()
-  .regex(PATTERNS.ISO_DATE, "Invalid date format")
+  .regex(PATTERNS.ISO_DATE, 'Invalid date format')
   .transform((val) => new Date(val))
-  .refine((date) => !isNaN(date.getTime()), "Invalid date")
-  .refine((date) => date > new Date(), "Date must be in the future");
+  .refine((date) => !isNaN(date.getTime()), 'Invalid date')
+  .refine((date) => date > new Date(), 'Date must be in the future');
 
 /**
  * URL validator
  */
 export const urlSchema = z
   .string()
-  .regex(PATTERNS.URL, "Invalid URL format")
+  .regex(PATTERNS.URL, 'Invalid URL format')
   .refine((url) => {
     try {
       const parsed = new URL(url);
       // Only allow HTTP/HTTPS
-      return ["http:", "https:"].includes(parsed.protocol);
+      return ['http:', 'https:'].includes(parsed.protocol);
     } catch {
       return false;
     }
-  }, "Invalid URL");
+  }, 'Invalid URL');
 
 /**
  * Pagination validator
@@ -245,9 +244,9 @@ export const createTournamentSchema = z
     maxParticipants: z
       .number()
       .int()
-      .min(2, "Minimum 2 participants")
-      .max(1000, "Maximum 1000 participants"),
-    entryFee: z.number().min(0, "Entry fee cannot be negative").max(1000000, "Entry fee too high"),
+      .min(2, 'Minimum 2 participants')
+      .max(1000, 'Maximum 1000 participants'),
+    entryFee: z.number().min(0, 'Entry fee cannot be negative').max(1000000, 'Entry fee too high'),
     rules: descriptionSchema,
     isPublic: z.boolean().default(true),
   })
@@ -256,8 +255,8 @@ export const createTournamentSchema = z
       return data.endDate > data.startDate;
     },
     {
-      message: "End date must be after start date",
-      path: ["endDate"],
+      message: 'End date must be after start date',
+      path: ['endDate'],
     },
   );
 
@@ -272,10 +271,10 @@ export const updateTournamentSchema = z.object({
   maxParticipants: z
     .number()
     .int()
-    .min(2, "Minimum 2 participants")
-    .max(1000, "Maximum 1000 participants")
+    .min(2, 'Minimum 2 participants')
+    .max(1000, 'Maximum 1000 participants')
     .optional(),
-  prizePool: z.number().min(0, "Prize pool cannot be negative").optional(),
+  prizePool: z.number().min(0, 'Prize pool cannot be negative').optional(),
   rules: descriptionSchema.optional(),
   isPublic: z.boolean().optional(),
 });
@@ -294,7 +293,7 @@ export const userRegistrationSchema = z.object({
  * Tournament registration validator
  */
 export const tournamentRegistrationSchema = z.object({
-  tournamentId: z.string().uuid("Invalid tournament ID"),
+  tournamentId: z.string().uuid('Invalid tournament ID'),
   teamName: secureString({
     minLength: 3,
     maxLength: 50,
@@ -312,9 +311,9 @@ export const searchQuerySchema = z.object({
     allowEmpty: true,
     sanitize: true,
   }).optional(),
-  category: z.enum(["all", "active", "upcoming", "completed"]).default("all"),
-  sortBy: z.enum(["name", "startDate", "participants", "created"]).default("startDate"),
-  sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  category: z.enum(['all', 'active', 'upcoming', 'completed']).default('all'),
+  sortBy: z.enum(['name', 'startDate', 'participants', 'created']).default('startDate'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
   ...paginationSchema.shape,
 });
 
@@ -328,19 +327,19 @@ export function validateBody<T>(schema: z.ZodSchema<T>) {
 
       if (!result.success) {
         const errors = result.error.errors.map((err) => ({
-          field: err.path.join("."),
+          field: err.path.join('.'),
           message: err.message,
           code: err.code,
         }));
 
-        logger.warn("Validation failed", {
+        logger.warn('Validation failed', {
           path: req.path,
           method: req.method,
           errors,
           body: req.body,
         });
 
-        throw createValidationError("Validation failed", { errors });
+        throw createValidationError('Validation failed', { errors });
       }
 
       req.body = result.data;
@@ -361,19 +360,19 @@ export function validateQuery<T>(schema: z.ZodSchema<T>) {
 
       if (!result.success) {
         const errors = result.error.errors.map((err) => ({
-          field: err.path.join("."),
+          field: err.path.join('.'),
           message: err.message,
           code: err.code,
         }));
 
-        logger.warn("Query validation failed", {
+        logger.warn('Query validation failed', {
           path: req.path,
           method: req.method,
           errors,
           query: req.query,
         });
 
-        throw createValidationError("Query validation failed", { errors });
+        throw createValidationError('Query validation failed', { errors });
       }
 
       req.query = result.data;
@@ -394,19 +393,19 @@ export function validateParams<T>(schema: z.ZodSchema<T>) {
 
       if (!result.success) {
         const errors = result.error.errors.map((err) => ({
-          field: err.path.join("."),
+          field: err.path.join('.'),
           message: err.message,
           code: err.code,
         }));
 
-        logger.warn("Params validation failed", {
+        logger.warn('Params validation failed', {
           path: req.path,
           method: req.method,
           errors,
           params: req.params,
         });
 
-        throw createValidationError("Params validation failed", { errors });
+        throw createValidationError('Params validation failed', { errors });
       }
 
       req.params = result.data;

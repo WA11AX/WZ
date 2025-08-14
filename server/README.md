@@ -52,6 +52,9 @@ npm run start
 # Push schema changes to database
 npm run db:push
 
+# Seed demo tournaments (optional)
+npm run seed
+
 # View database configuration
 cat drizzle.config.ts
 ```
@@ -62,15 +65,15 @@ The server uses a modular route structure:
 
 ```typescript
 // Example route handler
-import { db } from "./storage";
-import { tournaments } from "@shared/schema";
+import { db } from './storage';
+import { tournaments } from '@shared/schema';
 
-app.get("/api/tournaments", async (req, res) => {
+app.get('/api/tournaments', async (req, res) => {
   try {
     const allTournaments = await db.select().from(tournaments);
     res.json(allTournaments);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch tournaments" });
+    res.status(500).json({ error: 'Failed to fetch tournaments' });
   }
 });
 ```
@@ -98,7 +101,7 @@ app.get("/api/tournaments", async (req, res) => {
 The server uses shared database schemas from the `@shared` package:
 
 ```typescript
-import { users, tournaments, insertUserSchema } from "@shared/schema";
+import { users, tournaments, insertUserSchema } from '@shared/schema';
 
 // Type-safe database operations
 const newUser = await db.insert(users).values(validatedUserData);
@@ -109,9 +112,11 @@ const newUser = await db.insert(users).values(validatedUserData);
 ### Environment Variables
 
 - `NODE_ENV`: Environment (development/production)
+- `PORT`: Server port (default: 3000)
 - `DATABASE_URL`: PostgreSQL connection string
 - `SESSION_SECRET`: Session encryption secret
-- `PORT`: Server port (default: 3000)
+- `TELEGRAM_BOT_TOKEN`: Telegram bot API token
+- `ADMIN_TELEGRAM_ID` (optional): Telegram user ID with admin access. If not set, no user will have admin privileges via Telegram, and admin-only features will be disabled or inaccessible.
 
 ### Middleware Stack
 
@@ -126,13 +131,13 @@ const newUser = await db.insert(users).values(validatedUserData);
 Real-time features are implemented using WebSockets:
 
 ```typescript
-import { WebSocketServer } from "ws";
+import { WebSocketServer } from 'ws';
 
 // WebSocket server for real-time updates
 const wss = new WebSocketServer({ port: 8080 });
 
-wss.on("connection", (ws) => {
-  ws.on("message", (data) => {
+wss.on('connection', (ws) => {
+  ws.on('message', (data) => {
     // Handle real-time tournament updates
   });
 });

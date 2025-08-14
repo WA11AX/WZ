@@ -1,0 +1,234 @@
+﻿2025-08-13T03:38:29.9650037Z ##[group]Run npm ci
+2025-08-13T03:38:29.9650370Z [36;1mnpm ci[0m
+2025-08-13T03:38:29.9728586Z shell: /usr/bin/bash -e {0}
+2025-08-13T03:38:29.9729164Z ##[endgroup]
+2025-08-13T03:38:34.8183984Z npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-08-13T03:38:35.5710320Z npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-08-13T03:38:37.0358840Z npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+2025-08-13T03:38:37.0362397Z npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+2025-08-13T03:38:37.0736010Z npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+2025-08-13T03:38:37.1007856Z npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+2025-08-13T03:38:37.2624530Z npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-08-13T03:38:39.6049702Z npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+2025-08-13T03:38:42.5231213Z 
+2025-08-13T03:38:42.5239877Z > rest-express@1.0.0 prepare
+2025-08-13T03:38:42.5240657Z > npm run validate
+2025-08-13T03:38:42.5241049Z 
+2025-08-13T03:38:42.6622696Z 
+2025-08-13T03:38:42.6623530Z > rest-express@1.0.0 validate
+2025-08-13T03:38:42.6624431Z > npm run lint:check && npm run format:check && npm run type-check
+2025-08-13T03:38:42.6624933Z 
+2025-08-13T03:38:42.7900830Z 
+2025-08-13T03:38:42.7901402Z > rest-express@1.0.0 lint:check
+2025-08-13T03:38:42.7902064Z > eslint . --ext .ts,.tsx,.js,.jsx
+2025-08-13T03:38:42.7902400Z 
+2025-08-13T03:38:45.2226175Z 
+2025-08-13T03:38:45.2227091Z /home/runner/work/WZ/WZ/client/src/components/error-boundary.tsx
+2025-08-13T03:38:45.2252537Z ##[warning]  25:5  warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2259561Z 
+2025-08-13T03:38:45.2259940Z /home/runner/work/WZ/WZ/client/src/components/tournament-card.tsx
+2025-08-13T03:38:45.2261349Z ##[error]  11:13  error  'tournament' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2262086Z 
+2025-08-13T03:38:45.2262398Z /home/runner/work/WZ/WZ/client/src/components/ui/carousel.tsx
+2025-08-13T03:38:45.2263285Z ##[error]  17:13  error  'carouselApi' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2263953Z 
+2025-08-13T03:38:45.2264218Z /home/runner/work/WZ/WZ/client/src/components/ui/chart.tsx
+2025-08-13T03:38:45.2264836Z ##[error]  10:4  error  'key' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2265434Z 
+2025-08-13T03:38:45.2265709Z /home/runner/work/WZ/WZ/client/src/components/ui/sidebar.tsx
+2025-08-13T03:38:45.2266382Z ##[error]   32:13  error  'open' is defined but never used            no-unused-vars
+2025-08-13T03:38:45.2267420Z ##[error]   34:19  error  'open' is defined but never used            no-unused-vars
+2025-08-13T03:38:45.2268478Z ##[error]   55:21  error  'open' is defined but never used            no-unused-vars
+2025-08-13T03:38:45.2269868Z ##[error]   78:30  error  'value' is defined but never used           no-unused-vars
+2025-08-13T03:38:45.2271017Z ##[error]  568:7   error  Assignment to function parameter 'tooltip'  no-param-reassign
+2025-08-13T03:38:45.2271751Z 
+2025-08-13T03:38:45.2272009Z /home/runner/work/WZ/WZ/client/src/components/ui/skeleton.tsx
+2025-08-13T03:38:45.2272583Z ##[error]  3:44  error  'React' is not defined  no-undef
+2025-08-13T03:38:45.2273197Z 
+2025-08-13T03:38:45.2273421Z /home/runner/work/WZ/WZ/client/src/lib/telegram.ts
+2025-08-13T03:38:45.2274062Z ##[warning]    8:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2275072Z ##[warning]   14:7   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2276049Z ##[warning]   20:7   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2277521Z ##[warning]   44:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2278520Z ##[warning]   63:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2280039Z ##[warning]   77:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2281043Z ##[warning]   88:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2282047Z ##[warning]  100:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2283172Z ##[warning]  111:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2284236Z ##[error]  128:25  error    Unexpected confirm            no-alert
+2025-08-13T03:38:45.2285266Z ##[error]  148:7   error    Unexpected alert              no-alert
+2025-08-13T03:38:45.2286301Z ##[warning]  151:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2287332Z ##[error]  152:5   error    Unexpected alert              no-alert
+2025-08-13T03:38:45.2288401Z ##[warning]  169:5   warning  Unexpected console statement  no-console
+2025-08-13T03:38:45.2289445Z 
+2025-08-13T03:38:45.2289657Z /home/runner/work/WZ/WZ/client/src/lib/websocket.ts
+2025-08-13T03:38:45.2290601Z ##[warning]   10:16  warning  Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2292082Z ##[error]   18:38  error    'NodeJS' is not defined                                                                                     no-undef
+2025-08-13T03:38:45.2293529Z ##[warning]   19:48  warning  Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2295043Z ##[warning]   22:44  warning  Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2296479Z ##[warning]   42:7   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2297893Z ##[warning]   47:9   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2299571Z ##[warning]   65:11  warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2301057Z ##[warning]   76:9   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2302456Z ##[warning]   86:11  warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2303855Z ##[warning]   92:11  warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2305256Z ##[warning]  103:9   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2306648Z ##[warning]  114:7   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2308026Z ##[warning]  127:9   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2309630Z ##[warning]  133:9   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2311324Z ##[warning]  149:6   warning  React Hook useEffect has a missing dependency: 'connect'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+2025-08-13T03:38:45.2312989Z ##[warning]  151:33  warning  Unexpected any. Specify a different type                                                                    @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2314676Z ##[warning]  155:7   warning  Unexpected console statement                                                                                no-console
+2025-08-13T03:38:45.2315652Z 
+2025-08-13T03:38:45.2315824Z /home/runner/work/WZ/WZ/client/src/main.tsx
+2025-08-13T03:38:45.2316496Z ##[warning]  6:12  warning  Forbidden non-null assertion  @typescript-eslint/no-non-null-assertion
+2025-08-13T03:38:45.2317305Z 
+2025-08-13T03:38:45.2317504Z /home/runner/work/WZ/WZ/client/src/pages/admin.tsx
+2025-08-13T03:38:45.2318287Z ##[warning]   59:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2319644Z ##[error]  151:28  error    'React' is not defined                    no-undef
+2025-08-13T03:38:45.2320792Z ##[error]  173:9   error    Unexpected confirm                        no-alert
+2025-08-13T03:38:45.2321604Z 
+2025-08-13T03:38:45.2392508Z /home/runner/work/WZ/WZ/client/src/pages/tournament-detail.tsx
+2025-08-13T03:38:45.2393813Z ##[error]  1:15  error  'Tournament' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2396138Z ##[error]  3:42  error  'Clock' is defined but never used       no-unused-vars
+2025-08-13T03:38:45.2397527Z 
+2025-08-13T03:38:45.2397933Z /home/runner/work/WZ/WZ/client/src/pages/tournaments.tsx
+2025-08-13T03:38:45.2399194Z ##[error]   1:27  error  'User' is defined but never used       no-unused-vars
+2025-08-13T03:38:45.2401311Z ##[error]   4:10  error  'useEffect' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2403358Z ##[error]  61:17  error  'data' is defined but never used       no-unused-vars
+2025-08-13T03:38:45.2404656Z 
+2025-08-13T03:38:45.2404943Z /home/runner/work/WZ/WZ/server/auth.ts
+2025-08-13T03:38:45.2406205Z ##[error]    5:26  error    'isDevelopment' is defined but never used  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2408323Z ##[error]    5:26  error    'isDevelopment' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2410845Z ##[warning]   28:18  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2412958Z ##[warning]  164:59  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2414845Z ##[warning]  164:70  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2417185Z ##[warning]  175:11  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2419568Z ##[warning]  176:11  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2420505Z 
+2025-08-13T03:38:45.2420718Z /home/runner/work/WZ/WZ/server/config.ts
+2025-08-13T03:38:45.2421467Z ##[error]  184:18  error  Require statement not part of import statement  @typescript-eslint/no-var-requires
+2025-08-13T03:38:45.2422303Z 
+2025-08-13T03:38:45.2422465Z /home/runner/work/WZ/WZ/server/db.ts
+2025-08-13T03:38:45.2423123Z ##[error]  21:11  error  'result' is assigned a value but never used  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2424295Z ##[error]  21:11  error  'result' is assigned a value but never used  no-unused-vars
+2025-08-13T03:38:45.2425023Z 
+2025-08-13T03:38:45.2425209Z /home/runner/work/WZ/WZ/server/errorHandler.ts
+2025-08-13T03:38:45.2426016Z ##[error]  117:10  error    'isOperationalError' is defined but never used                          @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2427392Z ##[error]  117:10  error    'isOperationalError' is defined but never used                          no-unused-vars
+2025-08-13T03:38:45.2428783Z ##[warning]  137:36  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2430626Z ##[error]  156:3   error    'next' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2432002Z ##[error]  156:3   error    'next' is defined but never used                                        no-unused-vars
+2025-08-13T03:38:45.2433711Z ##[warning]  195:18  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2435324Z ##[warning]  206:24  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2436749Z ##[warning]  207:23  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2437590Z 
+2025-08-13T03:38:45.2437755Z /home/runner/work/WZ/WZ/server/index.ts
+2025-08-13T03:38:45.2438382Z ##[error]   1:24  error    'Request' is defined but never used       @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2439847Z ##[error]   1:24  error    'Request' is defined but never used       no-unused-vars
+2025-08-13T03:38:45.2441028Z ##[error]   1:33  error    'Response' is defined but never used      @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2442163Z ##[error]   1:33  error    'Response' is defined but never used      no-unused-vars
+2025-08-13T03:38:45.2443308Z ##[error]   1:43  error    'NextFunction' is defined but never used  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2444438Z ##[error]   1:43  error    'NextFunction' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2445616Z ##[warning]  21:44  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2446478Z 
+2025-08-13T03:38:45.2446634Z /home/runner/work/WZ/WZ/server/logger.ts
+2025-08-13T03:38:45.2447268Z ##[error]   1:25  error    'isDevelopment' is defined but never used  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2448418Z ##[error]   1:25  error    'isDevelopment' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2450011Z ##[warning]  54:24  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2451897Z ##[warning]  69:64  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2453566Z ##[warning]  76:33  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2454869Z ##[warning]  82:32  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2456139Z ##[warning]  88:32  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2457406Z ##[warning]  94:33  warning  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2458219Z 
+2025-08-13T03:38:45.2458389Z /home/runner/work/WZ/WZ/server/middleware.ts
+2025-08-13T03:38:45.2459418Z ##[warning]  102:39  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2460930Z ##[warning]  184:35  warning  Unexpected any. Specify a different type                                @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2462382Z ##[error]  184:69  error    'next' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2463727Z ##[error]  184:69  error    'next' is defined but never used                                        no-unused-vars
+2025-08-13T03:38:45.2464501Z 
+2025-08-13T03:38:45.2464705Z /home/runner/work/WZ/WZ/server/rateLimiter.simple.ts
+2025-08-13T03:38:45.2465548Z ##[error]  20:37  error    'options' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2466909Z ##[error]  20:37  error    'options' is defined but never used                                        no-unused-vars
+2025-08-13T03:38:45.2468509Z ##[warning]  20:46  warning  Unexpected any. Specify a different type                                   @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2470289Z ##[error]  22:2   error    Newline required at end of file but not found                              eol-last
+2025-08-13T03:38:45.2471297Z 
+2025-08-13T03:38:45.2471485Z /home/runner/work/WZ/WZ/server/rateLimiter.ts
+2025-08-13T03:38:45.2472362Z ##[error]    1:24  error    'Response' is defined but never used                                   @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2473682Z ##[error]    1:24  error    'Response' is defined but never used                                   no-unused-vars
+2025-08-13T03:38:45.2475059Z ##[warning]   12:36  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2476575Z ##[error]   17:39  error    Strings must use doublequote                                           quotes
+2025-08-13T03:38:45.2478552Z ##[warning]   37:38  warning  Unexpected any. Specify a different type                               @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2480210Z ##[error]   43:29  error    Strings must use doublequote                                           quotes
+2025-08-13T03:38:45.2481652Z ##[error]   45:10  error    'req' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2483020Z ##[error]   45:10  error    'req' is defined but never used                                        no-unused-vars
+2025-08-13T03:38:45.2484419Z ##[error]  142:12  error    'req' is defined but never used. Allowed unused args must match /^_/u  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2485767Z ##[error]  142:12  error    'req' is defined but never used                                        no-unused-vars
+2025-08-13T03:38:45.2486541Z 
+2025-08-13T03:38:45.2486699Z /home/runner/work/WZ/WZ/server/routes.ts
+2025-08-13T03:38:45.2487362Z ##[error]    3:10  error    'insertUserSchema' is defined but never used  @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2488564Z ##[error]    3:10  error    'insertUserSchema' is defined but never used  no-unused-vars
+2025-08-13T03:38:45.2490176Z ##[warning]   37:28  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2491613Z ##[warning]   54:39  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2492944Z ##[warning]  111:41  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2494320Z ##[warning]  136:39  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2495687Z ##[warning]  167:39  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2497037Z ##[warning]  192:41  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2498396Z ##[warning]  242:41  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2500139Z ##[warning]  298:21  warning  Unexpected any. Specify a different type      @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2501573Z 
+2025-08-13T03:38:45.2501890Z /home/runner/work/WZ/WZ/server/storage.ts
+2025-08-13T03:38:45.2503084Z ##[error]   1:10  error    'randomUUID' is defined but never used    @typescript-eslint/no-unused-vars
+2025-08-13T03:38:45.2504512Z ##[error]   1:10  error    'randomUUID' is defined but never used    no-unused-vars
+2025-08-13T03:38:45.2505771Z ##[warning]  36:43  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2507174Z ##[warning]  48:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2507994Z 
+2025-08-13T03:38:45.2508162Z /home/runner/work/WZ/WZ/server/validation.ts
+2025-08-13T03:38:45.2509059Z ##[error]   14:39  error    Unnecessary escape character: \[                                   no-useless-escape
+2025-08-13T03:38:45.2510532Z ##[error]   14:57  error    Unnecessary escape character: \/                                   no-useless-escape
+2025-08-13T03:38:45.2512019Z ##[error]   23:39  error    Unnecessary escape character: \[                                   no-useless-escape
+2025-08-13T03:38:45.2513907Z ##[error]   23:57  error    Unnecessary escape character: \/                                   no-useless-escape
+2025-08-13T03:38:45.2516103Z ##[error]   53:14  error    Unnecessary escape character: \[                                   no-useless-escape
+2025-08-13T03:38:45.2518275Z ##[error]   56:9   error    Unnecessary escape character: \/                                   no-useless-escape
+2025-08-13T03:38:45.2520771Z ##[error]   59:3   error    Unexpected control character(s) in regular expression: \x00        no-control-regex
+2025-08-13T03:38:45.2523074Z ##[error]   78:14  error    Unexpected control character(s) in regular expression: \x00, \x1f  no-control-regex
+2025-08-13T03:38:45.2525316Z ##[error]  109:9   error    Assignment to function parameter 'val'                             no-param-reassign
+2025-08-13T03:38:45.2527693Z ##[warning]  325:16  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2530393Z ##[warning]  325:26  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2532841Z ##[warning]  325:37  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2535506Z ##[warning]  358:16  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2537972Z ##[warning]  358:26  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2540612Z ##[warning]  358:37  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2543084Z ##[warning]  391:16  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2545634Z ##[warning]  391:26  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2547569Z ##[warning]  391:37  warning  Unexpected any. Specify a different type                           @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2549336Z 
+2025-08-13T03:38:45.2549654Z /home/runner/work/WZ/WZ/shared/types.ts
+2025-08-13T03:38:45.2551118Z ##[warning]    4:34  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2553677Z ##[warning]   21:39  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2556209Z ##[warning]   30:9   warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2558773Z ##[warning]  102:30  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2561455Z ##[warning]  110:13  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2562993Z 
+2025-08-13T03:38:45.2563365Z /home/runner/work/WZ/WZ/tests/example.test.ts
+2025-08-13T03:38:45.2564637Z ##[warning]   13:3   warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2566828Z ##[warning]   17:32  warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2569238Z ##[warning]   17:68  warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2571442Z ##[warning]   19:7   warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2573690Z ##[warning]   22:5   warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2576121Z ##[warning]   26:28  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2579155Z ##[warning]   27:20  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2581970Z ##[warning]   32:23  warning  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+2025-08-13T03:38:45.2584334Z ##[warning]  214:3   warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2586572Z ##[warning]  222:1   warning  Unexpected console statement              no-console
+2025-08-13T03:38:45.2587981Z 
+2025-08-13T03:38:45.2588584Z ✖ 148 problems (63 errors, 85 warnings)
+2025-08-13T03:38:45.2589590Z   3 errors and 0 warnings potentially fixable with the `--fix` option.
+2025-08-13T03:38:45.2590096Z 
+2025-08-13T03:38:45.2674783Z npm error code 1
+2025-08-13T03:38:45.2675396Z npm error path /home/runner/work/WZ/WZ
+2025-08-13T03:38:45.2675914Z npm error command failed
+2025-08-13T03:38:45.2676461Z npm error command sh -c npm run validate
+2025-08-13T03:38:45.2687434Z npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-13T03_38_30_049Z-debug-0.log
+2025-08-13T03:38:45.2999260Z ##[error]Process completed with exit code 1.

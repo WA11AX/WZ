@@ -1,0 +1,57 @@
+The job failed due to ESLint errors in your codebase. Here’s how to resolve the main issues:
+
+1. "Defined but never used" Errors
+Remove unused variables or use them if they’re needed. For example:
+
+In client/src/components/tournament-card.tsx at line 11:
+
+Diff
+- const tournament = ...
+Remove the unused variable if not needed, or use it in your code.
+
+In client/src/components/ui/carousel.tsx at line 17:
+
+Diff
+- const carouselApi = ...
+In client/src/components/ui/chart.tsx at line 10:
+
+Diff
+- const key = ...
+Similar issues exist for variables like open, value, _event, _error, tournamentTitle, data, useEffect, next, req, _next, _options, _limit, _window, etc. across various files.
+
+Solution:
+For each of these, either:
+
+Remove the variable if not needed.
+Prefix with an underscore if required by your linter (e.g., _req) and your linter is configured to allow unused variables when prefixed.
+Use the variable in your implementation.
+2. TypeScript "Unexpected any" Warnings
+Specify proper types instead of using any. For example:
+
+Diff
+- function foo(bar: any) {
++ function foo(bar: string) {
+Replace any with the actual expected type.
+
+3. "Require statement not part of import statement"
+In server/config.ts at line 180, use ES module imports instead of require:
+
+Diff
+- const something = require('something')
++ import something from 'something'
+4. "Unnecessary escape character" in Regular Expressions
+In server/validation.ts (lines 14, 23, 53, 56), remove unnecessary escaping. For example:
+
+Diff
+- const regex = /\\[abc\\]/;
++ const regex = /[abc]/;
+Validate your regex and remove unneeded backslashes.
+
+5. "Assignment to function parameter"
+Do not assign values to function parameters directly. Instead, assign to a new variable:
+
+Diff
+- function update(val) { val = process(val); }
++ function update(val) { const newVal = process(val); }
+6. "Unexpected control character(s) in regular expression"
+In your regex, avoid using control characters like \x00, \x01, \x1f unless absolutely needed and ensure your regex is correct.
