@@ -15,8 +15,8 @@ export default tseslint.config(
       'dist',
       'build',
       '*.config.js',
-      '*.config.ts'
-    ]
+      '*.config.ts',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -27,14 +27,14 @@ export default tseslint.config(
       sourceType: 'module',
       globals: {
         ...globals.browser,
-        ...globals.node
-      }
+        ...globals.node,
+      },
     },
     plugins: {
       react: reactPlugin,
       'react-hooks': reactHooks,
       import: importPlugin,
-      prettier: prettierPlugin
+      prettier: prettierPlugin,
     },
     rules: {
       '@typescript-eslint/no-unused-vars': 'off',
@@ -63,24 +63,24 @@ export default tseslint.config(
       'prefer-promise-reject-errors': 'error',
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-namespace': 'off',
-      'prettier/prettier': 'error'
+      'prettier/prettier': 'error',
     },
     settings: {
       react: { version: 'detect' },
       'import/resolver': {
         typescript: {
           alwaysTryTypes: true,
-          project: './tsconfig.json'
-        }
-      }
-    }
+          project: './tsconfig.json',
+        },
+      },
+    },
   },
   {
     files: ['*.tsx', '*.jsx'],
-    rules: { '@typescript-eslint/no-unused-vars': 'off' }
+    rules: { '@typescript-eslint/no-unused-vars': 'off' },
   },
   {
     files: ['server/**/*'],
-    rules: { 'no-console': 'off' }
-  }
+    rules: { 'no-console': 'off' },
+  },
 );

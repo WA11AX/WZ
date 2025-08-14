@@ -1,4 +1,5 @@
-import express from 'express';
+import 'dotenv/config';
+import express, { type Request, Response, NextFunction } from 'express';
 
 import { config, validateCriticalSecrets, isDevelopment } from './config';
 import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from './errorHandler';
