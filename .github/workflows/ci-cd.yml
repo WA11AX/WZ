@@ -126,7 +126,7 @@ jobs:
 
     environment:
       name: staging
-      url: https://staging.yourdomain.com
+      url: https://wz-tournament-staging.replit.app
 
     steps:
       - name: Checkout code
@@ -138,11 +138,25 @@ jobs:
           name: build-files
           path: dist/
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Deploy to staging
+        env:
+          REPLIT_TOKEN: ${{ secrets.REPLIT_TOKEN }}
+          REPLIT_STAGING_URL: ${{ secrets.REPLIT_STAGING_URL }}
         run: |
           echo "Deploying to staging environment..."
-          # Add your deployment commands here
-          # Example: rsync, docker deploy, cloud provider CLI, etc.
+          curl -X POST "$REPLIT_STAGING_URL/api/deploy" \
+            -H "Authorization: Bearer $REPLIT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"branch": "develop"}'
 
   deploy-production:
     name: Deploy to Production
@@ -152,7 +166,7 @@ jobs:
 
     environment:
       name: production
-      url: https://yourdomain.com
+      url: https://wz-tournament.replit.app
 
     steps:
       - name: Checkout code
@@ -164,16 +178,36 @@ jobs:
           name: build-files
           path: dist/
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Deploy to production
+        env:
+          REPLIT_TOKEN: ${{ secrets.REPLIT_TOKEN }}
+          REPLIT_PRODUCTION_URL: ${{ secrets.REPLIT_PRODUCTION_URL }}
         run: |
           echo "Deploying to production environment..."
-          # Add your production deployment commands here
+          curl -X POST "$REPLIT_PRODUCTION_URL/api/deploy" \
+            -H "Authorization: Bearer $REPLIT_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{"branch": "main"}'
 
       - name: Notify deployment
         if: success()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           echo "Production deployment successful!"
-          # Add notification logic (Slack, Discord, email, etc.)
+          curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            -d chat_id="$TELEGRAM_CHAT_ID" \
+            -d text="🚀 Production deployment successful! WZ Tournament Platform is now live."
 
   database-migration:
     name: Database Migration

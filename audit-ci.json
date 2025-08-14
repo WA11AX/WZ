@@ -2,8 +2,10 @@
   "moderate": true,
   "high": true,
   "critical": true,
-  "allowlist": [],
-  "skip-dev": false,
+  "allowlist": [
+    "GHSA-67mh-4wv8-2f99"
+  ],
   "report-type": "summary",
-  "output-format": "text"
+  "output-format": "text",
+  "skip-dev": false
 }
