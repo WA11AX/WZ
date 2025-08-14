@@ -1,5 +1,5 @@
-import "dotenv/config";
-import express, { type Request, Response, NextFunction } from "express";
+import 'dotenv/config';
+import express, { type Request, Response, NextFunction } from 'express';
 
 import { config, validateCriticalSecrets, isDevelopment } from './config';
 import { errorHandler, notFoundHandler, setupGlobalErrorHandlers } from './errorHandler';
@@ -73,7 +73,7 @@ app.use((req, res, next) => {
     {
       port,
       host: '0.0.0.0',
-      reusePort: true
+      reusePort: true,
     },
     () => {
       log(`🚀 Server running on port ${port} (${config.NODE_ENV})`);
