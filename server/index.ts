@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 
 import { config, validateCriticalSecrets, isDevelopment } from "./config";
@@ -71,8 +72,7 @@ app.use((req, res, next) => {
   server.listen(
     {
       port,
-      host: "0.0.0.0",
-      reusePort: true,
+      host: isDevelopment ? "127.0.0.1" : "0.0.0.0",
     },
     () => {
       log(`🚀 Server running on port ${port} (${config.NODE_ENV})`);

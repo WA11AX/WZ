@@ -5,7 +5,9 @@
     "node": true
   },
   "ignorePatterns": ["tests/**/*", "dist/**/*", "node_modules/**/*"],
-  "extends": ["eslint:recommended"],
+  "extends": [
+    "eslint:recommended"
+  ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
@@ -14,25 +16,28 @@
       "jsx": true
     }
   },
-  "plugins": ["@typescript-eslint", "react", "react-hooks", "import"],
+  "plugins": [
+    "@typescript-eslint",
+    "react",
+    "react-hooks",
+    "import"
+  ],
   "rules": {
     // TypeScript specific rules
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      { "argsIgnorePattern": "^_" }
-    ],
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-non-null-assertion": "warn",
     "@typescript-eslint/no-var-requires": "error",
 
+    
     // React specific rules
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-
+    
     // Import/Export rules
-
+    
     // General code quality rules
     "prefer-const": "error",
     "no-var": "error",
@@ -47,7 +52,7 @@
     "no-return-assign": "error",
     "no-throw-literal": "error",
     "prefer-promise-reject-errors": "error",
-
+    
     // Stylistic rules
     "indent": "off",
     "@typescript-eslint/indent": "off",
