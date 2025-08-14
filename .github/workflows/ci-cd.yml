@@ -15,6 +15,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -41,6 +45,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -71,6 +79,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -97,6 +109,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -130,6 +146,10 @@ jobs:
         with:
           name: build-files
           path: dist/
+
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -171,6 +191,10 @@ jobs:
           name: build-files
           path: dist/
 
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -210,6 +234,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Clean node_modules and lockfile
+        run: |
+          rm -rf node_modules package-lock.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
