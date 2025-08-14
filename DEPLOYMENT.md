@@ -7,6 +7,7 @@ To enable CI/CD deployment, you need to configure the following secrets in your 
 ### Required Secrets
 
 1. **DATABASE_URL** - PostgreSQL database connection string
+
    ```
    postgresql://username:password@host:port/database
    ```
@@ -16,11 +17,13 @@ To enable CI/CD deployment, you need to configure the following secrets in your 
    - Account → API Token
 
 3. **REPLIT_STAGING_URL** - URL of your Replit staging app
+
    ```
    https://wz-tournament-staging.replit.app
    ```
 
 4. **REPLIT_PRODUCTION_URL** - URL of your Replit production app
+
    ```
    https://wz-tournament.replit.app
    ```

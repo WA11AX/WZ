@@ -3,7 +3,10 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 // Simple test component
-const TestButton: React.FC<{ children: React.ReactNode; onClick?: () => void }> = ({ children, onClick }) => {
+const TestButton: React.FC<{ children: React.ReactNode; onClick?: () => void }> = ({
+  children,
+  onClick,
+}) => {
   return (
     <button onClick={onClick} data-testid="test-button">
       {children}
@@ -24,7 +27,7 @@ const TournamentCard: React.FC<{ title: string; status: string }> = ({ title, st
 describe('React Components', () => {
   it('should render button with text', () => {
     render(<TestButton>Click me</TestButton>);
-    
+
     const button = screen.getByTestId('test-button');
     expect(button).toBeInTheDocument();
     expect(button).toHaveTextContent('Click me');
@@ -32,7 +35,7 @@ describe('React Components', () => {
 
   it('should render tournament card with title and status', () => {
     render(<TournamentCard title="Test Tournament" status="active" />);
-    
+
     const card = screen.getByTestId('tournament-card');
     expect(card).toBeInTheDocument();
     expect(card).toHaveTextContent('Test Tournament');
@@ -41,7 +44,7 @@ describe('React Components', () => {
 
   it('should apply correct status class', () => {
     render(<TournamentCard title="Test" status="completed" />);
-    
+
     const statusElement = screen.getByText('completed');
     expect(statusElement).toHaveClass('status-completed');
   });
