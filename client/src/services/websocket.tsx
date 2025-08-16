@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import type { Tournament } from '@shared/schema';
 
 export interface WebSocketMessage {
   type:
@@ -42,7 +43,7 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
 
       wsRef.current.onopen = () => {
         setIsConnected(true);
-        reconnectAttempts = 0;
+        reconnectAttemptsRef.current = 0;
         if (reconnectTimeoutRef.current) {
           clearTimeout(reconnectTimeoutRef.current);
         }
@@ -67,11 +68,14 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
         setIsConnected(false);
         websocketCallbacks.current.forEach((callback) => callback({ type: 'disconnected' }));
 
-        if (reconnectAttempts < maxReconnectAttempts) {
-          const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
+        if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+          const delay = Math.min(
+            baseReconnectDelay * Math.pow(2, reconnectAttemptsRef.current),
+            30000,
+          );
           const jitter = Math.random() * 1000;
           const finalDelay = delay + jitter;
-          reconnectAttempts++;
+          reconnectAttemptsRef.current++;
           reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
         } else {
           websocketCallbacks.current.forEach((callback) =>
@@ -91,11 +95,14 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
       websocketCallbacks.current.forEach((callback) =>
         callback({ type: 'error', error: 'Failed to initiate WebSocket connection' }),
       );
-      if (reconnectAttempts < maxReconnectAttempts) {
-        const delay = Math.min(baseReconnectDelay * Math.pow(2, reconnectAttempts), 30000);
+      if (reconnectAttemptsRef.current < maxReconnectAttempts) {
+        const delay = Math.min(
+          baseReconnectDelay * Math.pow(2, reconnectAttemptsRef.current),
+          30000,
+        );
         const jitter = Math.random() * 1000;
         const finalDelay = delay + jitter;
-        reconnectAttempts++;
+        reconnectAttemptsRef.current++;
         reconnectTimeoutRef.current = window.setTimeout(connect, finalDelay);
       }
     }
@@ -125,7 +132,6 @@ function useWebSocket(onMessage?: (message: WebSocketMessage) => void) {
 
 interface WebSocketContextValue {
   isConnected: boolean;
-  sendMessage: (message: any) => void;
   sendMessage: (message: WebSocketMessage) => void;
   addCallback: (callback: (message: WebSocketMessage) => void) => () => void;
 }
